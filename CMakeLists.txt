@@ -1,0 +1,38 @@
+cmake_minimum_required(VERSION 2.8)
+INCLUDE( ExternalProject )
+
+SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/module)
+SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+SET(LIBRARY_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH})
+
+ExternalProject_Add(skp2tri
+	SOURCE_DIR ${PROJECT_SOURCE_DIR}/skp2tri
+	CMAKE_ARGS
+		-DCMAKE_TOOLCHAIN_FILE=${PROJECT_SOURCE_DIR}/skp2tri/Toolchain-windows-mingw32.cmake
+		-DEXECUTABLE_OUTPUT_PATH=${EXECUTABLE_OUTPUT_PATH}
+	INSTALL_COMMAND ""
+	#INSTALL_COMMAND ./bjam install ${Boost_bjam_ARGS}
+)
+
+find_package(Boost 1.49.0 COMPONENTS serialization program_options REQUIRED)
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+LINK_DIRECTORIES(${LIBRARY_OUTPUT_PATH})
+
+include_directories(libmesh/src)
+add_subdirectory(libmesh)
+add_subdirectory(descriptors)
+add_subdirectory(tools)
+
+
+#Find requirements and sources for tests
+
+FIND_PACKAGE(CppUnit REQUIRED)
+IF( NOT CPPUNIT_FOUND )
+    MESSAGE(FATAL_ERROR "Module CppUnit required and not found.")
+ENDIF()
+INCLUDE_DIRECTORIES(${CPPUNIT_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR})
+
+FILE(GLOB SRC_TEST */test/*.cpp)
+FILE(GLOB SRC */src/*.cpp)
+add_executable(tests test_runner.cxx ${SRC_TEST} ${SRC})
+target_link_libraries(tests ${CPPUNIT_LIBRARY} ${Boost_LIBRARIES})
