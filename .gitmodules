@@ -1,0 +1,3 @@
+[submodule "skp2tri"]
+	path = skp2tri
+	url = git@github.com:julfla/skp2tri.git
