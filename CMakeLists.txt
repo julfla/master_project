@@ -22,6 +22,7 @@ include_directories(libmesh/src)
 add_subdirectory(libmesh)
 add_subdirectory(descriptors)
 add_subdirectory(tools)
+add_subdirectory(partial_pointcloud)
 
 
 #Find requirements and sources for tests
