@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
             ("input,i", po::value<string>(), "Input file")
             ("output,o", po::value<string>(), "Output file")
             ("csv,c", "Export to a csv intead of a lib boost archive, use it with conv for convertion")
-            ("convert", "Convert the file instead of computiing it")
+            ("convert", "Convert the file instead of computing it")
             ;
 
 

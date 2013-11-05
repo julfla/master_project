@@ -40,6 +40,10 @@ public:
 		return polygons.empty();
 	}
 
+    size_t size() {
+        return polygons.size();
+    }
+
 private:
     std::vector<TrianglePolygon> polygons;
 	//the map is used to retreive a random point on the mesh

@@ -34,6 +34,7 @@ public:
         delete data;
     }
 
+    //merge two Histograms from the right
     void operator<<(Histogram histogram) {
        this->data->insert(this->data->end(), histogram.data->begin(), histogram.data->end());
     }

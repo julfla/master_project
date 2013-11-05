@@ -10,7 +10,6 @@
 #include "vector_3d.h"
 #include "histogram.h"
 #include <cmath>
-#include <cstdlib>
 
 // include headers that implement a archive in simple text format
 #include <boost/archive/text_oarchive.hpp>
@@ -47,8 +46,9 @@ public:
         this->distribution.insert(this->distribution.end(), hist.data->begin(), hist.data->end());
 
         //TODO : Find a more efficient way, doing normalization in Histogram !!
-        for( it_dbl it = distribution.begin(); it < distribution.end(); ++it )
-            *it /= _SAMPLE_LENGTH_;
+        /*for( it_dbl it = distribution.begin(); it < distribution.end(); ++it )
+         *it /= _SAMPLE_LENGTH_;
+         */
         assert((int) distribution.size() == (32 + 64 + 128 + 256));
     }
 
@@ -63,7 +63,10 @@ public:
         return distribution;
     }
 
+    typedef double (* double_distance)(double, double);
+
     // return the sums of the differance between repartion functions
+    template <double_distance d >
     double distance(Distribution other_distribution) {
 
         assert(other_distribution.distribution.size() == distribution.size());
@@ -72,21 +75,9 @@ public:
         {
             double p = this->distribution.at(i);
             double q = other_distribution.getDistribution().at(i);
-
-            sum += std::abs(p - q);
-
-            /*if(std::abs(p - q) > 1e-6)
-                sum += (p - q) * (p - q) / (p + q);
-            */
-            /*if(q < 1e-6)
-                sum += p * std::log(0.5);
-            else if( p < 1e-6 )
-                sum += q * std::log(0.5);
-            else
-                sum += 0.5*(p+q) * std::log(0.5*(p+q) / std::sqrt(p*q) );
-            */
-            return sum;
+            sum += d(p,q);
         }
+        return sum;
     }
 
 private:
