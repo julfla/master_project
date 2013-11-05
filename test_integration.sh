@@ -33,12 +33,12 @@ echo "Convert skp files to tri format"
 for file in */*.skp; do WINEDEBUG=-all, wine $bin_dir/skp2tri.exe -i $file -o ${file%.skp}.tri; done;
 
 echo "Computation of descriptors"
-for file in */*.tri; do $bin_dir/distribution -i $file -o ${file%.tri}.dist; done;
+for file in */*.tri; do $bin_dir/distribution -i $file -I tri -o ${file%.tri}.dist -O archive; done;
 
 
 echo "Plot descriptors"
 for file in */*.dist; do
-	$bin_dir/distribution --csv --conv -i $file -o ${file%.dist}.csv
+	$bin_dir/distribution -i $file -I archive -o ${file%.dist}.csv -O csv
 	R --slave -f $tool_dir/plot_raw_dist.R --args ${file%.dist}.csv ${file%.dist}.png
 done;
 

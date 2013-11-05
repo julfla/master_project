@@ -16,6 +16,13 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/vector.hpp>
 
+#include <pcl/io/pcd_io.h>
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+#include <pcl/common/common.h>
+#include <pcl/common/distances.h>
+#include "boost/random.hpp"
+
 #define _SAMPLE_LENGTH_ 100000
 
 
@@ -34,22 +41,12 @@ public:
         if (sample_length != 0)
             std::cerr << "Warning : sample length option is deprecated." << std::endl;
         std::vector<double> sample = compute_sample(&mesh, _SAMPLE_LENGTH_);
-        std::sort(sample.begin(), sample.end());
-        Histogram hist = Histogram(&sample, 256);
+        compute_histogram(sample);
+    }
 
-        this->distribution.insert(this->distribution.end(), hist.data->begin(), hist.data->end());
-        hist.scale_down(2);
-        this->distribution.insert(this->distribution.end(), hist.data->begin(), hist.data->end());
-        hist.scale_down(2);
-        this->distribution.insert(this->distribution.end(), hist.data->begin(), hist.data->end());
-        hist.scale_down(2);
-        this->distribution.insert(this->distribution.end(), hist.data->begin(), hist.data->end());
-
-        //TODO : Find a more efficient way, doing normalization in Histogram !!
-        /*for( it_dbl it = distribution.begin(); it < distribution.end(); ++it )
-         *it /= _SAMPLE_LENGTH_;
-         */
-        assert((int) distribution.size() == (32 + 64 + 128 + 256));
+    Distribution(pcl::PointCloud<pcl::PointXYZ> * const cloud) {
+        std::vector<double> sample = compute_sample(cloud, _SAMPLE_LENGTH_);
+        compute_histogram(sample);
     }
 
     std::string to_csv() {
@@ -82,25 +79,16 @@ public:
 
 private:
 
+    void compute_histogram(std::vector<double> sample);
+    std::vector<double> compute_sample(Mesh * const mesh, int number_points);
+    std::vector<double> compute_sample(pcl::PointCloud<pcl::PointXYZ> * const cloud, int number_points);
+
     std::vector<double> distribution;
 
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version)
     {
         ar & distribution;
-    }
-
-    std::vector<double> compute_sample(Mesh * const mesh, int number_points) {
-        if(mesh->empty())
-            return std::vector<double>();
-        std::vector<double> sample;
-        for (int i=0; i < number_points; ++i) {
-            //get two random points and compute the distance between them
-            Point_3D pts1 = mesh->retreive_random_point();
-            Point_3D pts2 = mesh->retreive_random_point();
-            sample.push_back(pts1.distance(pts2));
-        }
-        return sample;
     }
 
 };

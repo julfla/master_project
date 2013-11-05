@@ -103,7 +103,6 @@ int main()
         float x_min, y_min, z_min;
         x_min = y_min = z_min = std::numeric_limits<float>::max();
         float x_mean, y_mean, z_mean;
-        x_mean = y_mean = z_mean = 0;
         for(std::vector<glm::vec3>::iterator it = g_vertex_buffer_data.begin(); it < g_vertex_buffer_data.end(); ++it) {
             if(it->x > x_max) x_max = it->x;
             if(it->x < x_min) x_min = it->x;
@@ -136,9 +135,12 @@ int main()
         outter_box.push_back(glm::vec3(x_min - x_mean, y_min - y_mean, z_max - z_mean));
         outter_box.push_back(glm::vec3(x_min - x_mean, y_min - y_mean, z_min - z_mean));
 
+        #ifndef DEBUG
         std::cout << x_min << " < x < " << x_max << " average : " << x_mean << std::endl;
         std::cout << y_min << " < y < " << y_max << " average : " << y_mean << std::endl;
         std::cout << z_min << " < z < " << z_max << " average : " << z_mean << std::endl;
+        #endif
+
         std::cout << "Scale factor : " << scale_factor << " inv: " << 1.0f / scale_factor << std::endl;
 
     }

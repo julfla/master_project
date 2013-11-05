@@ -10,18 +10,16 @@ using namespace std;
 
 int main(int argc, char **argv) {
 
-    string input_path;
-    int number_points = 0;
+    string input_path, iformat, oformat;
 
     // Declare the supported options.
-    po::
-            options_description desc("Allowed options");
+    po::options_description desc("Allowed options");
     desc.add_options()
             ("help,h", "Produce help message")
             ("input,i", po::value<string>(), "Input file")
+            ("input-format,I", po::value<string>()->default_value("pcd"), "Input file format tri|pcd|archive")
             ("output,o", po::value<string>(), "Output file")
-            ("csv,c", "Export to a csv intead of a lib boost archive, use it with conv for convertion")
-            ("convert", "Convert the file instead of computing it")
+            ("output-format,O", po::value<string>()->default_value("archive"), "Ouput file format archive|csv")
             ;
 
 
@@ -43,22 +41,36 @@ int main(int argc, char **argv) {
     }
 
     Distribution distribution;
-    if(vm.count("convert")) {
+    if(vm["input-format"].as<string>() == "archive") {
         // load data from archive
         std::ifstream ifs(input_path.c_str());
         boost::archive::text_iarchive oa(ifs);
         oa >> distribution;
-    } else
+    } else if(vm["input-format"].as<string>() == "tri") {
         distribution = Distribution(Mesh(input_path));
+    } else if(vm["input-format"].as<string>() == "pcd") {
+        pcl::PointCloud<pcl::PointXYZ> cloud;
+        if (pcl::io::loadPCDFile<pcl::PointXYZ> (input_path, cloud) == -1) //* load the file
+        {
+            cout << "Input file unknown or invalid." << endl;
+            cout << desc << endl;
+            return -1;
+        }
+        distribution = Distribution(&cloud);
+    }
+    else {
+        cout << desc << endl;
+        return 1;
+    }
 
-    if(vm.count("csv")) { //export to csv
+   if(vm["output-format"].as<string>() == "csv") { //export to csv
         if(vm.count("output")) {
             std::ofstream ofs(vm["output"].as<string>().c_str());
             ofs << distribution.to_csv();
         }
         else
             std::cout << distribution.to_csv();
-    } else {
+   } else if(vm["output-format"].as<string>() == "archive") {
         if(vm.count("output")) {
             std::ofstream ofs(vm["output"].as<string>().c_str());
             boost::archive::text_oarchive oa(ofs);
@@ -66,7 +78,10 @@ int main(int argc, char **argv) {
         }
         else
             boost::archive::text_oarchive(std::cout) << distribution;
-    }
+    } else {
+       cout << desc << endl;
+       return 1;
+   }
 
     return 0;
 }

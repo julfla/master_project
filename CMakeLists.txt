@@ -18,6 +18,11 @@ find_package(Boost 1.49.0 COMPONENTS serialization program_options REQUIRED)
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 LINK_DIRECTORIES(${LIBRARY_OUTPUT_PATH})
 
+find_package(PCL 1.2 REQUIRED)
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+
 include_directories(libmesh/src)
 add_subdirectory(libmesh)
 add_subdirectory(descriptors)
