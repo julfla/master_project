@@ -61,7 +61,7 @@ public:
   {
     for (int i=0; i<3; ++i)
       if(!(points[i] == mesh.points[i]))
-	return false;
+           return false;
     return true;
   }
   

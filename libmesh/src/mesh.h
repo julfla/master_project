@@ -20,15 +20,7 @@ public:
 		this->polygons = polygons;
 	}
 
-    Mesh(std::string path_file) {
-        std::ifstream in_stream(path_file.c_str());
-        if(!in_stream.good())
-            throw std::ifstream::failure("Input file not found.");
-        std::string line;
-        while (std::getline(in_stream, line))
-            polygons.push_back(TrianglePolygon(line));
-        in_stream.close();
-    }
+    Mesh(std::string path_file);
 
 	const Point_3D retreive_random_point() {
         if(cumul_area.empty())
@@ -47,21 +39,13 @@ public:
 private:
     std::vector<TrianglePolygon> polygons;
 	//the map is used to retreive a random point on the mesh
-	std::map<double, TrianglePolygon> cumul_area; //cumlative area of polygons
+    std::map<double, TrianglePolygon> cumul_area; //cumulative area of polygons
 
 	//generator for random number
     boost::minstd_rand generator;
     boost::uniform_real<> uni_dist;
 	
-	void init_map_area() {
-        double cumul = 0;
-        for (int i=0; i < polygons.size(); ++i) {
-            cumul += polygons.at(i).getArea();
-            cumul_area[cumul] = polygons.at(i);
-        }
-        generator = boost::minstd_rand(std::time(0));
-        uni_dist = boost::uniform_real<>(0,cumul);
-	}
+    void init_map_area();
 };
 
 #endif // MESH_H
