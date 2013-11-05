@@ -1,0 +1,27 @@
+#version 120
+
+// Input vertex data, different for all executions of this shader.
+attribute vec3 vertexPosition_modelspace;
+attribute vec3 vertexColor;
+
+// Output data ; will be interpolated for each fragment.
+varying vec4 fragmentColor;
+varying float depth;
+// Values that stay constant for the whole mesh.
+uniform mat4 MVP;
+uniform mat4 MV;
+
+void main(){
+	
+	// Output position of the vertex, in clip space : MVP * position
+	vec4 temp = MVP * vec4(vertexPosition_modelspace,1);
+	depth = 1.0f - temp.z / 10.0f;
+
+	gl_Position = temp;	
+	fragmentColor = vec4(vertexPosition_modelspace,1);
+	fragmentColor.z = - fragmentColor.z
+	fragmentColor.x /= 438.717;
+	fragmentColor.y /= 438.717;
+	fragmentColor.z /= 438.717;
+	
+}
