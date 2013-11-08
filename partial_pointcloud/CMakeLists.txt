@@ -1,5 +1,3 @@
-#ADD_DEFINITIONS(-std=c99 -O3 -funsigned-char -freg-struct-return -Wall -W -Wshadow -Wstrict-prototypes -Wpointer-arith -Winline)
-
 FIND_PACKAGE(OpenGL REQUIRED)
 FIND_PACKAGE(GLEW REQUIRED)
 FIND_PACKAGE(GLM REQUIRED)
@@ -10,5 +8,5 @@ pkg_search_module(GLFW REQUIRED libglfw)
 include_directories(${GLFW_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR})
 SET(GL_LIBS ${GLEW_LIBRARY} ${OPENGL_LIBRARY} ${GLFW_LIBRARIES} ${GLM_LIBRARIES})
 
-ADD_EXECUTABLE(main test.cpp common/shader.cpp)
-TARGET_LINK_LIBRARIES(main ${GL_LIBS} ${PCL_LIBRARIES})
+ADD_EXECUTABLE(partial_view partial_view.cxx partial_view.h common/shader.cpp)
+TARGET_LINK_LIBRARIES(partial_view ${GL_LIBS} ${PCL_LIBRARIES})
