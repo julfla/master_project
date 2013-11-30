@@ -41,6 +41,7 @@ public:
         if (sample_length != 0)
             std::cerr << "Warning : sample length option is deprecated." << std::endl;
         std::vector<double> sample = compute_sample(&mesh, _SAMPLE_LENGTH_);
+        assert(sample.size() == _SAMPLE_LENGTH_);
         compute_histogram(sample);
     }
 

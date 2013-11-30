@@ -47,6 +47,5 @@ std::vector<double> Distribution::compute_sample(pcl::PointCloud<pcl::PointXYZ> 
         pcl::PointXYZ pts2 = cloud->at(uni_dist(generator));
         sample.push_back((double) pcl::euclideanDistance(pts1,pts2));
     }
-    std::cout << sample.size() << std::endl;
     return sample;
 }

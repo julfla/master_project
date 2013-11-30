@@ -10,7 +10,7 @@ using namespace std;
 
 int main(int argc, char **argv) {
 
-    string input_path, iformat, oformat;
+    string input_path;
 
     // Declare the supported options.
     po::options_description desc("Allowed options");
