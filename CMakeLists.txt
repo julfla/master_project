@@ -14,14 +14,14 @@ ExternalProject_Add(skp2tri
 	#INSTALL_COMMAND ./bjam install ${Boost_bjam_ARGS}
 )
 
-find_package(Boost 1.49.0 COMPONENTS serialization program_options REQUIRED)
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
-LINK_DIRECTORIES(${LIBRARY_OUTPUT_PATH})
-
 find_package(PCL 1.2 REQUIRED)
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
+
+find_package(Boost 1.49.0 COMPONENTS serialization program_options system REQUIRED)
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+LINK_DIRECTORIES(${LIBRARY_OUTPUT_PATH})
 
 include_directories(libmesh/src)
 add_subdirectory(libmesh)
