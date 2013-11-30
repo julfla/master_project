@@ -44,9 +44,21 @@ public:
         this->height = height;
         this->fov = fov;
         load_mesh(tri_path);
+        if(!init_viewer())
+            return;
     }
 
-    bool init_viewer() {
+    ~PartialViewComputer() {
+        // Close OpenGL window and terminate GLFW
+        glfwTerminate();
+        // Cleanup VBO and shader
+        glDeleteBuffers(1, &vertexbuffer);
+        glDeleteBuffers(1, &framebuffer);
+        glDeleteProgram(programID);
+    }
+
+    bool init_viewer(const char* window_name = NULL) {
+
         // Initialise GLFW
         if( !glfwInit() )
         {
@@ -72,13 +84,36 @@ public:
             return -1;
         }
 
-        glfwSetWindowTitle( "Tutorial 04" );
-
+        glfwSetWindowTitle( window_name );
         // Ensure we can capture the escape key being pressed below
         glfwEnable( GLFW_STICKY_KEYS );
 
         // Dark blue background
         glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+
+        // Enable depth test
+        glEnable(GL_DEPTH_TEST);
+        // Accept fragment if it closer to the camera than the former one
+        glDepthFunc(GL_LESS);
+
+        // Create and compile our GLSL program from the shaders
+        const char* vertex_sharder = "../shaders/TransformVertexShader.vertexshader";
+        const char* fragment_sharder = "../shaders/ColorFragmentShader.fragmentshader";
+
+        programID = LoadShaders( vertex_sharder, fragment_sharder );
+
+        // Get a handle for our "MVP" uniform
+        MVP_ID = glGetUniformLocation(programID, "MVP");
+        SCALE_ID = glGetUniformLocation(programID, "SCALE");
+        MV_ID = glGetUniformLocation(programID, "MV");
+
+        // Get a handle for our buffers
+        vertexPosition_modelspaceID = glGetAttribLocation(programID, "vertexPosition_modelspace");
+        vertexColorID = glGetAttribLocation(programID, "vertexColor");
+
+        glGenBuffers(1, &vertexbuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+        glBufferData(GL_ARRAY_BUFFER, g_vertex_buffer_data.size() * sizeof(glm::vec3), &g_vertex_buffer_data[0], GL_STATIC_DRAW);
 
         return true;
 
@@ -168,11 +203,11 @@ public:
         centroid = glm::vec3(x_mean, y_mean, z_mean);
 
         scale_factor = x_max;
-        scale_factor = max(scale_factor, - x_min);
-        scale_factor = max(scale_factor, y_max);
-        scale_factor = max(scale_factor, - y_min);
-        scale_factor = max(scale_factor, z_max);
-        scale_factor = max(scale_factor, - z_min);
+        scale_factor = std::max(scale_factor, - x_min);
+        scale_factor = std::max(scale_factor, y_max);
+        scale_factor = std::max(scale_factor, - y_min);
+        scale_factor = std::max(scale_factor, z_max);
+        scale_factor = std::max(scale_factor, - z_min);
         scale_factor = 1.0f / scale_factor;
 
         outter_box.push_back(glm::vec3(x_max - x_mean, y_max - y_mean, z_max - z_mean));
@@ -236,34 +271,10 @@ public:
         }
     }
 
-    int compute_view(std::string output_path, float theta, float phi, bool show_image)
+    pcl::PointCloud<pcl::PointXYZ> compute_view(float theta, float phi, bool show_image)
     {
 
-        if(!init_viewer())
-            return -1;
-
         init_MVP(theta, phi);
-
-        // Enable depth test
-        glEnable(GL_DEPTH_TEST);
-        // Accept fragment if it closer to the camera than the former one
-        glDepthFunc(GL_LESS);
-
-        // Create and compile our GLSL program from the shaders
-        programID = LoadShaders( "shaders/TransformVertexShader.vertexshader", "shaders/ColorFragmentShader.fragmentshader" );
-
-        // Get a handle for our "MVP" uniform
-        MVP_ID = glGetUniformLocation(programID, "MVP");
-        SCALE_ID = glGetUniformLocation(programID, "SCALE");
-        MV_ID = glGetUniformLocation(programID, "MV");
-
-        // Get a handle for our buffers
-        vertexPosition_modelspaceID = glGetAttribLocation(programID, "vertexPosition_modelspace");
-        vertexColorID = glGetAttribLocation(programID, "vertexColor");
-
-        glGenBuffers(1, &vertexbuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-        glBufferData(GL_ARRAY_BUFFER, g_vertex_buffer_data.size() * sizeof(glm::vec3), &g_vertex_buffer_data[0], GL_STATIC_DRAW);
 
         if(show_image) {
             do{
@@ -274,7 +285,7 @@ public:
             } // Check if the ESC key was pressed or the window was closed
             while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS &&
                    glfwGetWindowParam( GLFW_OPENED ) );
-        }
+            }
 
         draw();
         pcl::PointCloud<pcl::PointXYZ> cloud;
@@ -283,20 +294,10 @@ public:
         DEBUG_MSG( width * height << " pixels." );
         DEBUG_MSG( cloud.size() << " points in cloud." );
 
-        // Close OpenGL window and terminate GLFW
-        glfwTerminate();
-
-        if(!cloud.empty())
-            pcl::io::savePCDFileASCII (output_path, cloud);
-
-        // Cleanup VBO and shader
-        glDeleteBuffers(1, &vertexbuffer);
-        glDeleteProgram(programID);
-
-        return 0;
+        return cloud;
     }
 
-private:
+    private:
     std::vector<glm::vec3> g_vertex_buffer_data;
     glm::vec3 centroid;
     float scale_factor;
@@ -305,6 +306,8 @@ private:
     float fov;
     glm::mat4 MV, MVP;
     GLuint programID, MVP_ID, MV_ID, SCALE_ID, vertexPosition_modelspaceID, vertexColorID, vertexbuffer, framebuffer;
+
+
 
 };
 
