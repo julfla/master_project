@@ -10,7 +10,7 @@ using namespace std;
 
 int main(int argc, char **argv) {
 
-    string input_path;
+    string input_path, output_path;
 
     // Declare the supported options.
     po::options_description desc("Allowed options");
@@ -20,6 +20,7 @@ int main(int argc, char **argv) {
             ("input-format,I", po::value<string>()->default_value("pcd"), "Input file format tri|pcd|archive")
             ("output,o", po::value<string>(), "Output file")
             ("output-format,O", po::value<string>()->default_value("archive"), "Ouput file format archive|csv")
+            ("no-clobber,n", po::bool_switch(), "Do not overwrite an existing file.")
             ;
 
 
@@ -38,6 +39,13 @@ int main(int argc, char **argv) {
         cout << "Input file unknown or invalid." << endl;
         cout << desc << endl;
         return 1;
+    }
+
+    if (vm.count("output")) {
+        output_path = vm["output"].as<string>();
+        //check if file exists
+        if( ifstream(output_path.c_str()) && vm.count("no-clobber") )
+            return 1;
     }
 
     Distribution distribution;
@@ -65,14 +73,14 @@ int main(int argc, char **argv) {
 
    if(vm["output-format"].as<string>() == "csv") { //export to csv
         if(vm.count("output")) {
-            std::ofstream ofs(vm["output"].as<string>().c_str());
+            std::ofstream ofs(output_path.c_str());
             ofs << distribution.to_csv();
         }
         else
             std::cout << distribution.to_csv();
    } else if(vm["output-format"].as<string>() == "archive") {
         if(vm.count("output")) {
-            std::ofstream ofs(vm["output"].as<string>().c_str());
+            std::ofstream ofs(output_path.c_str());
             boost::archive::text_oarchive oa(ofs);
             oa << distribution;
         }
