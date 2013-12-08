@@ -22,7 +22,13 @@ bool process_cloud(string output_path, string output_format, pcl::PointCloud<pcl
             oa << distribution;
         } else
             boost::archive::text_oarchive(std::cout) << distribution;
-        return true;
+    } else if( output_format == "csv") {
+        Distribution distribution(cloud);
+        if(output_path != "") {
+            std::ofstream ofs(output_path.c_str());
+            ofs << distribution.to_csv();
+        } else
+            std::cout << distribution.to_csv();
     } else
         return false;
 
@@ -43,11 +49,12 @@ int main(int argc, char **argv) {
             ("help,h", "Produce help message")
             ("input,i", po::value<string>(), "Input tri file")
             ("output,o", po::value<string>(), "Ouput pcd file")
-            ("output-format,O", po::value<string>()->default_value("pcd"), "Ouput file format pcd|dist")
+            ("output-format,O", po::value<string>()->default_value("pcd"), "Ouput file format pcd|dist|csv")
             ("theta,t", po::value<float>()->default_value(M_PI * 0.30), "Theta angle")
             ("phi,p", po::value<float>()->default_value(2 * M_PI * 0.125), "Phi angle")
             ("several,s" , po::bool_switch(), "Compute several partial views (disable phi & theta options)")
             ("view-image,v" , po::bool_switch(), "Display the intermediate partial view")
+            ("no-clobber,n", po::bool_switch(), "Do not overwrite an existing file.")
             ;
 
     po::variables_map vm;
@@ -84,7 +91,7 @@ int main(int argc, char **argv) {
             for(int j = 0; j < SQRT_NUMBER_VIEWS; ++j) {
                 theta = M_PI * (float) i / (float) SQRT_NUMBER_VIEWS;
                 phi = 2 * M_PI * (float) i / (float) SQRT_NUMBER_VIEWS;
-                pcl::PointCloud<pcl::PointXYZ> cloud = comp.compute_view(theta, phi, vm["view-image"].as<bool>());
+
                 string current_output = output_path;
                 if( current_output != "" && current_output.find(".") != -1) {
                     stringstream stream;
@@ -93,10 +100,18 @@ int main(int argc, char **argv) {
                     stream << basename << i << j << ext;
                     current_output = stream.str();
                 }
-                if(!process_cloud(current_output,vm["output-format"].as<string>(), &cloud))
-                    return -1;
+
+                //check if file already exist
+                if( !(ifstream(current_output.c_str()) && vm.count("no-clobber")) ) {
+                    pcl::PointCloud<pcl::PointXYZ> cloud = comp.compute_view(theta, phi, vm["view-image"].as<bool>());
+                    if(!process_cloud(current_output,vm["output-format"].as<string>(), &cloud)) {
+                        cout << "Output format unknown or invalid." << endl;
+                        cout << desc << endl;
+                        return -1;
+                    }
+                }
             }
-    } else {
+    } else if (!(ifstream(output_path.c_str()) && vm.count("no-clobber"))){
         theta = vm["theta"].as<float>();
         phi = vm["phi"].as<float>();
         pcl::PointCloud<pcl::PointXYZ> cloud = comp.compute_view(theta, phi, vm["view-image"].as<bool>());
