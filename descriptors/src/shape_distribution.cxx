@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
     if (vm.count("output")) {
         output_path = vm["output"].as<string>();
         //check if file exists
-        if( ifstream(output_path.c_str()) && vm.count("no-clobber") )
+        if( ifstream(output_path.c_str()) && vm["no-clobber"].as<bool>() )
             return 1;
     }
 

@@ -111,7 +111,9 @@ int main(int argc, char **argv) {
                     }
                 }
             }
-    } else if (!(ifstream(output_path.c_str()) && vm.count("no-clobber"))){
+    } else if ( vm["no-clobber"].as<bool>() && ifstream(output_path.c_str()) )
+        return 1;
+    else {
         theta = vm["theta"].as<float>();
         phi = vm["phi"].as<float>();
         pcl::PointCloud<pcl::PointXYZ> cloud = comp.compute_view(theta, phi, vm["view-image"].as<bool>());
