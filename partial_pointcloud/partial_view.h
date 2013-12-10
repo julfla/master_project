@@ -210,6 +210,10 @@ public:
         scale_factor = std::max(scale_factor, - z_min);
         scale_factor = 1.0f / scale_factor;
 
+        max_relative_position[0] = x_max * scale_factor;
+        max_relative_position[1] = y_max * scale_factor;
+        max_relative_position[2] = z_max * scale_factor;
+
         outter_box.push_back(glm::vec3(x_max - x_mean, y_max - y_mean, z_max - z_mean));
         outter_box.push_back(glm::vec3(x_max - x_mean, y_max - y_mean, z_min - z_mean));
         outter_box.push_back(glm::vec3(x_max - x_mean, y_min - y_mean, z_max - z_mean));
@@ -249,6 +253,14 @@ public:
                     (void*)0                     // array buffer offset
                     );
 
+        glTexImage2D(GL_TEXTURE_2D, 0,
+                     GL_RGB32F, // this should match your fragment shader output.
+                                // I used vec3, hence a 3-componont 32bits float
+                                // You can use something else for different information
+                     width, height, 0,
+                     GL_RGB, GL_FLOAT, // Again, this should match
+                     0);
+
         // Draw the triangleS !
         glDrawArrays(GL_TRIANGLES, 0, g_vertex_buffer_data.size()*3); // 12*3 indices starting at 0 -> 12 triangles
 
@@ -266,7 +278,11 @@ public:
             float y = *it;
             ++it;
             float z = *it;
-            if( abs(x - 1.0) > 1e-5 && abs(y - 1.0) > 1e-5 && abs(z - 1.0) > 1e-5)
+
+
+            //this is to fix, due to some border effect, some pix do not represent the position
+            //because the background is white they are augmented.
+            if( max_relative_position[0] > x && max_relative_position[1] > y && max_relative_position[2] > z )
                 cloud->push_back(pcl::PointXYZ(x,y,z));
         }
     }
@@ -298,6 +314,8 @@ public:
     }
 
     private:
+
+    float max_relative_position[3]; // used to remove the border effect..
     std::vector<glm::vec3> g_vertex_buffer_data;
     glm::vec3 centroid;
     float scale_factor;

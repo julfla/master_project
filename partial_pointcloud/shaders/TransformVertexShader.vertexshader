@@ -1,10 +1,10 @@
-#version 120
+#version 130
 
 // Input vertex data, different for all executions of this shader.
-attribute vec3 vertexPosition_modelspace;
+in vec3 vertexPosition_modelspace;
 
 // Output data ; will be interpolated for each fragment.
-varying vec4 fragmentColor;
+out vec3 fragPosition;
 
 // Values that stay constant for the whole mesh.
 uniform mat4 MVP;
@@ -13,8 +13,8 @@ uniform float SCALE;
 
 void main(){
 	
-	gl_Position = MVP * vec4(vertexPosition_modelspace,1);	
-	fragmentColor = vec4(vertexPosition_modelspace,1.0f);
-	fragmentColor *= SCALE;
+	gl_Position = MVP * vec4(vertexPosition_modelspace,1.0f);	
+	fragPosition = vertexPosition_modelspace;
+	fragPosition *= SCALE;
 	
 }

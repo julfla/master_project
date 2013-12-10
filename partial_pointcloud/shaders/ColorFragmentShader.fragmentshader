@@ -1,13 +1,16 @@
-#version 120
+#version 130
 
 // Interpolated values from the vertex shaders
-varying vec4 fragmentColor;
+in vec3 fragPosition;
 varying float depth;
+
+//out vec3 position;
 
 void main(){
 
 	// Output color = color specified in the vertex shader, 
 	// interpolated between all 3 surrounding vertices
-	gl_FragColor = fragmentColor;
+	gl_FragColor = vec4(fragPosition, 1.0f);
+	//position = fragPosition;
 
 }
