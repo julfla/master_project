@@ -10,7 +10,7 @@ tool_dir=$(dirname $(readlink -f $0))/tools
 bin_dir=$(dirname $(readlink -f $0))/bin
 #used to create a tmp folder
 #tmp_dir=$(mktemp -d)
-tmp_dir=/tmp/dataset;
+tmp_dir=~/Bureau/dataset;
 
 
 echo "This test will download, convert, compute descriptors and distance map"
@@ -27,14 +27,15 @@ for dir in $dataset/*/; do
 	mkdir -p $(basename $dir);
 	for file in $dir/*.skp; do ln -sf $file $(basename $dir)/$(basename $file); done;
 done
-#rm -r fork spoon
 
 echo "Convert skp files to tri format"
 for file in */*.skp; do WINEDEBUG=-all, wine $bin_dir/skp2tri.exe -i $file -o ${file%.skp}.tri; done;
 
-echo "Computation of descriptors"
-for file in */*.tri; do $bin_dir/distribution -i $file -I tri -o ${file%.tri}.dist -O archive; done;
+#echo "Computation of patialviews"
+#for file in */*.tri; do $bin_dir/partial_view -i $file -o ${file%.tri}.pcd -s; done;
 
+echo "Computation of descriptors"
+for file in */*.tri; do $bin_dir/partial_view -i $file -o ${file%.tri}.dist -O dist -s; done;
 
 echo "Plot descriptors"
 for file in */*.dist; do
@@ -42,19 +43,24 @@ for file in */*.dist; do
 	R --slave -f $tool_dir/plot_raw_dist.R --args ${file%.dist}.csv ${file%.dist}.png
 done;
 
-echo "Computation of distance matrix"
-files=*/*.dist
-matrix="model"
-for file in $files; do matrix=$matrix" "$(basename --suffix=".dist" -a $file); done;
-matrix=$matrix"\n"
-for file1 in $files; do
-	matrix=$matrix$(basename --suffix=".dist" -a $file1)
-	for file2 in $files; do matrix=$matrix" "$($bin_dir/distance $file1 $file2); done;
-	matrix=$matrix"\n"
-done
-echo $matrix > matrix_distance.m
+#echo "Computation of distance matrix"
+#files=*/*.dist
+#matrix="model"
+#for file in $files; do matrix=$matrix" "$(basename --suffix=".dist" -a $file); done;
+#matrix=$matrix"\n"
+#for file1 in $files; do
+#	matrix=$matrix$(basename --suffix=".dist" -a $file1)
+#	for file2 in $files; do matrix=$matrix" "$($bin_dir/distance $file1 $file2); done;
+#	matrix=$matrix"\n"
+#done
+#echo $matrix > matrix_distance.m
 
-R --slave -f $tool_dir/heatmap.R --args "matrix_distance.m" 
+#R --slave -f $tool_dir/heatmap.R --args "matrix_distance.m" 
+
+tool_dir=~/research_project/tools
+for file in ~/Bureau/dataset/*/*.csv; do
+	R --slave -f $tool_dir/plot_raw_dist.R --args $file ${file%.csv}.png
+done;
 
 
 
