@@ -40,5 +40,5 @@ INCLUDE_DIRECTORIES(${CPPUNIT_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_S
 
 FILE(GLOB SRC_TEST */test/*.cpp)
 FILE(GLOB SRC */src/*.cpp)
-add_executable(tests test_runner.cxx ${SRC_TEST} ${SRC})
-target_link_libraries(tests ${CPPUNIT_LIBRARY} ${Boost_LIBRARIES})
+add_executable(test EXCLUDE_FROM_ALL test_runner.cxx ${SRC_TEST} ${SRC})
+target_link_libraries(test ${CPPUNIT_LIBRARY} ${Boost_LIBRARIES})
