@@ -1,9 +1,11 @@
-#include "shape_distribution.h"
-#include "mesh.h"
 #include <iostream>
 #include <string>
-
+#include <pcl/io/pcd_io.h>
 #include <boost/program_options.hpp> //used to parse command line arguments
+
+#include "shape_distribution.h"
+#include "mesh.h"
+
 
 namespace po = boost::program_options;
 using namespace std;
@@ -44,19 +46,22 @@ int main(int argc, char **argv) {
     if (vm.count("output")) {
         output_path = vm["output"].as<string>();
         //check if file exists
-        if( ifstream(output_path.c_str()) && vm["no-clobber"].as<bool>() )
+        if( ifstream(output_path.c_str()) && vm["no-clobber"].as<bool>() ) {
             return 1;
+        }
     }
 
     Distribution distribution;
-    if(vm["input-format"].as<string>() == "archive") {
+    if (vm["input-format"].as<string>() == "archive") {
         // load data from archive
-        std::ifstream ifs(input_path.c_str());
-        boost::archive::text_iarchive oa(ifs);
-        oa >> distribution;
-    } else if(vm["input-format"].as<string>() == "tri") {
+        distribution = Distribution::load_archive(input_path);
+    }
+    else if (vm["input-format"].as<string>() == "tri") {
         distribution = Distribution(Mesh(input_path));
-    } else if(vm["input-format"].as<string>() == "pcd") {
+    }
+    else if (vm["input-format"].as<string>() == "pcd") {
+
+        // load the pointcloud
         pcl::PointCloud<pcl::PointXYZ> cloud;
         if (pcl::io::loadPCDFile<pcl::PointXYZ> (input_path, cloud) == -1) //* load the file
         {
@@ -71,25 +76,25 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-   if(vm["output-format"].as<string>() == "csv") { //export to csv
-        if(vm.count("output")) {
+    if (vm["output-format"].as<string>() == "csv") { //export to csv
+        if (vm.count("output")) {
             std::ofstream ofs(output_path.c_str());
             ofs << distribution.to_csv();
         }
-        else
+        else {
             std::cout << distribution.to_csv();
-   } else if(vm["output-format"].as<string>() == "archive") {
-        if(vm.count("output")) {
-            std::ofstream ofs(output_path.c_str());
-            boost::archive::text_oarchive oa(ofs);
-            oa << distribution;
         }
-        else
+    } else if (vm["output-format"].as<string>() == "archive") {
+        if (vm.count("output")) {
+            distribution.save_archive(output_path);
+        }
+        else {
             boost::archive::text_oarchive(std::cout) << distribution;
+        }
     } else {
-       cout << desc << endl;
-       return 1;
-   }
+        cout << desc << endl;
+        return 1;
+    }
 
     return 0;
 }

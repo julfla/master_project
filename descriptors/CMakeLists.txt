@@ -1,5 +1,5 @@
 FILE(GLOB SRC_DESCRIPTORS src/*.cpp)
-add_library(descriptors ${SRC_DESCRIPTORS})
+add_library(descriptors src/shape_distribution.cpp src/histogram.cpp)
 target_link_libraries(descriptors mesh ${Boost_LIBRARIES})
 set_target_properties(descriptors PROPERTIES EXCLUDE_FROM_ALL true)
 
@@ -10,3 +10,10 @@ target_link_libraries(distribution descriptors mesh ${Boost_LIBRARIES} ${PCL_LIB
 add_executable(distance src/distance.cxx ${Mesh_INCLUDE_DIRS})
 add_dependencies(distance descritors mesh)
 target_link_libraries(distance descriptors ${Boost_LIBRARIES})
+
+# Expose ShapeDistribution to be used with python
+find_package(PythonLibs REQUIRED)
+INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIRS})
+
+add_library(pydescriptors SHARED src/py_descriptors.cpp src/shape_distribution.cpp src/histogram.cpp)
+target_link_libraries(pydescriptors mesh ${Boost_LIBRARIES})

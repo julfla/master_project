@@ -1,5 +1,13 @@
 #include "shape_distribution.h"
 
+#include <algorithm> //provide sort std::vector::sort
+#include <map>
+#include "boost/random.hpp"
+#include <pcl/io/pcd_io.h>
+
+#include <pcl/common/distances.h> //provides pcl::euclideanDistance
+
+
 void Distribution::compute_histogram(std::vector<double> sample) {
     std::sort(sample.begin(), sample.end());
     Histogram hist = Histogram(&sample, 256);
@@ -48,4 +56,34 @@ std::vector<double> Distribution::compute_sample(pcl::PointCloud<pcl::PointXYZ> 
         sample.push_back((double) pcl::euclideanDistance(pts1,pts2));
     }
     return sample;
+}
+
+Distribution Distribution::load_archive(const std::string path) {
+    return load_archive(path.c_str());
+}
+
+Distribution Distribution::load_archive(const char* path) {
+    Distribution temp;
+    std::ifstream ifs(path);
+    boost::archive::text_iarchive oa(ifs);
+    oa >> temp;
+    return temp;
+}
+
+void Distribution::save_archive(const char* path) {
+    std::ofstream ofs(path);
+    boost::archive::text_oarchive oa(ofs);
+    oa << *this;
+}
+
+void Distribution::save_archive(const std::string path) {
+    save_archive(path.c_str());
+}
+
+
+std::string Distribution::to_csv() {
+    std::stringstream buff;
+    for (std::vector<double>::iterator it = distribution.begin(); it < distribution.end(); ++it)
+        buff << *it << std::endl;
+    return buff.str();
 }

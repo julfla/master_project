@@ -29,7 +29,7 @@ for dir in $dataset/*/; do
 done
 
 echo "Convert skp files to tri format"
-for file in */*.skp; do WINEDEBUG=-all, wine $bin_dir/skp2tri.exe -i $file -o ${file%.skp}.tri; done;
+for file in */*.skp; do WINEDEBUG=-all, wine $bin_dir/skp2tri.exe $file ${file%.skp}.tri; done;
 
 #echo "Computation of patialviews"
 #for file in */*.tri; do $bin_dir/partial_view -i $file -o ${file%.tri}.pcd -s; done;
