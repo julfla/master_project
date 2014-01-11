@@ -40,7 +40,6 @@ int main(int argc, char **argv) {
 
     string input_path, output_path;
     output_path = "";
-    float theta, phi;
 
 
     // Declare the supported options.
@@ -82,15 +81,15 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    bool view_image = vm["view-image"].as<bool>();
 
-
-    PartialViewComputer comp(input_path.c_str());
+    PartialViewComputer comp(input_path);
 
     if(vm["several"].as<bool>()) {
         for(int i = 0; i < SQRT_NUMBER_VIEWS; ++i)
             for(int j = 0; j < SQRT_NUMBER_VIEWS; ++j) {
-                theta = M_PI * (float) i / (float) SQRT_NUMBER_VIEWS;
-                phi = 2 * M_PI * (float) i / (float) SQRT_NUMBER_VIEWS;
+                float theta = M_PI * (float) i / (float) SQRT_NUMBER_VIEWS;
+                float phi = 2 * M_PI * (float) i / (float) SQRT_NUMBER_VIEWS;
 
                 string current_output = output_path;
                 if( current_output != "" && current_output.find(".") != -1) {
@@ -103,7 +102,7 @@ int main(int argc, char **argv) {
 
                 //check if file already exist
                 if( !(ifstream(current_output.c_str()) && vm.count("no-clobber")) ) {
-                    pcl::PointCloud<pcl::PointXYZ> cloud = comp.compute_view(theta, phi, vm["view-image"].as<bool>());
+                    pcl::PointCloud<pcl::PointXYZ> cloud = comp.compute_view(theta, phi, view_image);
                     if(!process_cloud(current_output,vm["output-format"].as<string>(), &cloud)) {
                         cout << "Output format unknown or invalid." << endl;
                         cout << desc << endl;
@@ -114,9 +113,14 @@ int main(int argc, char **argv) {
     } else if ( vm["no-clobber"].as<bool>() && ifstream(output_path.c_str()) )
         return 1;
     else {
-        theta = vm["theta"].as<float>();
-        phi = vm["phi"].as<float>();
-        pcl::PointCloud<pcl::PointXYZ> cloud = comp.compute_view(theta, phi, vm["view-image"].as<bool>());
+        float theta = vm["theta"].as<float>();
+        float phi = vm["phi"].as<float>();
+
+        cout << theta << " " << phi << " " << view_image << endl;
+         
+        cout << "Computation of Partial cloud." << endl;
+        pcl::PointCloud<pcl::PointXYZ> cloud = comp.compute_view(theta, phi, view_image);
+        cout << "Partial cloud computed." << endl;
         if(!process_cloud(output_path,vm["output-format"].as<string>(), &cloud))
             return -1;
     }

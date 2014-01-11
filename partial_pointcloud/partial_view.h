@@ -1,6 +1,19 @@
+//should be defined by cmake... ?
+#define DEBUG true
+
 // Include standard headers
 #include <stdio.h>
 #include <stdlib.h>
+#include <vector>
+#include <cmath>
+#include <inttypes.h>
+#include <limits>
+#include <iostream>
+
+#include <pcl/io/pcd_io.h>
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+#include <pcl/visualization/cloud_viewer.h>
 
 // Include GLEW
 #include <GL/glew.h>
@@ -12,24 +25,19 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
+
+// Include GLX
+#include <X11/X.h>
+#include <X11/Xlib.h>
+#include <GL/gl.h>
+#include <GL/glx.h>
+
 using namespace glm;
 
 #include <mesh.h>
-
 #include "common/shader.hpp"
 
-#include <pcl/io/pcd_io.h>
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
-#include <pcl/visualization/cloud_viewer.h>
-#include <vector>
-#include <cmath>
-#include <inttypes.h>
-
-#include <limits>
-
 #ifdef DEBUG
-#include <iostream>
 #define DEBUG_MSG(str) do { std::cout << str << std::endl; } while( false )
 #else
 #define DEBUG_MSG(str) do { } while ( false )
@@ -44,8 +52,20 @@ public:
         this->height = height;
         this->fov = fov;
         load_mesh(tri_path);
-        if(!init_viewer())
+        DEBUG_MSG( "Mesh loaded." );
+
+        if(!setWindowlessContext()) {
+        //if(!init_viewer()) {
+            DEBUG_MSG( "Failed to set opengl context." );
             return;
+        }
+        DEBUG_MSG( "Context set." );
+
+        if(!presets()) {
+            DEBUG_MSG( "Failed to do the presets" );
+            return;
+        }
+        DEBUG_MSG( "Shaders loaded." );
     }
 
     ~PartialViewComputer() {
@@ -75,18 +95,22 @@ public:
         {
             fprintf( stderr, "Failed to open GLFW window.\n" );
             glfwTerminate();
-            return -1;
-        }
-
-        // Initialize GLEW
-        if (glewInit() != GLEW_OK) {
-            fprintf(stderr, "Failed to initialize GLEW\n");
-            return -1;
+            return false;
         }
 
         glfwSetWindowTitle( window_name );
         // Ensure we can capture the escape key being pressed below
         glfwEnable( GLFW_STICKY_KEYS );
+        return true;
+    }
+
+    bool presets() {
+
+        // Initialize GLEW
+        if (glewInit() != GLEW_OK) {
+            fprintf(stderr, "Failed to initialize GLEW\n");
+            return false;
+        }
 
         // Dark blue background
         glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
@@ -116,7 +140,6 @@ public:
         glBufferData(GL_ARRAY_BUFFER, g_vertex_buffer_data.size() * sizeof(glm::vec3), &g_vertex_buffer_data[0], GL_STATIC_DRAW);
 
         return true;
-
     }
 
     void init_MVP(float theta, float phi) {
@@ -130,12 +153,11 @@ public:
         glm::vec3 cam_pos(std::sin(theta) * std::cos(phi), std::sin(theta) * std::sin(phi), std::cos(theta));
 
         //find the distance min
-        float view_dist;
+        float view_dist = 0.0f;
         for(std::vector<glm::vec3>::iterator it = outter_box.begin(); it < outter_box.end(); ++it) {
             float axial_proj = glm::dot(cam_pos, *it);
             float current_radial_dist = std::sqrt( glm::dot(*it,*it) - axial_proj * axial_proj);
-            float current_view_dist = current_radial_dist / std::tan(M_PI * fov / 180.0f) - axial_proj;
-
+            float current_view_dist = std::abs( current_radial_dist / std::tan(M_PI * fov / 180.0f) - axial_proj );
             if( current_view_dist > view_dist)
                 view_dist = current_view_dist;
         }
@@ -188,6 +210,8 @@ public:
         float x_min, y_min, z_min;
         x_min = y_min = z_min = std::numeric_limits<float>::max();
         float x_mean, y_mean, z_mean;
+
+        // TODO : remove and do while parsing file !!
         for(std::vector<glm::vec3>::iterator it = g_vertex_buffer_data.begin(); it < g_vertex_buffer_data.end(); ++it) {
             if(it->x > x_max) x_max = it->x;
             if(it->x < x_min) x_min = it->x;
@@ -258,7 +282,7 @@ public:
                     );
 
         // Draw the triangleS !
-        glDrawArrays(GL_TRIANGLES, 0, g_vertex_buffer_data.size()*3); // 12*3 indices starting at 0 -> 12 triangles
+        glDrawArrays(GL_TRIANGLES, 0, g_vertex_buffer_data.size()*3);
 
         glDisableVertexAttribArray(vertexPosition_modelspaceID);
         glDisableVertexAttribArray(vertexColorID);
@@ -275,20 +299,26 @@ public:
             ++it;
             float z = *it;
 
+            /*DEBUG_MSG( x << " " << y << " " << z);
+            DEBUG_MSG( min_relative_position[0] << " < " << x << " < " << max_relative_position[0] );
+            DEBUG_MSG( min_relative_position[1] << " < " << y << " < " << max_relative_position[1] );
+            DEBUG_MSG( min_relative_position[2] << " < " << z << " < " << max_relative_position[2] );
+            */
 
             //this is to fix, due to some border effect, some pix do not represent the position
-            //because the background is white they are augmented.
-            if( max_relative_position[0] > x && min_relative_position[0] < x && max_relative_position[1] > y && min_relative_position[1] < y && max_relative_position[2] > z && min_relative_position[2] < z )
+            //because the background is white they are augmented. Bug only with GLFW ??
+            /*if( min_relative_position[0] < x && x < max_relative_position[0]
+                    && min_relative_position[1] < y && y < max_relative_position[1]
+                    && min_relative_position[2] < z && z < max_relative_position[2]
+                    )*/
                 cloud->push_back(pcl::PointXYZ(x,y,z));
-            assert(!cloud->empty());
         }
+
     }
 
     pcl::PointCloud<pcl::PointXYZ> compute_view(float theta, float phi, bool show_image)
     {
-
         init_MVP(theta, phi);
-
         if(show_image) {
             do{
                 draw();
@@ -303,14 +333,60 @@ public:
         draw();
         pcl::PointCloud<pcl::PointXYZ> cloud;
         build_cloud_from_pixelbuffer(&cloud);
-
         DEBUG_MSG( width * height << " pixels." );
         DEBUG_MSG( cloud.size() << " points in cloud." );
-
+        assert(!cloud.empty());
         return cloud;
     }
 
 private:
+
+    // Create an windowless opengl context
+    // credit : http://renderingpipeline.com/2012/05/windowless-opengl/
+    bool setWindowlessContext() {
+
+        typedef GLXContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
+        typedef Bool (*glXMakeContextCurrentARBProc)(Display*, GLXDrawable, GLXDrawable, GLXContext);
+        static glXCreateContextAttribsARBProc glXCreateContextAttribsARB = NULL;
+        static glXMakeContextCurrentARBProc   glXMakeContextCurrentARB   = NULL;
+
+        glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc) glXGetProcAddressARB( (const GLubyte *) "glXCreateContextAttribsARB" );
+        glXMakeContextCurrentARB   = (glXMakeContextCurrentARBProc)   glXGetProcAddressARB( (const GLubyte *) "glXMakeContextCurrent"      );
+        assert( glXCreateContextAttribsARB != NULL);
+        assert( glXMakeContextCurrentARB != NULL);
+
+        const char *displayName = NULL;
+        Display* display = XOpenDisplay( displayName );
+
+        static int visualAttribs[] = { None };
+        int numberOfFramebufferConfigurations = 0;
+        GLXFBConfig* fbConfigs = glXChooseFBConfig( display, DefaultScreen(display), visualAttribs, &numberOfFramebufferConfigurations );
+        assert( fbConfigs != NULL );
+
+        int context_attribs[] = {
+            GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+            GLX_CONTEXT_MINOR_VERSION_ARB, 0,
+            GLX_CONTEXT_FLAGS_ARB, GLX_CONTEXT_DEBUG_BIT_ARB,
+            GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
+            None
+        };
+
+        GLXContext openGLContext = glXCreateContextAttribsARB( display, fbConfigs[0], 0, True, context_attribs);
+
+
+        int pbufferAttribs[] = {
+            GLX_PBUFFER_WIDTH,  width,
+            GLX_PBUFFER_HEIGHT, height,
+            None
+        };
+        GLXPbuffer pbuffer = glXCreatePbuffer( display, fbConfigs[0], pbufferAttribs );
+
+        // clean up:
+        XFree( fbConfigs );
+        XSync( display, False );
+
+        return glXMakeContextCurrent( display, pbuffer, pbuffer, openGLContext );
+    }
 
     float max_relative_position[3]; // used to remove the border effect..
     float min_relative_position[3];
