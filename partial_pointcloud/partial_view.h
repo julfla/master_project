@@ -35,7 +35,7 @@
 using namespace glm;
 
 #include <mesh.h>
-#include "common/shader.hpp"
+#include "shader_helper.hpp"
 
 #ifdef DEBUG
 #define DEBUG_MSG(str) do { std::cout << str << std::endl; } while( false )

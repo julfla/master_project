@@ -8,5 +8,5 @@ pkg_search_module(GLFW REQUIRED libglfw)
 include_directories(${GLFW_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR})
 SET(GL_LIBS ${GLEW_LIBRARY} ${OPENGL_LIBRARY} ${GLFW_LIBRARIES} ${GLM_LIBRARIES} )
 
-ADD_EXECUTABLE(partial_view partial_view.cxx partial_view.h common/shader.cpp)
+ADD_EXECUTABLE(partial_view partial_view.cxx partial_view.h)
 TARGET_LINK_LIBRARIES(partial_view  ${GL_LIBS} ${PCL_LIBRARIES} descriptors)
