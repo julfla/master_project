@@ -2,7 +2,7 @@
 #define PARTIAL_VIEW_HPP
 
 //should be defined by cmake... ?
-#define DEBUG true
+//#define DEBUG true
 
 // Include standard headers
 #include <stdio.h>
@@ -38,11 +38,7 @@
 #include <mesh.h>
 #include "shader_helper.hpp"
 
-#ifdef DEBUG
-#define DEBUG_MSG(str) do { cout << str << std::endl; } while( false )
-#else
-#define DEBUG_MSG(str) do { } while ( false )
-#endif
+typedef pcl::PointCloud<pcl::PointXYZ> DefaultPointCloud;
 
 using namespace glm;
 
@@ -52,45 +48,28 @@ public:
 
     void loadMesh(std::string path);
 
+    DefaultPointCloud compute_view(float theta, float phi);
+
+    void displayMesh(float theta, float phi);
+
+    PartialViewComputer(std::string tri_path, int width = 800, int height = 600, float fov = 45.0f) :
+        width(width), height(height), fov(fov), windowsLessContextSet(false), glfwContextSet(false) {loadMesh(tri_path);}
+
+    ~PartialViewComputer() {free_gpu();}
+
+private:
+
     bool presets();
 
     void init_MVP(float theta, float phi);
 
-    pcl::PointCloud<pcl::PointXYZ> compute_view(float theta, float phi, bool show_image);
-
     void draw();
 
-    void displayMesh();
+    void build_cloud_from_framebuffer(DefaultPointCloud * cloud);
 
-    PartialViewComputer(std::string tri_path, int width = 800, int height = 600, float fov = 45.0f) {
-        this->width = width;
-        this->height = height;
-        this->fov = fov;
-        this->windowsLessContextSet = false;
-        this->glfwContextSet = false;
-        loadMesh(tri_path);
-    }
+    void build_cloud_from_pixelbuffer(DefaultPointCloud * cloud);
 
-    ~PartialViewComputer() {
-        free_gpu();
-    }
-
-private:
-
-    void build_cloud_from_framebuffer(pcl::PointCloud<pcl::PointXYZ> * cloud);
-
-    void build_cloud_from_pixelbuffer(pcl::PointCloud<pcl::PointXYZ> * cloud);
-
-    void free_gpu() {
-        // Cleanup VBO and shader
-        glDeleteBuffers(1, &vertexbuffer);
-        glDeleteProgram(programID);
-        DEBUG_MSG( "GPU Freed." );
-        // Close OpenGL window and terminate GLFW
-        if(glfwContextSet)
-            glfwTerminate();
-        windowsLessContextSet = glfwContextSet = false;
-    }
+    void free_gpu();
 
     bool setGLFWContext(const char* window_name = NULL);
 
@@ -109,8 +88,6 @@ private:
     float fov;
     glm::mat4 SCALING, MVP;
     GLuint programID, MVP_ID, MV_ID, SCALE_ID, vertexPosition_modelspaceID, vertexbuffer;//, framebuffer;
-
-
 
 };
 

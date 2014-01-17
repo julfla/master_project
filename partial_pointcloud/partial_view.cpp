@@ -1,5 +1,11 @@
 #include "partial_view.h"
 
+#ifdef DEBUG
+#define DEBUG_MSG(str) do { cout << str << std::endl; } while( false )
+#else
+#define DEBUG_MSG(str) do { } while ( false )
+#endif
+
 void PartialViewComputer::loadMesh(std::string path) {
     //parse the file
     std::ifstream in_stream(path.c_str());
@@ -157,18 +163,13 @@ void PartialViewComputer::init_MVP(float theta, float phi) {
 
 }
 
-pcl::PointCloud<pcl::PointXYZ> PartialViewComputer::compute_view(float theta, float phi, bool show_image){
-    init_MVP(theta,phi);
-    if(show_image) {
-        displayMesh();
-        assert(glfwContextSet);
-    }
-    else {
+DefaultPointCloud PartialViewComputer::compute_view(float theta, float phi){
+    if (!(glfwContextSet || windowsLessContextSet)) {
         setWindowlessContext();
-        assert(windowsLessContextSet);
     }
+    init_MVP(theta,phi);
     draw();
-    pcl::PointCloud<pcl::PointXYZ> cloud;
+    DefaultPointCloud cloud;
     //build_cloud_from_framebuffer(&cloud);
     build_cloud_from_pixelbuffer(&cloud);
 
@@ -207,8 +208,9 @@ void PartialViewComputer::draw() {
     glDisableVertexAttribArray(vertexPosition_modelspaceID);
 }
 
-void PartialViewComputer::displayMesh() {
+void PartialViewComputer::displayMesh(float theta, float phi) {
     setGLFWContext();
+    init_MVP(theta,phi);
     do{
         draw();
         // Swap buffers
@@ -219,7 +221,7 @@ void PartialViewComputer::displayMesh() {
            glfwGetWindowParam( GLFW_OPENED ) );
 }
 
-void PartialViewComputer::build_cloud_from_framebuffer(pcl::PointCloud<pcl::PointXYZ> * cloud) {
+void PartialViewComputer::build_cloud_from_framebuffer(DefaultPointCloud * cloud) {
 
     //Somewhere at initialization
     GLuint fbo;
@@ -268,7 +270,7 @@ void PartialViewComputer::build_cloud_from_framebuffer(pcl::PointCloud<pcl::Poin
     //glDeleteRenderbuffers(1,&render_buf);
 }
 
-void PartialViewComputer::build_cloud_from_pixelbuffer(pcl::PointCloud<pcl::PointXYZ> * cloud) {
+void PartialViewComputer::build_cloud_from_pixelbuffer(DefaultPointCloud * cloud) {
     std::vector<float> data(width*height*3);
     glReadBuffer(GL_BACK);
     glReadPixels(0,0,width,height,GL_RGB,GL_FLOAT,&data[0]);
@@ -334,6 +336,10 @@ bool PartialViewComputer::setGLFWContext(const char* window_name) {
 
 bool PartialViewComputer::setWindowlessContext() {
 
+#ifndef DEBUG
+    std::cerr << "The function setWindowlessContext is buggy please don't use it." << std::endl;
+#endif
+
     if(windowsLessContextSet)
         return true;
     if(glfwContextSet)
@@ -382,4 +388,15 @@ bool PartialViewComputer::setWindowlessContext() {
 
     windowsLessContextSet = glXMakeContextCurrent( display, pbuffer, pbuffer, openGLContext );
     return windowsLessContextSet && presets();
+}
+
+void PartialViewComputer::free_gpu() {
+    // Cleanup VBO and shader
+    glDeleteBuffers(1, &vertexbuffer);
+    glDeleteProgram(programID);
+    DEBUG_MSG( "GPU Freed." );
+    // Close OpenGL window and terminate GLFW
+    if(glfwContextSet)
+        glfwTerminate();
+    windowsLessContextSet = glfwContextSet = false;
 }

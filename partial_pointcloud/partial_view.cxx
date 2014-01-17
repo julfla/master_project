@@ -102,7 +102,9 @@ int main(int argc, char **argv) {
 
                 //check if file already exist
                 if( !(ifstream(current_output.c_str()) && vm.count("no-clobber")) ) {
-                    pcl::PointCloud<pcl::PointXYZ> cloud = comp.compute_view(theta, phi, view_image);
+                    if (view_image)
+                        comp.displayMesh(theta,phi);
+                    pcl::PointCloud<pcl::PointXYZ> cloud = comp.compute_view(theta, phi);
                     if(!process_cloud(current_output,vm["output-format"].as<string>(), &cloud)) {
                         cout << "Output format unknown or invalid." << endl;
                         cout << desc << endl;
@@ -115,7 +117,9 @@ int main(int argc, char **argv) {
     else {
         float theta = vm["theta"].as<float>();
         float phi = vm["phi"].as<float>();
-        pcl::PointCloud<pcl::PointXYZ> cloud = comp.compute_view(theta, phi, view_image);
+        if (view_image)
+            comp.displayMesh(theta,phi);
+        pcl::PointCloud<pcl::PointXYZ> cloud = comp.compute_view(theta, phi);
         if(!process_cloud(output_path,vm["output-format"].as<string>(), &cloud))
             return -1;
     }
