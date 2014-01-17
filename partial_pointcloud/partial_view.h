@@ -52,6 +52,9 @@ public:
 
     void displayMesh(float theta, float phi);
 
+    PartialViewComputer(int width = 800, int height = 600, float fov = 45.0f) :
+        width(width), height(height), fov(fov), windowsLessContextSet(false), glfwContextSet(false) {}
+
     PartialViewComputer(std::string tri_path, int width = 800, int height = 600, float fov = 45.0f) :
         width(width), height(height), fov(fov), windowsLessContextSet(false), glfwContextSet(false) {loadMesh(tri_path);}
 

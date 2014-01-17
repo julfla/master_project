@@ -23,6 +23,10 @@ find_package(Boost 1.49.0 COMPONENTS serialization program_options system python
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 LINK_DIRECTORIES(${LIBRARY_OUTPUT_PATH})
 
+# Expose ShapeDistribution to be used with python
+find_package(PythonLibs REQUIRED)
+INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIRS})
+
 include_directories(libmesh/src)
 add_subdirectory(libmesh)
 add_subdirectory(descriptors)
