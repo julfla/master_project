@@ -8,7 +8,7 @@
 
 #include <GL/glew.h>
 
-char const * parseShaderSource(const char * path) {
+static char const * parseShaderSource(const char * path) {
     std::ifstream ifs(path, std::ios::in);
     if(!ifs.good()) {
         throw std::ifstream::failure("Impossible to open" + std::string(path) + ".");
@@ -23,7 +23,7 @@ char const * parseShaderSource(const char * path) {
     return shaderCode.c_str();
 }
 
-void compileShader(const char * source_path, GLuint SharderID) {
+static void compileShader(const char * source_path, GLuint SharderID) {
 
     std::cout << "Compiling shader : " << source_path << std::endl;
     char const * sourceCode = parseShaderSource(source_path);
@@ -41,7 +41,7 @@ void compileShader(const char * source_path, GLuint SharderID) {
     }
 }
 
-GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path){
+static GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path){
 
     //Compiling Vertex Shader
     GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
@@ -63,10 +63,8 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
     return ProgramID;
 }
 
-GLuint LoadShaders(const std::string vertex_file_path,const std::string fragment_file_path) {
+static GLuint LoadShaders(const std::string vertex_file_path,const std::string fragment_file_path) {
     return LoadShaders(vertex_file_path.c_str(), fragment_file_path.c_str());
 }
-
-
 
 #endif //SHADER_HELPER_HPP
