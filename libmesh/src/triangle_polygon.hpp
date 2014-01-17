@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include "point_3d.h"
-#include "vector_3d.h"
+#include "point_3d.hpp"
+#include "vector_3d.hpp"
 #include "boost/random.hpp"
 #include <sstream>  // to read file
 
@@ -36,7 +36,7 @@ public:
             return area;
         Vector_3D vect1(points[0], points[1]);
         Vector_3D vect2(points[0], points[2]);
-        return 0.5 *(vect1%vect2)*(vect1%vect2);
+        return 0.5*(vect1%vect2)*(vect1%vect2);
     }
 
     Point_3D* getPoints() {
@@ -44,7 +44,7 @@ public:
     }
 
     Point_3D getRandomPoint() const {
-        boost::uniform_real<> uni_dist(0, 1);
+        boost::uniform_real<> uni_dist(0,1);
 
         // With r1 et r2 two random pts
         // (1 - sqrt(r1)) * A + (sqrt(r1) * (1 - r2)) * B + (sqrt(r1) * r2) * C

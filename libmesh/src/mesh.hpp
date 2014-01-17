@@ -1,24 +1,23 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "triangle_polygon.h"
-#include "point_3d.h"
-#include "boost/random.hpp"
+#include <iostream>
+#include <fstream>  // to read file
 #include <vector>
 #include <map>
 #include <ctime>
+#include <stdexcept>  // to throw exceptions
 
-#include <stdexcept> // to throw exceptions
-#include <fstream> // to read file
-#include <iostream>
+#include "boost/random.hpp"
+
+#include "triangle_polygon.hpp"
+#include "point_3d.hpp"
+
 
 class Mesh {
-
 public:
 	Mesh() {}
-	Mesh(std::vector<TrianglePolygon> polygons) {
-		this->polygons = polygons;
-	}
+    Mesh(std::vector<TrianglePolygon> polygons) : polygons(polygons) {}
 
     Mesh(std::string path_file);
 
@@ -38,14 +37,14 @@ public:
 
 private:
     std::vector<TrianglePolygon> polygons;
-	//the map is used to retreive a random point on the mesh
-    std::map<double, TrianglePolygon> cumul_area; //cumulative area of polygons
+    // the map is used to retreive a random point on the mesh
+    std::map<double, TrianglePolygon> cumul_area;  // cumulative area of polygons
 
-	//generator for random number
+    // generator for random number
     boost::minstd_rand generator;
     boost::uniform_real<> uni_dist;
 	
     void init_map_area();
 };
 
-#endif // MESH_H
+#endif  // MESH_H

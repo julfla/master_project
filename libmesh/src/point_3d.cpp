@@ -1,14 +1,12 @@
-#include "point_3d.h"
+#include "point_3d.hpp"
 
-  std::ostream & operator<<(std::ostream &out, const Point_3D &point)
-  {
+std::ostream & operator<<(std::ostream &out, const Point_3D &point) {
     out << "x:" << point.x;
     out << " y:" << point.y;
     out << " z:" << point.z;
-  }
-  
-  Point_3D operator*(double scalar, const Point_3D &point)
-  {
+}
+
+Point_3D operator*(double scalar, const Point_3D &point) {
     return point*scalar;
-  }
+}
 
