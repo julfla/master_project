@@ -1,16 +1,18 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "triangle_polygon.h"
-#include "point_3d.h"
-#include "boost/random.hpp"
+#include <iostream>
+#include <fstream> // to read file
 #include <vector>
 #include <map>
 #include <ctime>
-
 #include <stdexcept> // to throw exceptions
-#include <fstream> // to read file
-#include <iostream>
+
+#include "boost/random.hpp"
+
+#include "triangle_polygon.h"
+#include "point_3d.h"
+
 
 class Mesh {
 

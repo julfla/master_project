@@ -1,3 +1,5 @@
+#include <string>
+
 #include "mesh.h"
 
 Mesh::Mesh(std::string path_file) {
