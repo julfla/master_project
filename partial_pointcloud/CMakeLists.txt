@@ -14,3 +14,5 @@ TARGET_LINK_LIBRARIES(partial_view ${GL_LIBS} ${PCL_LIBRARIES} descriptors)
 
 add_library(pypartialview SHARED py_partial_view.cpp partial_view.cpp)
 target_link_libraries(pypartialview ${GL_LIBS} ${PCL_LIBRARIES}  ${Boost_LIBRARIES} descriptors)
+
+set_target_properties(pypartialview PROPERTIES EXCLUDE_FROM_ALL true)

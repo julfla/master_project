@@ -13,3 +13,5 @@ target_link_libraries(distance descriptors ${Boost_LIBRARIES})
 
 add_library(pydescriptors SHARED src/py_descriptors.cpp src/shape_distribution.cpp src/histogram.cpp)
 target_link_libraries(pydescriptors mesh ${Boost_LIBRARIES})
+
+set_target_properties(pydescriptors PROPERTIES EXCLUDE_FROM_ALL true)
