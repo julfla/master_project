@@ -38,7 +38,7 @@ using namespace glm;
 #include "shader_helper.hpp"
 
 #ifdef DEBUG
-#define DEBUG_MSG(str) do { std::cout << str << std::endl; } while( false )
+#define DEBUG_MSG(str) do { cout << str << std::endl; } while( false )
 #else
 #define DEBUG_MSG(str) do { } while ( false )
 #endif
@@ -51,143 +51,14 @@ public:
         this->width = width;
         this->height = height;
         this->fov = fov;
-        load_mesh(tri_path);
-        DEBUG_MSG( "Mesh loaded." );
-
-        if(!setWindowlessContext()) {
-        //if(!init_viewer()) {
-            DEBUG_MSG( "Failed to set opengl context." );
-            return;
-        }
-        DEBUG_MSG( "Context set." );
-
-        if(!presets()) {
-            DEBUG_MSG( "Failed to do the presets" );
-            return;
-        }
-        DEBUG_MSG( "Shaders loaded." );
+        this->windowsLessContextSet = false;
+        this->glfwContextSet = false;
+        loadMesh(tri_path);
     }
 
-    ~PartialViewComputer() {
-        // Close OpenGL window and terminate GLFW
-        glfwTerminate();
-        // Cleanup VBO and shader
-        glDeleteBuffers(1, &vertexbuffer);
-        glDeleteBuffers(1, &framebuffer);
-        glDeleteProgram(programID);
-    }
-
-    bool init_viewer(const char* window_name = NULL) {
-
-        // Initialise GLFW
-        if( !glfwInit() )
-        {
-            fprintf( stderr, "Failed to initialize GLFW\n" );
-            return false;
-        }
-
-        glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
-        glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 2);
-        glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 1);
-
-        // Open a window and create its OpenGL context
-        if( !glfwOpenWindow( width, height, 0,0,0,0, 32,0, GLFW_WINDOW ) )
-        {
-            fprintf( stderr, "Failed to open GLFW window.\n" );
-            glfwTerminate();
-            return false;
-        }
-
-        glfwSetWindowTitle( window_name );
-        // Ensure we can capture the escape key being pressed below
-        glfwEnable( GLFW_STICKY_KEYS );
-        return true;
-    }
-
-    bool presets() {
-
-        // Initialize GLEW
-        if (glewInit() != GLEW_OK) {
-            fprintf(stderr, "Failed to initialize GLEW\n");
-            return false;
-        }
-
-        // Dark blue background
-        glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-
-        // Enable depth test
-        glEnable(GL_DEPTH_TEST);
-        // Accept fragment if it closer to the camera than the former one
-        glDepthFunc(GL_LESS);
-
-        // Create and compile our GLSL program from the shaders
-        const char* vertex_sharder = "../shaders/TransformVertexShader.vertexshader";
-        const char* fragment_sharder = "../shaders/ColorFragmentShader.fragmentshader";
-
-        programID = LoadShaders( vertex_sharder, fragment_sharder );
-
-        // Get a handle for our "MVP" uniform
-        MVP_ID = glGetUniformLocation(programID, "MVP");
-        SCALE_ID = glGetUniformLocation(programID, "SCALE");
-        MV_ID = glGetUniformLocation(programID, "MV");
-
-        // Get a handle for our buffers
-        vertexPosition_modelspaceID = glGetAttribLocation(programID, "vertexPosition_modelspace");
-        vertexColorID = glGetAttribLocation(programID, "vertexColor");
-
-        glGenBuffers(1, &vertexbuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-        glBufferData(GL_ARRAY_BUFFER, g_vertex_buffer_data.size() * sizeof(glm::vec3), &g_vertex_buffer_data[0], GL_STATIC_DRAW);
-
-        return true;
-    }
-
-    void init_MVP(float theta, float phi) {
-
-        // Model matrix : translate model centroid to origin and scale it
-        glm::mat4 Model   = glm::translate(- centroid);
-
-        // Camera matrix
-
-        //coodinate on 1radius sphere
-        glm::vec3 cam_pos(std::sin(theta) * std::cos(phi), std::sin(theta) * std::sin(phi), std::cos(theta));
-
-        //find the distance min
-        float view_dist = 0.0f;
-        for(std::vector<glm::vec3>::iterator it = outter_box.begin(); it < outter_box.end(); ++it) {
-            float axial_proj = glm::dot(cam_pos, *it);
-            float current_radial_dist = std::sqrt( glm::dot(*it,*it) - axial_proj * axial_proj);
-            float current_view_dist = std::abs( current_radial_dist / std::tan(M_PI * fov / 180.0f) - axial_proj );
-            if( current_view_dist > view_dist)
-                view_dist = current_view_dist;
-        }
-
-        //scale the view position
-        cam_pos.x *= 1.5 * view_dist;
-        cam_pos.y *= 1.5 * view_dist;
-        cam_pos.z *= 1.5 * view_dist;
-
-        DEBUG_MSG( "Cam Info :" << cam_pos.x << " " << cam_pos.y << " " << cam_pos.z );
-
-        glm::mat4 View       = glm::lookAt(
-                    cam_pos, // Camera is at (4,3,-3), in World Space
-                    glm::vec3(0,0,0), // and looks at the origin
-                    glm::vec3(0,1.0,0.0) // Head is up (set to 0,-1,0 to look upside-down)
-                    );
-
-        // Projection matrix : FOV Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-        glm::mat4 Projection = glm::perspective(fov, 4.0f / 3.0f, 0.1f * view_dist, 10.0f * view_dist);
-
-        // Our ModelViewProjection : multiplication of our 3 matrices
-        MVP        = Projection * View * Model;
-        MV         = View * Model;
-
-    }
-
-    void load_mesh(std::string tri_path) {
-
+    void loadMesh(std::string path) {
         //parse the file
-        std::ifstream in_stream(tri_path.c_str());
+        std::ifstream in_stream(path.c_str());
         if(!in_stream.good())
             throw std::ifstream::failure("Input file not found.");
         std::string line;
@@ -195,7 +66,7 @@ public:
             TrianglePolygon tri(line);
             for(int i = 0; i < 3; ++i) {
                 glm::vec3 vertex;
-                vertex.x = (float) tri.getPoints()[i].getX();
+                vertex.x = (float) tri.getPoints()[i].getX() * 0.5;
                 vertex.y = (float) tri.getPoints()[i].getY();
                 vertex.z = (float) tri.getPoints()[i].getZ();
                 g_vertex_buffer_data.push_back(vertex);
@@ -226,12 +97,10 @@ public:
         z_mean = ( z_max + z_min) / 2;
         centroid = glm::vec3(x_mean, y_mean, z_mean);
 
-        scale_factor = x_max;
-        scale_factor = std::max(scale_factor, - x_min);
-        scale_factor = std::max(scale_factor, y_max);
-        scale_factor = std::max(scale_factor, - y_min);
-        scale_factor = std::max(scale_factor, z_max);
-        scale_factor = std::max(scale_factor, - z_min);
+        //scale_factor will be used to make sure that pixels coordinates belong to [0,1]
+        scale_factor = x_max - x_min;
+        scale_factor = std::max(scale_factor, y_max - y_min);
+        scale_factor = std::max(scale_factor, z_max - z_min);
         scale_factor = 1.0f / scale_factor;
 
         max_relative_position[0] = x_max * scale_factor;
@@ -255,7 +124,115 @@ public:
         DEBUG_MSG( y_min << " < y < " << y_max << " average : " << y_mean );
         DEBUG_MSG( z_min << " < z < " << z_max << " average : " << z_mean );
         DEBUG_MSG( "Scale factor : " << scale_factor << " inv: " << 1.0f / scale_factor );
+    }
 
+    bool presets() {
+
+        if(g_vertex_buffer_data.empty()) {
+            std::cerr << "No mesh loaded." << std::endl;
+            return false;
+        }
+
+        // Initialize GLEW
+        if (glewInit() != GLEW_OK) {
+            fprintf(stderr, "Failed to initialize GLEW\n");
+            return false;
+        }
+
+        // Dark blue background
+        glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+
+        // Enable depth test
+        glEnable(GL_DEPTH_TEST);
+        // Accept fragment if it closer to the camera than the former one
+        glDepthFunc(GL_LESS);
+
+        // Create and compile our GLSL program from the shaders
+        const char* vertex_sharder = "../shaders/TransformVertexShader.vertexshader";
+        const char* fragment_sharder = "../shaders/ColorFragmentShader.fragmentshader";
+
+        programID = LoadShaders( vertex_sharder, fragment_sharder );
+
+        // Get a handle for our "MVP" uniform
+        MVP_ID = glGetUniformLocation(programID, "MVP");
+        SCALE_ID = glGetUniformLocation(programID, "SCALE");
+        MV_ID = glGetUniformLocation(programID, "MV");
+
+        // Get a handle for our buffers
+        vertexPosition_modelspaceID = glGetAttribLocation(programID, "vertexPosition_modelspace");
+
+        glGenBuffers(1, &vertexbuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+        glBufferData(GL_ARRAY_BUFFER, g_vertex_buffer_data.size() * sizeof(glm::vec3), &g_vertex_buffer_data[0], GL_STATIC_DRAW);
+
+        return true;
+    }
+
+    void init_MVP(float theta, float phi) {
+
+        // Model matrix : translate model centroid to origin and scale it
+        glm::mat4 Model   = glm::translate(- centroid);
+
+        // Camera matrix
+
+        //coodinate on a 1 radius sphere
+        glm::vec3 cam_pos(std::sin(theta) * std::cos(phi), std::sin(theta) * std::sin(phi), std::cos(theta));
+        //to find the min distance to see the whole model, we compute the distance to see to containing cube
+        float view_dist = 0.0f;
+        for(std::vector<glm::vec3>::iterator it = outter_box.begin(); it < outter_box.end(); ++it) {
+            float axial_proj = glm::dot(cam_pos, *it);
+            float current_radial_dist = std::sqrt( glm::dot(*it,*it) - axial_proj * axial_proj);
+            float current_view_dist = std::abs( current_radial_dist / std::tan(M_PI * fov / 180.0f) - axial_proj );
+            if( current_view_dist > view_dist)
+                view_dist = current_view_dist;
+        }
+        //scale the view position
+        cam_pos.x *= 1.5 * view_dist;
+        cam_pos.y *= 1.5 * view_dist;
+        cam_pos.z *= 1.5 * view_dist;
+
+        DEBUG_MSG( "Cam Info :" << cam_pos.x << " " << cam_pos.y << " " << cam_pos.z );
+
+        glm::mat4 View = glm::lookAt(
+                    cam_pos, // Coordinates of the camera, in World Space
+                    glm::vec3(0,0,0), // and looks at there in world space
+                    glm::vec3(0,1,0) // Head is up (set to 0,-1,0 to look upside-down)
+                    );
+
+        // Projection matrix : FOV Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
+        glm::mat4 Projection = glm::perspective(fov, 4.0f / 3.0f, 0.1f * view_dist, 10.0f * view_dist);
+
+        // Our ModelViewProjection : multiplication of our 3 matrices
+        MVP = Projection * View * Model;
+
+        // This matrix will scale the model to make vertice corrdinates belowg to [0,1]
+        glm::vec3 translation(min_relative_position[0],
+                min_relative_position[1],
+                min_relative_position[2]);
+        SCALING = glm::translate(-translation) * glm::scale(scale_factor, scale_factor, scale_factor);
+
+    }
+
+    pcl::PointCloud<pcl::PointXYZ> compute_view(float theta, float phi, bool show_image)
+    {
+        init_MVP(theta,phi);
+        if(show_image) {
+            displayMesh();
+            assert(glfwContextSet);
+        }
+        else {
+            setWindowlessContext();
+            assert(windowsLessContextSet);
+        }
+        draw();
+        pcl::PointCloud<pcl::PointXYZ> cloud;
+        //build_cloud_from_framebuffer(&cloud);
+        build_cloud_from_pixelbuffer(&cloud);
+
+        DEBUG_MSG( width * height << " pixels." );
+        DEBUG_MSG( cloud.size() << " points in cloud." );
+        assert(!cloud.empty());
+        return cloud;
     }
 
     void draw() {
@@ -266,7 +243,7 @@ public:
         glUseProgram(programID);
 
         glUniformMatrix4fv(MVP_ID, 1, GL_FALSE, &MVP[0][0]);
-        glUniformMatrix4fv(MV_ID, 1, GL_FALSE, &MV[0][0]);
+        glUniformMatrix4fv(MV_ID, 1, GL_FALSE, &SCALING[0][0]);
         glUniform1f(SCALE_ID, scale_factor);
 
         // 1rst attribute buffer : vertices
@@ -285,7 +262,76 @@ public:
         glDrawArrays(GL_TRIANGLES, 0, g_vertex_buffer_data.size()*3);
 
         glDisableVertexAttribArray(vertexPosition_modelspaceID);
-        glDisableVertexAttribArray(vertexColorID);
+    }
+
+    void displayMesh() {
+        setGLFWContext();
+        do{
+            draw();
+            // Swap buffers
+            glfwSwapBuffers();
+
+        } // Check if the ESC key was pressed or the window was closed
+        while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS &&
+               glfwGetWindowParam( GLFW_OPENED ) );
+    }
+
+
+    ~PartialViewComputer() {
+        free_gpu();
+    }
+
+private:
+
+    bool windowsLessContextSet, glfwContextSet;
+
+    void build_cloud_from_framebuffer(pcl::PointCloud<pcl::PointXYZ> * cloud) {
+
+        //Somewhere at initialization
+        GLuint fbo;
+        glGenFramebuffers(1,&fbo);
+        //glGenRenderbuffers(1,&render_buf);
+        //glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB, width, height);
+
+        //glBindFramebuffer(GL_DRAW_FRAMEBUFFER,fbo);
+        glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, vertexbuffer);
+
+        //Before drawing
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER,fbo);
+
+        draw();
+
+        //after drawing
+        std::vector<float> data(width*height*3);
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        glReadPixels(0,0,width,height,GL_RGB,GL_FLOAT,&data[0]);
+        for(std::vector<float>::iterator it = data.begin(); it < data.end(); ++it) {
+            float x = *it;
+            ++it;
+            float y = *it;
+            ++it;
+            float z = *it;
+
+            //DEBUG_MSG( x << " " << y << " " << z);
+            /*DEBUG_MSG( min_relative_position[0] << " < " << x << " < " << max_relative_position[0] );
+        DEBUG_MSG( min_relative_position[1] << " < " << y << " < " << max_relative_position[1] );
+        DEBUG_MSG( min_relative_position[2] << " < " << z << " < " << max_relative_position[2] );*/
+
+            bool isBackground = (x == 1.0f && y == 1.0f && z == 1.0f);
+            if(!isBackground)
+                //this is to fix, due to some border effect, some pix do not represent the position
+                //because the background is white they are augmented. Bug only with GLFW ??*
+                /*if ( min_relative_position[0] <= x && x <= max_relative_position[0]
+                    && min_relative_position[1] <= y && y <= max_relative_position[1]
+                    && min_relative_position[2] <= z && z <= max_relative_position[2]
+                    )*/
+                cloud->push_back(pcl::PointXYZ(x,y,z));
+        }
+        // Return to onscreen rendering:
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER,0);
+        //At deinit:
+        glDeleteFramebuffers(1,&fbo);
+        //glDeleteRenderbuffers(1,&render_buf);
     }
 
     void build_cloud_from_pixelbuffer(pcl::PointCloud<pcl::PointXYZ> * cloud) {
@@ -299,51 +345,78 @@ public:
             ++it;
             float z = *it;
 
-            /*DEBUG_MSG( x << " " << y << " " << z);
-            DEBUG_MSG( min_relative_position[0] << " < " << x << " < " << max_relative_position[0] );
+            //DEBUG_MSG( x << " " << y << " " << z);
+            /*DEBUG_MSG( min_relative_position[0] << " < " << x << " < " << max_relative_position[0] );
             DEBUG_MSG( min_relative_position[1] << " < " << y << " < " << max_relative_position[1] );
-            DEBUG_MSG( min_relative_position[2] << " < " << z << " < " << max_relative_position[2] );
-            */
+            DEBUG_MSG( min_relative_position[2] << " < " << z << " < " << max_relative_position[2] );*/
 
-            //this is to fix, due to some border effect, some pix do not represent the position
-            //because the background is white they are augmented. Bug only with GLFW ??
-            /*if( min_relative_position[0] < x && x < max_relative_position[0]
-                    && min_relative_position[1] < y && y < max_relative_position[1]
-                    && min_relative_position[2] < z && z < max_relative_position[2]
-                    )*/
+            bool isBackground = (x == 1.0f && y == 1.0f && z == 1.0f);
+            if(!isBackground)
+                //this is to fix, due to some border effect, some pix do not represent the position
+                //because the background is white they are augmented. Bug only with GLFW ??*
+                /*if ( min_relative_position[0] <= x && x <= max_relative_position[0]
+                        && min_relative_position[1] <= y && y <= max_relative_position[1]
+                        && min_relative_position[2] <= z && z <= max_relative_position[2]
+                        )*/
                 cloud->push_back(pcl::PointXYZ(x,y,z));
         }
 
     }
 
-    pcl::PointCloud<pcl::PointXYZ> compute_view(float theta, float phi, bool show_image)
-    {
-        init_MVP(theta, phi);
-        if(show_image) {
-            do{
-                draw();
-                // Swap buffers
-                glfwSwapBuffers();
-
-            } // Check if the ESC key was pressed or the window was closed
-            while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS &&
-                   glfwGetWindowParam( GLFW_OPENED ) );
-        }
-
-        draw();
-        pcl::PointCloud<pcl::PointXYZ> cloud;
-        build_cloud_from_pixelbuffer(&cloud);
-        DEBUG_MSG( width * height << " pixels." );
-        DEBUG_MSG( cloud.size() << " points in cloud." );
-        assert(!cloud.empty());
-        return cloud;
+    void free_gpu() {
+        // Cleanup VBO and shader
+        glDeleteBuffers(1, &vertexbuffer);
+        glDeleteProgram(programID);
+        DEBUG_MSG( "GPU Freed." );
+        // Close OpenGL window and terminate GLFW
+        if(glfwContextSet)
+            glfwTerminate();
+        windowsLessContextSet = glfwContextSet = false;
     }
 
-private:
+    bool setGLFWContext(const char* window_name = NULL) {
+
+        if(glfwContextSet)
+            return true;
+        if(windowsLessContextSet)
+            free_gpu();
+
+        // Initialise GLFW
+        if( !glfwInit() )
+        {
+            fprintf( stderr, "Failed to initialize GLFW\n" );
+            return false;
+        }
+
+        glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
+        glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 2);
+        glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 1);
+
+        // Open a window and create its OpenGL context
+        if( !glfwOpenWindow( width, height, 0,0,0,0, 32,0, GLFW_WINDOW ) )
+        {
+            fprintf( stderr, "Failed to open GLFW window.\n" );
+            glfwTerminate();
+            return false;
+        }
+
+        glfwSetWindowTitle( window_name );
+        // Ensure we can capture the escape key being pressed below
+        glfwEnable( GLFW_STICKY_KEYS );
+
+        DEBUG_MSG( "GLFW context set." );
+        glfwContextSet = true;
+        return glfwContextSet && presets();
+    }
 
     // Create an windowless opengl context
     // credit : http://renderingpipeline.com/2012/05/windowless-opengl/
     bool setWindowlessContext() {
+
+        if(windowsLessContextSet)
+            return true;
+        if(glfwContextSet)
+            free_gpu();
 
         typedef GLXContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
         typedef Bool (*glXMakeContextCurrentARBProc)(Display*, GLXDrawable, GLXDrawable, GLXContext);
@@ -357,6 +430,7 @@ private:
 
         const char *displayName = NULL;
         Display* display = XOpenDisplay( displayName );
+        assert( display != NULL);
 
         static int visualAttribs[] = { None };
         int numberOfFramebufferConfigurations = 0;
@@ -385,19 +459,20 @@ private:
         XFree( fbConfigs );
         XSync( display, False );
 
-        return glXMakeContextCurrent( display, pbuffer, pbuffer, openGLContext );
+        windowsLessContextSet = glXMakeContextCurrent( display, pbuffer, pbuffer, openGLContext );
+        return windowsLessContextSet && presets();
     }
 
     float max_relative_position[3]; // used to remove the border effect..
-    float min_relative_position[3];
-    std::vector<glm::vec3> g_vertex_buffer_data;
-    glm::vec3 centroid;
+    float min_relative_position[3]; //
+    std::vector<glm::vec3> g_vertex_buffer_data; // vertice of the model
+    std::vector<glm::vec3> outter_box; // a cubic box containing all the model
+    glm::vec3 centroid; //centroid of the model
     float scale_factor;
-    std::vector<glm::vec3> outter_box;
     int width, height;
     float fov;
-    glm::mat4 MV, MVP;
-    GLuint programID, MVP_ID, MV_ID, SCALE_ID, vertexPosition_modelspaceID, vertexColorID, vertexbuffer, framebuffer;
+    glm::mat4 SCALING, MVP;
+    GLuint programID, MVP_ID, MV_ID, SCALE_ID, vertexPosition_modelspaceID, vertexbuffer;//, framebuffer;
 
 
 

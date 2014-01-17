@@ -115,12 +115,7 @@ int main(int argc, char **argv) {
     else {
         float theta = vm["theta"].as<float>();
         float phi = vm["phi"].as<float>();
-
-        cout << theta << " " << phi << " " << view_image << endl;
-         
-        cout << "Computation of Partial cloud." << endl;
         pcl::PointCloud<pcl::PointXYZ> cloud = comp.compute_view(theta, phi, view_image);
-        cout << "Partial cloud computed." << endl;
         if(!process_cloud(output_path,vm["output-format"].as<string>(), &cloud))
             return -1;
     }

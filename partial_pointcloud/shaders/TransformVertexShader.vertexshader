@@ -4,7 +4,7 @@
 in vec3 vertexPosition_modelspace;
 
 // Output data ; will be interpolated for each fragment.
-out vec3 fragPosition;
+out vec4 fragColor;
 
 // Values that stay constant for the whole mesh.
 uniform mat4 MVP;
@@ -14,7 +14,7 @@ uniform float SCALE;
 void main(){
 	
 	gl_Position = MVP * vec4(vertexPosition_modelspace,1.0f);	
-	fragPosition = vertexPosition_modelspace;
-	fragPosition *= SCALE;
+	fragColor = MV * vec4(vertexPosition_modelspace, 1.0f);
+	//fragPosition *= SCALE;
 	
 }

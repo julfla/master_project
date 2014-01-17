@@ -13,11 +13,13 @@ char const * parseShaderSource(const char * path) {
     if(!ifs.good()) {
         throw std::ifstream::failure("Impossible to open" + std::string(path) + ".");
     }
-    std::string shaderCode;
+    std::string shaderCode = "";
     std::string line = "";
     while(getline(ifs, line))
-        shaderCode += "\n" + line;
+        if(!line.length() == 0)
+            shaderCode += line + "\n";
     ifs.close();
+    shaderCode +=  "\n";
     return shaderCode.c_str();
 }
 
@@ -26,11 +28,10 @@ void compileShader(const char * source_path, GLuint SharderID) {
     std::cout << "Compiling shader : " << source_path << std::endl;
     char const * sourceCode = parseShaderSource(source_path);
     glShaderSource(SharderID, 1, &sourceCode , NULL);
-    glCompileShader(SharderID);
-
+    glCompileShader(SharderID); //I don't know why but this line seems to output empty lines to the terminal...
     // Check the program
     GLint Result = GL_FALSE;
-    int InfoLogLength;
+    int InfoLogLength = 0;
     glGetProgramiv(SharderID, GL_LINK_STATUS, &Result);
     glGetProgramiv(SharderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
     if ( InfoLogLength > 0 ){
