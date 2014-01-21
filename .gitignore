@@ -4,3 +4,6 @@ build
 
 # Ignore pip virtual env
 env
+
+# Ignore python files
+*.pyc
