@@ -9,7 +9,6 @@ from scrapy.contrib.djangoitem import DjangoItem
 from testapp.models import SketchupModel
 
 class ModelItem(DjangoItem):
-
     django_model = SketchupModel
     link_image = Field()
     link_skp = Field()
