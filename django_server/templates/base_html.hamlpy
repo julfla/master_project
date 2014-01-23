@@ -1,0 +1,15 @@
+!!! 5
+{% load bootstrap3 %}
+
+
+%html{'lang':'en'}
+    %head
+        / Load Bootstrap CSS and JavaScript
+        -bootstrap_css
+        -bootstrap_javascript
+        %title
+            -block title
+                My amazing site
+    %body
+        #content
+            -block content

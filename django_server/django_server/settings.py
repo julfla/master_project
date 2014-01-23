@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'testapp',
     'scrapper',
+    'bootstrap3',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -63,6 +64,16 @@ DATABASES = {
       'NAME' : 'my_database'
    }
 }
+
+TEMPLATE_LOADERS = (
+    'hamlpy.template.loaders.HamlPyFilesystemLoader',
+    'hamlpy.template.loaders.HamlPyAppDirectoriesLoader',
+    'django.template.loaders.app_directories.Loader',
+)
+
+TEMPLATE_DIRS = (
+    "/templates/",
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/

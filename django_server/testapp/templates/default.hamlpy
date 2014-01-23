@@ -1,0 +1,12 @@
+-extends "base_html.hamlpy"
+
+-block content
+  .page-header.center-block
+    %form.form-inline
+      .form-group
+        %label.sr-only Search for models
+        %input#keywords.form-control{'placeholder': "Keywords..."}
+      %button.btn.btn-default{'type':"submit"} Search
+  .results
+    -for model in models
+      -include 'model_short_view.html' with model=model
