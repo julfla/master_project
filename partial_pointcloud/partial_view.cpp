@@ -16,7 +16,7 @@ void PartialViewComputer::loadMesh(std::string path) {
         TrianglePolygon tri(line);
         for(int i = 0; i < 3; ++i) {
             glm::vec3 vertex;
-            vertex.x = (float) tri.getPoints()[i].getX() * 0.5;
+            vertex.x = (float) tri.getPoints()[i].getX();
             vertex.y = (float) tri.getPoints()[i].getY();
             vertex.z = (float) tri.getPoints()[i].getZ();
             g_vertex_buffer_data.push_back(vertex);
