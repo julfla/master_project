@@ -1,10 +1,14 @@
-Django==1.5.5
+Django==1.6.1
+Markdown==2.3.1
+Pygments==1.6
 Scrapy==0.22.0
 Twisted==13.2.0
 argparse==1.2.1
 cssselect==0.9.1
+django-bootstrap3==2.5.5
 django-mongodb-engine==0.5.1
 djangotoolbox==1.6.2
+hamlpy==0.82.2
 lxml==3.2.5
 mongoengine==0.8.6
 pyOpenSSL==0.13.1
