@@ -4,7 +4,7 @@ import datetime
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-from testapp.models import SketchupModel
+from sketchup_models.models import SketchupModel
 
 def search_models(request, keywords):
     models = SketchupModel.search_warehouse(keywords)   

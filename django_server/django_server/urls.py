@@ -5,5 +5,5 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^model/', include('testapp.urls'))
+    url(r'^model/', include('sketchup_models.urls'))
 )

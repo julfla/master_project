@@ -7,7 +7,7 @@ from gridfs import GridFS
 from bs4 import BeautifulSoup as Soup
 import urllib2
 
-#from testapp.testsoup import scrap_model, search_models
+#from sketchup_models.testsoup import scrap_model, search_models
 
 # see there : https://django-mongodb-engine.readthedocs.org/en/latest/tutorial.html
 
