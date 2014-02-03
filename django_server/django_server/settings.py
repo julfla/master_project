@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'sketchup_models',
+    'shape_distribution',
     'bootstrap3',
 )
 
