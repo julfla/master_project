@@ -25,7 +25,7 @@ def model_mesh(request, google_id):
         response['Content-Disposition'] = 'attachment; filename= %s.skp' % model
         return response
     except SketchupModel.DoesNotExist:
-        return HttpResponseNotFound("<h1>Page not found</h1>")
+        return HttpResponseNotFound()
 
 def scrap_model(request, google_id):
     scrap.scrap_model(google_id)

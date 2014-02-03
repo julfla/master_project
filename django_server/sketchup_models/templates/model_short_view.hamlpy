@@ -4,7 +4,7 @@
   .panel-body
     .col-md-3
       %img.img-thumbnail{'src': "/model/={model.google_id}/image/"}
-      %a{'href':"./mesh/"} Dowload Mesh
+      %a{'href':"/model/={model.google_id}/mesh/"} Dowload Mesh
     .col-md-3
       %p.description ={model.text}
       %p.tags Tags: 

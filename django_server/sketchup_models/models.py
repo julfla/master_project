@@ -7,8 +7,6 @@ from gridfs import GridFS
 from bs4 import BeautifulSoup as Soup
 import urllib2
 
-#from sketchup_models.testsoup import scrap_model, search_models
-
 # see there : https://django-mongodb-engine.readthedocs.org/en/latest/tutorial.html
 
 class CategoryField(ListField):
@@ -25,14 +23,7 @@ class SketchupModel(models.Model):
     # similat_objects
 
     def __str__(self):
-        return self.google_id
-
-
-    def mesh(self):
-        try:
-            return self.mesh
-        except:
-            return self.super
+        return self.google_id    
 
     @staticmethod
     def find_google_id(google_id):
@@ -69,11 +60,15 @@ class SketchupModel(models.Model):
         model.text = soup.select('span#descriptionText')[0].string
         for tag in soup.select('a.fl'):
             if not model.tags.count(tag.string):
-                model.tags.append(tag.string) 
-        #if download_skp:
-        #    model.skp = "okok"
+                model.tags.append(tag.string)    
         link_image = absolute_path(soup.select('#previewImage')[0]['src'] )
+        for dowload_choice in soup.select('#downloadChoices tr'):
+            if '.skp' in dowload_choice.select('td')[0].string:
+                link_skp = absolute_path( 
+                    dowload_choice.select('td')[1].select('a')[0]['href'] )
+                break
         model.image = urllib2.urlopen(link_image).read()
+        model.mesh = urllib2.urlopen(link_skp).read()
         model.save()
         return model
 
