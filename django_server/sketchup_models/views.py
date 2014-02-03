@@ -8,21 +8,21 @@ from sketchup_models.models import SketchupModel
 
 def search_models(request, keywords):
     models = SketchupModel.search_warehouse(keywords)   
-    return render_to_response('default.html', {'time': datetime.datetime.now(), 'models': models}, 
+    return render_to_response('default.html', {'models': models}, 
         context_instance=RequestContext(request))
 
 def model_image(request, google_id):
     try:
-        model = SketchupModel.objects.get(google_id=google_id)
+        model = SketchupModel.find_google_id(google_id)
         return HttpResponse(model.image.read(), mimetype="image/png")
     except SketchupModel.DoesNotExist:
         return HttpResponseNotFound()
 
 def model_mesh(request, google_id):
     try:
-        model = SketchupModel.objects.get(google_id=google_id)
-        response = HttpResponse(model.mesh.read(), mimetype="application/octet-stream")
-        response['Content-Disposition'] = 'attachment; filename= %s.skp' % model
+        model = SketchupModel.find_google_id(google_id)
+        response = HttpResponse(model.mesh.read(), mimetype="text/plain")
+        response['Content-Disposition'] = 'attachment; filename= %s.tri' % model
         return response
     except SketchupModel.DoesNotExist:
         return HttpResponseNotFound()

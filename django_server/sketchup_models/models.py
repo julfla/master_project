@@ -5,7 +5,7 @@ from django_mongodb_engine.fields import GridFSField
 from gridfs import GridFS
 
 from bs4 import BeautifulSoup as Soup
-import urllib2
+import urllib2, tempfile, os
 
 # see there : https://django-mongodb-engine.readthedocs.org/en/latest/tutorial.html
 
@@ -30,9 +30,8 @@ class SketchupModel(models.Model):
         try:
             return SketchupModel.objects.get(google_id=google_id)
         except SketchupModel.DoesNotExist:
-            model = SketchupModel._scrap_model_page(google_id)
-            model.save
-            return model
+            SketchupModel._scrap_model_page(google_id)
+            return SketchupModel.objects.get(google_id=google_id)
 
     @staticmethod
     def search_warehouse(keywords):
@@ -68,7 +67,13 @@ class SketchupModel(models.Model):
                     dowload_choice.select('td')[1].select('a')[0]['href'] )
                 break
         model.image = urllib2.urlopen(link_image).read()
-        model.mesh = urllib2.urlopen(link_skp).read()
+        # the mesh in store in temp and converted into a .tri file
+        f = tempfile.NamedTemporaryFile()
+        f.write( urllib2.urlopen(link_skp).read() )
+        os.system('../bin/skp2tri.exe {0} {0}'.format(f.name))
+        f.seek(0)
+        model.mesh = f.read()
+        f.close()
         model.save()
         return model
 
