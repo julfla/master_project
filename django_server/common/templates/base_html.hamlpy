@@ -9,7 +9,9 @@
         -bootstrap_javascript
         %title
             -block title
-                My amazing site
+                Research Project
+        %style
+            body {width: 90%; margin: auto;}
     %body
         #content
             -block content
