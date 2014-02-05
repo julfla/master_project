@@ -38,7 +38,8 @@
 #include <mesh.hpp>
 #include "shader_helper.hpp"
 
-typedef pcl::PointCloud<pcl::PointXYZ> DefaultPointCloud;
+typedef pcl::PointXYZ DefaultPoint;
+typedef pcl::PointCloud<DefaultPoint> DefaultPointCloud;
 
 using namespace glm;
 
