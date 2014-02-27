@@ -68,12 +68,13 @@ class SketchupModel(models.Model):
                 break
         model.image = urllib2.urlopen(link_image).read()
         # the mesh in store in temp and converted into a .tri file
-        f = tempfile.NamedTemporaryFile()
-        f.write( urllib2.urlopen(link_skp).read() )
-        os.system('../bin/skp2tri.exe {0} {0}'.format(f.name))
-        f.seek(0)
-        model.mesh = f.read()
-        f.close()
+        with tempfile.NamedTemporaryFile() as tmp_file:
+            tmp_file.write( urllib2.urlopen(link_skp).read() )
+            tmp_file.flush()
+            cvt_cmd = 'WINEDEBUG=-all, ../bin/skp2tri.exe {0} {0}'
+            os.system(cvt_cmd.format(tmp_file.name) )
+            tmp_file.seek(0)
+            model.mesh = tmp_file.read()
         model.save()
         return model
 

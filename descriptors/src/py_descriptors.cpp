@@ -1,22 +1,26 @@
 #include <boost/python.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 #include "shape_distribution.h"
 
-inline Distribution load_archive_char(char* path) { return Distribution::load_archive(path); }
+std::string serialize( Distribution & self ) {
+    std::ostringstream oss;
+    boost::archive::text_oarchive archive( oss );
+    archive << self;
+    return oss.str();
+}
+
+void unserialize( Distribution & self, std::string data) {
+    std::istringstream iss( data );
+    boost::archive::text_iarchive archive( iss );
+    archive >> self;
+}
 
 BOOST_PYTHON_MODULE(libpydescriptors)
 {
     using namespace boost::python;
 
-    typedef std::vector<double> vec_dbl;
-
-    class_<vec_dbl>("ListDouble")
-           .def(vector_indexing_suite<vec_dbl>() );
-
     class_<Distribution>("ShapeDistribution", no_init)
-            .add_property("data", &Distribution::getDistribution)
-            .def("load_archive", load_archive_char )
-            .staticmethod("load_archive")
-            .def("save_archive", (void (Distribution::*)(const char*) ) &Distribution::save_archive);
+            .add_property( "serialized_data", &serialize, &unserialize );
 }

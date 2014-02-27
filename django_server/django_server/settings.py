@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'common',
     'sketchup_models',
     'shape_distribution',
+    'partial_view',
     'bootstrap3',
 )
 

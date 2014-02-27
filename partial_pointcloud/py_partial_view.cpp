@@ -4,36 +4,44 @@
 #include <boost/assign/std/vector.hpp> // for 'operator+=()'
 
 #include "partial_view.h"
+#include "pointcloud_serialization.hpp"
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 using namespace boost::python;
 using namespace boost::assign;
 
-typedef std::vector<double> vec_dbl;
-
-vec_dbl get_pointcloud_data_as_vector( DefaultPointCloud& self ) {
-    vec_dbl buff;
-    for( DefaultPointCloud::iterator it = self.points.begin(); it < self.points.end(); ++it )
-        buff += it->x, it->y, it->z;
-    return buff;
+std::string serialize_pointCloud( DefaultPointCloud & self ) {
+    std::ostringstream oss;
+    boost::archive::text_oarchive archive( oss );
+    archive << self;
+    return oss.str();
 }
 
-void set_pointcloud_data_from_vector( DefaultPointCloud& self, vec_dbl point_coordinates) {
-    assert(point_coordinates.size() % 3 == 0); // x,y,z coordinates only
-    for( vec_dbl::iterator it = point_coordinates.begin(); it < point_coordinates.end(); it = it+3)
-        self.points += DefaultPoint(*it, *(it+1), *(it+2));
+void unserialize_pointcloud( DefaultPointCloud & self, std::string data) {
+    std::istringstream iss( data );
+    boost::archive::text_iarchive archive( iss );
+    archive >> self;
 }
 
-void save_point_cloud_as_pcd(DefaultPointCloud& self, char* path) {
-    pcl::io::savePCDFileASCII(path, self);
+void save_point_cloud_as_pcd( DefaultPointCloud& self, char* path) { 
+    pcl::io::savePCDFileASCII(path, self); 
 }
+
+/*
+DefaultPointCloud read_point_cloud_from_pcd( std::string path) {
+    DefaultPointCloud::Ptr cloud (new DefaultPointCloud);
+    pcl::io::loadPCDFile<DefaultPoint> (path, *cloud);
+    return *cloud;
+}
+*/
 
 BOOST_PYTHON_MODULE(libpypartialview)
 {
-    class_<vec_dbl>("ListDouble").def(vector_indexing_suite<vec_dbl>() );
-
     class_<DefaultPointCloud>("PointCloud")
-            .add_property("data", &get_pointcloud_data_as_vector, &set_pointcloud_data_from_vector )
-            .def("save_pcd", &save_point_cloud_as_pcd);
+            .def( "size", &DefaultPointCloud::size )
+            .add_property( "serialized_data", &serialize_pointCloud, &unserialize_pointcloud )
+            .def( "save_pcd", &save_point_cloud_as_pcd);
 
     class_<PartialViewComputer>("PartialViewComputer")
             .def("display_mesh", &PartialViewComputer::displayMesh )
