@@ -1,7 +1,7 @@
 #include <boost/python.hpp>
 #include <boost/python/wrapper.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include <boost/assign/std/vector.hpp> // for 'operator+=()'
+#include <boost/assign/std/vector.hpp> // for 'operator+=() on vectors'
 
 #include "partial_view.h"
 #include "pointcloud_serialization.hpp"

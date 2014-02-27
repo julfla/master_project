@@ -1,9 +1,10 @@
 from django.db import models
-from djangotoolbox.fields import ListField
+from djangotoolbox.fields import EmbeddedModelField
 from django_mongodb_engine.fields import GridFSField
 from django.utils.six import with_metaclass
 
 from sketchup_models.models import SketchupModel
+from shape_distribution.models import ShapeDistribution
 from common.libs.libpypartialview import PointCloud, PartialViewComputer
 import tempfile
 
@@ -31,6 +32,10 @@ class PartialView(models.Model):
     theta = models.FloatField()
     phi = models.FloatField()
     pointcloud = PointCloudField()
+    distribution = EmbeddedModelField('ShapeDistribution', blank=True, null=True)
+
+    class Meta:
+        unique_together = (("model", "theta", "phi"),)
 
     @staticmethod
     def compute_view(model, theta, phi):
@@ -46,6 +51,7 @@ class PartialView(models.Model):
         view.theta = theta
         view.phi = phi
         view.pointcloud = comp.compute_view(theta, phi)
+        view.distribution = ShapeDistribution( view.pointcloud )
 
     @staticmethod
     def display_view(model, theta, phi):

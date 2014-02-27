@@ -21,6 +21,6 @@ BOOST_PYTHON_MODULE(libpydescriptors)
 {
     using namespace boost::python;
 
-    class_<Distribution>("ShapeDistribution", no_init)
+    class_<Distribution>("ShapeDistribution", init<pcl::PointCloud<pcl::PointXYZ> >)
             .add_property( "serialized_data", &serialize, &unserialize );
 }
