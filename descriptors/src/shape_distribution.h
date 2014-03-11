@@ -41,8 +41,12 @@ public:
 
     std::string to_csv();
 
-    std::vector<double> getDistribution() {
+    std::vector<double> const getDistribution() {
         return distribution;
+    }
+
+    void setDistribution(std::vector<double> distribution) {
+        this->distribution = distribution;
     }
 
     typedef double (* double_distance)(double, double);

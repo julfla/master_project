@@ -6,6 +6,7 @@ from django.utils.six import with_metaclass
 from sketchup_models.models import SketchupModel
 from shape_distribution.models import ShapeDistribution
 from common.libs.libpypartialview import PointCloud, PartialViewComputer
+# from common.libs.libpydescriptors import Distribution
 import tempfile
 
 class PointCloudField(with_metaclass(models.SubfieldBase, models.Field)):
@@ -32,7 +33,7 @@ class PartialView(models.Model):
     theta = models.FloatField()
     phi = models.FloatField()
     pointcloud = PointCloudField()
-    distribution = EmbeddedModelField('ShapeDistribution', blank=True, null=True)
+    distribution = EmbeddedModelField(ShapeDistribution, blank=True, null=True)
 
     class Meta:
         unique_together = (("model", "theta", "phi"),)
@@ -45,13 +46,16 @@ class PartialView(models.Model):
             comp = PartialViewComputer()
             comp.load_mesh(f.name)
 
+        # comp.display_mesh(theta, phi)
+
         # Instanciate the model and return
         view = PartialView()
         view.model = model
         view.theta = theta
         view.phi = phi
         view.pointcloud = comp.compute_view(theta, phi)
-        view.distribution = ShapeDistribution( view.pointcloud )
+        view.distribution = ShapeDistribution.compute( view.pointcloud )
+        return view
 
     @staticmethod
     def display_view(model, theta, phi):

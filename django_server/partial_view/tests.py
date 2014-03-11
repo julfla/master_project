@@ -12,23 +12,22 @@ class TestPartialView(TestCase):
         test_model.tags = ["tag1", "tag2"]
         test_model.title = "title1"
         test_model.text = "Description of 'title1' SketchupModel."
-        test_model.mesh = file("sketchup_models/features/mesh_cube.tri").read()
+        test_model.mesh = file("sketchup_models/fixtures/mesh_can.tri").read()
         test_model.save()
 
-    @skip("Bug Eigen3")
+    # @skip("Bug Eigen3")
     def test_write_and_read(self):
         """
-        Tests writing then reading of a PointCloudStorage.
+        Tests writing then reading of a PointCloudStorage and ShapeDistribution.
         """
         test_model = SketchupModel.find_google_id("test1")
-        view = PartialView()
 
         # Generate the pointcloud
-        view.compute_view( test_model, 0.0, 0.0)
+        view  = PartialView.compute_view( test_model, 0.0, 0.0)
         self.assertTrue( view.pointcloud.size() > 0 )
         
         view.save()
-        self.assertTrue( PartialView.objects.count() == 1 )
+        self.assertEqual( PartialView.objects.count(), 1 )
 
         restored_view = PartialView.objects.all()[:1].get()
         self.assertEqual( restored_view.theta, view.theta )

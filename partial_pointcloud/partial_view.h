@@ -1,8 +1,8 @@
 #ifndef PARTIAL_VIEW_HPP
 #define PARTIAL_VIEW_HPP
 
-//should be defined by cmake... ?
-//#define DEBUG true
+// should be defined by cmake... ?
+// #define DEBUG true
 
 // Include standard headers
 #include <stdio.h>

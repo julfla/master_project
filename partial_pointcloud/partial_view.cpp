@@ -165,7 +165,7 @@ void PartialViewComputer::init_MVP(float theta, float phi) {
 
 DefaultPointCloud PartialViewComputer::compute_view(float theta, float phi){
     if (!(glfwContextSet || windowsLessContextSet)) {
-        setWindowlessContext();
+        setGLFWContext();
     }
     init_MVP(theta,phi);
     draw();

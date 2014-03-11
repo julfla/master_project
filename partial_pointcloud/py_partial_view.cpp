@@ -3,6 +3,9 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/assign/std/vector.hpp> // for 'operator+=() on vectors'
 
+// see this post : http://eigen.tuxfamily.org/dox-devel/group__TopicUnalignedArrayAssert.html
+#define EIGEN_DONT_ALIGN_STATICALLY true
+
 #include "partial_view.h"
 #include "pointcloud_serialization.hpp"
 #include <boost/archive/text_oarchive.hpp>

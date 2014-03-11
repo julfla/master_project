@@ -16,7 +16,8 @@ template<typename PointT, class Archive>
 template<typename PointT, class Archive>
     void save(Archive & ar, const pcl::PointCloud<PointT> & cloud, unsigned int version)
     {
-      ar << cloud.size();
+      int size = cloud.size();
+      ar << size;
       for (int i = 0; i < size; ++i)
       {
         ar << cloud.points[i];
