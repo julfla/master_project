@@ -41,7 +41,6 @@ int main(int argc, char **argv) {
     string input_path, output_path;
     output_path = "";
 
-
     // Declare the supported options.
     po::options_description desc("Allowed options");
     desc.add_options()
@@ -83,7 +82,14 @@ int main(int argc, char **argv) {
 
     bool view_image = vm["view-image"].as<bool>();
 
-    PartialViewComputer comp(input_path);
+    PartialViewComputer * comp;
+    try {
+        comp = new PartialViewComputer(input_path);
+    }
+    catch (exception& e) {
+        cerr << e.what() << endl;
+        return 1;
+    }
 
     if(vm["several"].as<bool>()) {
         for(int i = 0; i < SQRT_NUMBER_VIEWS; ++i)
@@ -103,8 +109,8 @@ int main(int argc, char **argv) {
                 //check if file already exist
                 if( !(ifstream(current_output.c_str()) && vm.count("no-clobber")) ) {
                     if (view_image)
-                        comp.displayMesh(theta,phi);
-                    pcl::PointCloud<pcl::PointXYZ> cloud = comp.compute_view(theta, phi);
+                        comp->displayMesh(theta,phi);
+                    pcl::PointCloud<pcl::PointXYZ> cloud = comp->compute_view(theta, phi);
                     if(!process_cloud(current_output,vm["output-format"].as<string>(), &cloud)) {
                         cout << "Output format unknown or invalid." << endl;
                         cout << desc << endl;
@@ -118,11 +124,13 @@ int main(int argc, char **argv) {
         float theta = vm["theta"].as<float>();
         float phi = vm["phi"].as<float>();
         if (view_image)
-            comp.displayMesh(theta,phi);
-        pcl::PointCloud<pcl::PointXYZ> cloud = comp.compute_view(theta, phi);
+            comp->displayMesh(theta,phi);
+        pcl::PointCloud<pcl::PointXYZ> cloud = comp->compute_view(theta, phi);
         if(!process_cloud(output_path,vm["output-format"].as<string>(), &cloud))
             return -1;
     }
+
+    delete comp;
 
     return 0;
 }
