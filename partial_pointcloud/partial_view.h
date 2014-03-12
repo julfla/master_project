@@ -61,6 +61,10 @@ private:
 
     bool presets();
 
+    glm::mat4 ViewMatrix(float theta, float phi);
+
+    glm::mat4 ProjectionMatrix(float theta, float phi);
+
     void init_MVP(float theta, float phi);
 
     void draw();
@@ -81,7 +85,7 @@ private:
     float max_relative_position[3]; // used to remove the border effect..
     float min_relative_position[3]; //
     std::vector<glm::vec3> g_vertex_buffer_data; // vertice of the model
-    std::vector<glm::vec3> outter_box; // a cubic box containing all the model
+    double containing_diameter;
     glm::vec3 centroid; //centroid of the model
     float scale_factor;
     int width, height;

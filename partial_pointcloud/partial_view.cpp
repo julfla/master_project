@@ -1,4 +1,5 @@
 #include "partial_view.h"
+#include <glm/gtx/norm.hpp> // prived glm::length2 for euclidian norm of glm::vec
 
 #ifdef DEBUG
 #define DEBUG_MSG(str) do { cout << str << std::endl; } while( false )
@@ -16,7 +17,7 @@ void PartialViewComputer::loadMesh(std::string path) {
         TrianglePolygon tri(line);
         for(int i = 0; i < 3; ++i) {
             glm::vec3 vertex;
-            vertex.x = (float) tri.getPoints()[i].getX() * 0.5;
+            vertex.x = (float) tri.getPoints()[i].getX();
             vertex.y = (float) tri.getPoints()[i].getY();
             vertex.z = (float) tri.getPoints()[i].getZ();
             g_vertex_buffer_data.push_back(vertex);
@@ -61,6 +62,7 @@ void PartialViewComputer::loadMesh(std::string path) {
     min_relative_position[1] = y_min * scale_factor;
     min_relative_position[2] = z_min * scale_factor;
 
+    std::vector<glm::vec3> outter_box; // a cubic box containing all the model
     outter_box.push_back(glm::vec3(x_max - x_mean, y_max - y_mean, z_max - z_mean));
     outter_box.push_back(glm::vec3(x_max - x_mean, y_max - y_mean, z_min - z_mean));
     outter_box.push_back(glm::vec3(x_max - x_mean, y_min - y_mean, z_max - z_mean));
@@ -70,10 +72,18 @@ void PartialViewComputer::loadMesh(std::string path) {
     outter_box.push_back(glm::vec3(x_min - x_mean, y_min - y_mean, z_max - z_mean));
     outter_box.push_back(glm::vec3(x_min - x_mean, y_min - y_mean, z_min - z_mean));
 
+    // compute diameter of containing sphere
+    containing_diameter = 0;
+    for (std::vector<glm::vec3>::iterator it = outter_box.begin(); it < outter_box.end(); ++it) {
+        if( containing_diameter < glm::length2(*it) )
+            containing_diameter = glm::length(*it);
+    }
+
     DEBUG_MSG( x_min << " < x < " << x_max << " average : " << x_mean );
     DEBUG_MSG( y_min << " < y < " << y_max << " average : " << y_mean );
     DEBUG_MSG( z_min << " < z < " << z_max << " average : " << z_mean );
     DEBUG_MSG( "Scale factor : " << scale_factor << " inv: " << 1.0f / scale_factor );
+    DEBUG_MSG( "diameter: " << containing_diameter );
 }
 
 bool PartialViewComputer::presets() {
@@ -118,40 +128,35 @@ bool PartialViewComputer::presets() {
     return true;
 }
 
-void PartialViewComputer::init_MVP(float theta, float phi) {
-
-    // Model matrix : translate model centroid to origin and scale it
-    glm::mat4 Model   = glm::translate(- centroid);
-
-    // Camera matrix
-
+glm::mat4 PartialViewComputer::ViewMatrix(float theta, float phi) {
     //coodinate on a 1 radius sphere
     glm::vec3 cam_pos(std::sin(theta) * std::cos(phi), std::sin(theta) * std::sin(phi), std::cos(theta));
-    //to find the min distance to see the whole model, we compute the distance to see to containing cube
-    float view_dist = 0.0f;
-    for(std::vector<glm::vec3>::iterator it = outter_box.begin(); it < outter_box.end(); ++it) {
-        float axial_proj = glm::dot(cam_pos, *it);
-        float current_radial_dist = std::sqrt( glm::dot(*it,*it) - axial_proj * axial_proj);
-        float current_view_dist = std::abs( current_radial_dist / std::tan(M_PI * fov / 180.0f) - axial_proj );
-        if( current_view_dist > view_dist)
-            view_dist = current_view_dist;
-    }
-    //scale the view position
-    cam_pos.x *= 1.5 * view_dist;
-    cam_pos.y *= 1.5 * view_dist;
-    cam_pos.z *= 1.5 * view_dist;
 
     DEBUG_MSG( "Cam Info :" << cam_pos.x << " " << cam_pos.y << " " << cam_pos.z );
-
-    glm::mat4 View = glm::lookAt(
+    return glm::lookAt(
                 cam_pos, // Coordinates of the camera, in World Space
                 glm::vec3(0,0,0), // and looks at there in world space
                 glm::vec3(0,1,0) // Head is up (set to 0,-1,0 to look upside-down)
                 );
+}
 
-    // Projection matrix : FOV Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-    glm::mat4 Projection = glm::perspective(fov, 4.0f / 3.0f, 0.1f * view_dist, 10.0f * view_dist);
+glm::mat4 PartialViewComputer::ProjectionMatrix(float theta, float phi) {
+    double aspect = width / height;
+    GLdouble horizontal = containing_diameter;
+    GLdouble vertical = containing_diameter;
+    if ( aspect < 1.0 ) { // window taller than wide
+        vertical /= aspect;
+    } else {
+        horizontal *= aspect;
+    }
+    return glm::ortho<float>(- horizontal, horizontal, - vertical, vertical, - containing_diameter, containing_diameter);
+}
 
+void PartialViewComputer::init_MVP(float theta, float phi) {
+
+    glm::mat4 Model   = glm::translate(- centroid);
+    glm::mat4 View    = ViewMatrix(theta, phi);
+    glm::mat4 Projection = ProjectionMatrix(theta, phi);
     // Our ModelViewProjection : multiplication of our 3 matrices
     MVP = Projection * View * Model;
 
@@ -165,7 +170,7 @@ void PartialViewComputer::init_MVP(float theta, float phi) {
 
 DefaultPointCloud PartialViewComputer::compute_view(float theta, float phi){
     if (!(glfwContextSet || windowsLessContextSet)) {
-        setWindowlessContext();
+        setGLFWContext();
     }
     init_MVP(theta,phi);
     draw();
@@ -281,11 +286,6 @@ void PartialViewComputer::build_cloud_from_pixelbuffer(DefaultPointCloud * cloud
         ++it;
         float z = *it;
 
-        //DEBUG_MSG( x << " " << y << " " << z);
-        /*DEBUG_MSG( min_relative_position[0] << " < " << x << " < " << max_relative_position[0] );
-        DEBUG_MSG( min_relative_position[1] << " < " << y << " < " << max_relative_position[1] );
-        DEBUG_MSG( min_relative_position[2] << " < " << z << " < " << max_relative_position[2] );*/
-
         bool isBackground = (x == 1.0f && y == 1.0f && z == 1.0f);
         if(!isBackground)
             //this is to fix, due to some border effect, some pix do not represent the position
@@ -296,7 +296,6 @@ void PartialViewComputer::build_cloud_from_pixelbuffer(DefaultPointCloud * cloud
                     )*/
             cloud->push_back(pcl::PointXYZ(x,y,z));
     }
-
 }
 
 bool PartialViewComputer::setGLFWContext(const char* window_name) {
