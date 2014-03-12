@@ -37,6 +37,6 @@ class TestShapeDistribution(TestCase):
         """
         Tests that we can use the data as a numpy array.
         """
-        data = self.distribution.data.data
-        self.assertTrue( isinstance(data, numpy.ndarray) )
-        self.assertEqual( data.size, 480 )
+        array = self.distribution._cpp_object.as_numpy_array
+        self.assertTrue( isinstance(array, numpy.ndarray) )
+        self.assertEqual( array.size, 480 )

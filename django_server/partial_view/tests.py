@@ -15,7 +15,6 @@ class TestPartialView(TestCase):
         test_model.mesh = file("sketchup_models/fixtures/mesh_can.tri").read()
         test_model.save()
 
-    # @skip("Bug Eigen3")
     def test_write_and_read(self):
         """
         Tests writing then reading of a PointCloudStorage and ShapeDistribution.
@@ -47,11 +46,9 @@ class TestPartialView(TestCase):
         self.assertEqual( PartialView.objects.count(), 1 )
 
         # If the set model, theta, phi is the same the view should not save
-        view2 = PartialView()
-        view2.theta = 0.0
-        view2.phi = 1.345
-        view2.model = SketchupModel.find_google_id("test1")
+        view.pk = None # force the instance to be saved as a new one
+        view.save()
         self.assertEqual( PartialView.objects.count(), 1 )
-        view2.theta = 1.0
-        view2.save()
+        view.theta = 1.0
+        view.save()
         self.assertEqual( PartialView.objects.count(), 2 )

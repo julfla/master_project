@@ -23,10 +23,10 @@ class DistributionField(with_metaclass(models.SubfieldBase, models.Field)):
             return value
 
 class ShapeDistribution(models.Model):
-    data = DistributionField()
+    _cpp_object = DistributionField()
 
     @staticmethod
     def compute(cloud):
         temp = ShapeDistribution()
-        temp.data = Distribution( cloud )
+        temp._cpp_object = Distribution( cloud )
         return temp

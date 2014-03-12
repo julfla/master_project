@@ -28,6 +28,8 @@ class PointCloudField(with_metaclass(models.SubfieldBase, models.Field)):
             return value
 
 class PartialView(models.Model):
+    view_computer = PartialViewComputer()
+
 	# TODO : should not save if model, theta, or phi blank
     model = models.ForeignKey(SketchupModel)
     theta = models.FloatField()
@@ -43,17 +45,14 @@ class PartialView(models.Model):
         with tempfile.NamedTemporaryFile() as f :
             f.write( model.mesh.read() )
             f.flush()
-            comp = PartialViewComputer()
-            comp.load_mesh(f.name)
-
-        # comp.display_mesh(theta, phi)
+            PartialView.view_computer.load_mesh(f.name)
 
         # Instanciate the model and return
         view = PartialView()
         view.model = model
         view.theta = theta
         view.phi = phi
-        view.pointcloud = comp.compute_view(theta, phi)
+        view.pointcloud = PartialView.view_computer.compute_view(theta, phi)
         view.distribution = ShapeDistribution.compute( view.pointcloud )
         return view
 
@@ -62,7 +61,6 @@ class PartialView(models.Model):
         with tempfile.NamedTemporaryFile() as f :
             f.write( model.mesh.read() )
             f.flush()
-            comp = PartialViewComputer()
-            comp.load_mesh(f.name)
-        comp.display_mesh(theta, phi)
+            PartialView.view_computer.load_mesh(f.name)
+        PartialView.view_computer.display_mesh(theta, phi)
        
