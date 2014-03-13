@@ -69,9 +69,11 @@ private:
 
     void draw();
 
+    void pixel_vector_to_pointcloud(std::vector<float> * data, DefaultPointCloud * cloud);
+
     void build_cloud_from_framebuffer(DefaultPointCloud * cloud);
 
-    void build_cloud_from_pixelbuffer(DefaultPointCloud * cloud);
+    // void build_cloud_from_pixelbuffer(DefaultPointCloud * cloud);
 
     void free_gpu();
 

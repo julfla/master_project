@@ -171,12 +171,13 @@ void PartialViewComputer::init_MVP(float theta, float phi) {
 DefaultPointCloud PartialViewComputer::compute_view(float theta, float phi){
     if (!(glfwContextSet || windowsLessContextSet)) {
         setGLFWContext();
+        //setWindowlessContext(); //buggy
     }
     init_MVP(theta,phi);
     draw();
     DefaultPointCloud cloud;
-    //build_cloud_from_framebuffer(&cloud);
-    build_cloud_from_pixelbuffer(&cloud);
+    build_cloud_from_framebuffer(&cloud);
+    //build_cloud_from_pixelbuffer(&cloud);
 
     DEBUG_MSG( width * height << " pixels." );
     DEBUG_MSG( cloud.size() << " points in cloud." );
@@ -226,37 +227,16 @@ void PartialViewComputer::displayMesh(float theta, float phi) {
            glfwGetWindowParam( GLFW_OPENED ) );
 }
 
-void PartialViewComputer::build_cloud_from_framebuffer(DefaultPointCloud * cloud) {
+void PartialViewComputer::pixel_vector_to_pointcloud(std::vector<float> * data, DefaultPointCloud * cloud) {
+    assert( data->size() % 3 == 0); //data should be successive x,y,z values
+    cloud->clear(); //empty the cloud
 
-    //Somewhere at initialization
-    GLuint fbo;
-    glGenFramebuffers(1,&fbo);
-    //glGenRenderbuffers(1,&render_buf);
-    //glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB, width, height);
-
-    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER,fbo);
-    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, vertexbuffer);
-
-    //Before drawing
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER,fbo);
-
-    draw();
-
-    //after drawing
-    std::vector<float> data(width*height*3);
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
-    glReadPixels(0,0,width,height,GL_RGB,GL_FLOAT,&data[0]);
-    for(std::vector<float>::iterator it = data.begin(); it < data.end(); ++it) {
+    for(std::vector<float>::iterator it = data->begin(); it < data->end(); ++it) {
         float x = *it;
         ++it;
         float y = *it;
         ++it;
         float z = *it;
-
-        //DEBUG_MSG( x << " " << y << " " << z);
-        /*DEBUG_MSG( min_relative_position[0] << " < " << x << " < " << max_relative_position[0] );
-    DEBUG_MSG( min_relative_position[1] << " < " << y << " < " << max_relative_position[1] );
-    DEBUG_MSG( min_relative_position[2] << " < " << z << " < " << max_relative_position[2] );*/
 
         bool isBackground = (x == 1.0f && y == 1.0f && z == 1.0f);
         if(!isBackground)
@@ -268,35 +248,40 @@ void PartialViewComputer::build_cloud_from_framebuffer(DefaultPointCloud * cloud
                 )*/
             cloud->push_back(pcl::PointXYZ(x,y,z));
     }
+}
+
+void PartialViewComputer::build_cloud_from_framebuffer(DefaultPointCloud * cloud) {
+
+    GLuint fbo;
+    glGenFramebuffers(1,&fbo);
+
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, vertexbuffer);
+
+    //Before drawing
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER,fbo);
+
+    draw();
+
+    //after drawing
+    std::vector<float> data(width*height*3);
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    glReadPixels(0,0,width,height,GL_RGB,GL_FLOAT,&data[0]);
+
+    pixel_vector_to_pointcloud( &data, cloud);
+
     // Return to onscreen rendering:
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER,0);
     //At deinit:
     glDeleteFramebuffers(1,&fbo);
-    //glDeleteRenderbuffers(1,&render_buf);
 }
 
+/*
 void PartialViewComputer::build_cloud_from_pixelbuffer(DefaultPointCloud * cloud) {
     std::vector<float> data(width*height*3);
     glReadBuffer(GL_BACK);
     glReadPixels(0,0,width,height,GL_RGB,GL_FLOAT,&data[0]);
-    for(std::vector<float>::iterator it = data.begin(); it < data.end(); ++it) {
-        float x = *it;
-        ++it;
-        float y = *it;
-        ++it;
-        float z = *it;
-
-        bool isBackground = (x == 1.0f && y == 1.0f && z == 1.0f);
-        if(!isBackground)
-            //this is to fix, due to some border effect, some pix do not represent the position
-            //because the background is white they are augmented. Bug only with GLFW ??*
-            /*if ( min_relative_position[0] <= x && x <= max_relative_position[0]
-                    && min_relative_position[1] <= y && y <= max_relative_position[1]
-                    && min_relative_position[2] <= z && z <= max_relative_position[2]
-                    )*/
-            cloud->push_back(pcl::PointXYZ(x,y,z));
-    }
-}
+    pixel_vector_to_pointcloud( &data, cloud);
+}*/
 
 bool PartialViewComputer::setGLFWContext(const char* window_name) {
 
@@ -335,9 +320,8 @@ bool PartialViewComputer::setGLFWContext(const char* window_name) {
 
 bool PartialViewComputer::setWindowlessContext() {
 
-#ifndef DEBUG
+    // the results is different than the one expected. Seems to be some missing points in the resulting cloud.
     std::cerr << "The function setWindowlessContext is buggy please don't use it." << std::endl;
-#endif
 
     if(windowsLessContextSet)
         return true;
