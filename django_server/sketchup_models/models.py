@@ -5,9 +5,7 @@ from django_mongodb_engine.fields import GridFSField
 from gridfs import GridFS
 
 from bs4 import BeautifulSoup as Soup
-import urllib2, tempfile, os
-
-# see there : https://django-mongodb-engine.readthedocs.org/en/latest/tutorial.html
+import urllib2, tempfile, os, httplib, json
 
 class CategoryField(ListField):
     def formfield(self, **kwargs):
@@ -45,28 +43,26 @@ class SketchupModel(models.Model):
     @staticmethod
     def _scrap_model_page(google_id):
 
-        def absolute_path(relative_path):
-            return "http://sketchup.google.com{0}".format(relative_path)
-
-        model_url = absolute_path("/3dwarehouse/details?mid={}&prevstart=0").format(google_id)
+        model_url = ("https://3dwarehouse.sketchup.com/3dw/GetEntity?id={}".
+        format(google_id))
         try:
             model = SketchupModel.objects.get(google_id=google_id)
         except SketchupModel.DoesNotExist:
             model = SketchupModel()
         model.google_id = google_id
-        soup = Soup( urllib2.urlopen(model_url) )
-        model.title = soup.select('#bylinetitle')[0].string
-        model.text = soup.select('span#descriptionText')[0].string
-        for tag in soup.select('a.fl'):
-            if not model.tags.count(tag.string):
-                model.tags.append(tag.string)    
-        link_image = absolute_path(soup.select('#previewImage')[0]['src'] )
-        for dowload_choice in soup.select('#downloadChoices tr'):
-            if '.skp' in dowload_choice.select('td')[0].string:
-                link_skp = absolute_path( 
-                    dowload_choice.select('td')[1].select('a')[0]['href'] )
-                break
+        json_data = json.load(urllib2.urlopen(model_url))     
+        model.title = json_data['title']
+        model.text = json_data['description']
+        model.tags = json_data['tags']
+        # retreive the image
+        link_image = json_data['binaries']['lt']['url']
         model.image = urllib2.urlopen(link_image).read()
+        binary_names = json_data['binaryNames']
+        for binary_name in binary_names:
+            binary = json_data['binaries'][binary_name]
+            if binary['types'] == 'SKP':
+                link_skp = binary['url']             
+
         # the mesh in store in temp and converted into a .tri file
         with tempfile.NamedTemporaryFile() as tmp_file:
             tmp_file.write( urllib2.urlopen(link_skp).read() )
@@ -75,15 +71,20 @@ class SketchupModel(models.Model):
             os.system(cvt_cmd.format(tmp_file.name) )
             tmp_file.seek(0)
             model.mesh = tmp_file.read()
+
         model.save()
         return model
 
     @staticmethod
     def _scrap_search_engine(keywords):
-        search_url = 'http://sketchup.google.com/3dwarehouse/search?q={0}&styp=m&scoring=t'.format(keywords)
-        soup = Soup( urllib2.urlopen(search_url) )
+        search_url = (
+            "https://3dwarehouse.sketchup.com/"
+            "3dw/Search?startRow=1&endRow=16&calculateTotal=true"
+            "&q={}&class=entity&Lk=true".format(keywords)
+            )
+        json_data = json.load( urllib2.urlopen( search_url ) )
         model_ids = []
-        for div in soup.select('.searchresult'):
-            model_ids.append(div['id'])
+        for entry in json_data['entries']:
+            model_ids.append(entry['id'])
         return model_ids
 
