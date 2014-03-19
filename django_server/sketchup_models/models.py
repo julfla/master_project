@@ -2,8 +2,7 @@ from django.db import models
 
 from djangotoolbox.fields import ListField
 from django_mongodb_engine.fields import GridFSField
-from gridfs import GridFS
-
+from gridfs import GridFS, GridOut
 from bs4 import BeautifulSoup as Soup
 import urllib2, tempfile, os, httplib, json
 
@@ -17,11 +16,21 @@ class SketchupModel(models.Model):
     text = models.TextField()
     tags = CategoryField()
     image = GridFSField()
-    mesh = GridFSField()
+    _mesh = GridFSField()
     # similat_objects
 
+    @property
+    def mesh(self):
+        if isinstance( self._mesh, GridOut):
+            return self._mesh.read()
+        else:
+            return self._mesh
+    @mesh.setter
+    def mesh(self, value):
+        self._mesh = value
+
     def __str__(self):
-        return self.google_id    
+        return self.google_id
 
     @staticmethod
     def find_google_id(google_id):
@@ -78,7 +87,6 @@ class SketchupModel(models.Model):
     @staticmethod
     def _scrap_search_engine(keywords):
         search_url = (
-           #q&type=SKETCHUP_MODEL&source&title=fork&description&sortBy=title%20ASC&createUserDisplayName&createUserId&modifyUserDisplayName&class=entity&Lk=true
             "https://3dwarehouse.sketchup.com/"
             "3dw/Search?startRow=1&endRow=16&calculateTotal=true"
             "&q&type=SKETCHUP_MODEL&class=entity&Lk=true&title={}".format(keywords)
