@@ -38,6 +38,6 @@ class SketchupModel(models.Model):
         try:
             return SketchupModel.objects.get(google_id=google_id)
         except SketchupModel.DoesNotExist:
-            WarehouseScrapper.scrap_one_model(google_id)
+            warehouse_scrapper.models.WarehouseScrapper.scrap_one_model(google_id)
             return SketchupModel.objects.get(google_id=google_id)
 

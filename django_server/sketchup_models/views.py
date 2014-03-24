@@ -5,9 +5,15 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 from sketchup_models.models import SketchupModel
+from warehouse_scrapper.models import WarehouseScrapper
 
-def search_models(request, keywords):
-    models = SketchupModel.search_warehouse(keywords)   
+def index(request):
+    keywords = request.GET.get('keywords')
+    print keywords
+    if keywords == None:
+        models = []
+    else:
+        models = WarehouseScrapper.search_for_models(keywords)
     return render_to_response('default.html', {'models': models}, 
         context_instance=RequestContext(request))
 

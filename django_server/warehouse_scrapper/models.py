@@ -1,6 +1,6 @@
 from gridfs import GridFS, GridOut
 from bs4 import BeautifulSoup as Soup
-import urllib2, tempfile, os, httplib, json
+import urllib2, tempfile, os, json, re
 
 from sketchup_models.models import SketchupModel
 
@@ -10,7 +10,7 @@ class WarehouseScrapper():
     def search_for_models(keywords):
         models = []
         if keywords:
-            model_ids = scrap_one_model(keywords)
+            model_ids = WarehouseScrapper._scrap_search_engine(keywords)
             for model_id in model_ids:
                 models.append(SketchupModel.find_google_id(model_id))
         return models 
@@ -19,10 +19,7 @@ class WarehouseScrapper():
     def scrap_one_model(google_id):
         model_url = ("https://3dwarehouse.sketchup.com/3dw/GetEntity?id={}".
         format(google_id))
-        try:
-            model = SketchupModel.objects.get(google_id=google_id)
-        except SketchupModel.DoesNotExist:
-            model = SketchupModel()
+        model = SketchupModel()
         model.google_id = google_id
         json_data = json.load(urllib2.urlopen(model_url))     
         model.title = json_data['title']
@@ -34,7 +31,7 @@ class WarehouseScrapper():
         binary_names = json_data['binaryNames']
         for binary_name in binary_names:
             binary = json_data['binaries'][binary_name]
-            if binary['types'] == 'SKP':
+            if 'types' in binary and binary['types'] == 'SKP':
                 link_skp = binary['url']             
         if not link_skp == None:
         	WarehouseScrapper._download_skp_and_convert_to_tri(model, link_skp)
@@ -55,12 +52,14 @@ class WarehouseScrapper():
 
     @staticmethod
     def _scrap_search_engine(keywords):
+    	keywords = re.sub(' ', '%2B', keywords)
         search_url = (
             "https://3dwarehouse.sketchup.com/"
             "3dw/Search?startRow=1&endRow=16&calculateTotal=true"
             "&q&type=SKETCHUP_MODEL&class=entity&Lk=true&title={}"
             .format(keywords)
             )
+        print search_url
         json_data = json.load( urllib2.urlopen( search_url ) )
         model_ids = []
         for entry in json_data['entries']:

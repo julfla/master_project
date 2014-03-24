@@ -2,11 +2,11 @@
 
 -block content
   .page-header.center-block
-    %form.form-inline
+    %form.form-inline{'method':'GET', 'action':'index.html'}
       .form-group
         %label.sr-only Search for models
-        %input#keywords.form-control{'placeholder': "Keywords..."}
-      %button.btn.btn-default{'type':"submit"} Search
+        %input#keywords.form-control{'name': 'keywords', 'placeholder': "Keywords..."}
+      %button.btn.btn-default{'type':"submit", 'value':"Submit"} Search
   .results
     -for model in models
       -include 'model_short_view.html' with model=model
