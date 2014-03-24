@@ -16,6 +16,7 @@ class SketchupModel(models.Model):
     text = models.TextField()
     tags = CategoryField()
     image = GridFSField()
+    url_mesh = models.TextField()
     _mesh = GridFSField()
     # similat_objects
 
@@ -23,6 +24,10 @@ class SketchupModel(models.Model):
     def mesh(self):
         if isinstance( self._mesh, GridOut):
             return self._mesh.read()
+        elif not self._mesh == 0:
+            warehouse_scrapper.models._download_skp_and_convert_to_tri(self, model.url_mesh)
+            self.save()
+            return self.mesh
         else:
             return self._mesh
 

@@ -28,7 +28,7 @@ class SimpleTest(TestCase):
         Test that the search engine is used correctly and 
         that we retreive a valid set of model
         """
-        model_ids = WarehouseScrapper._scrap_search_engine("mug")
-        self.assertEqual( len(model_ids), 16)
+        models = WarehouseScrapper.search_for_models("mug")
+        self.assertEqual( len(models), 16)
         # get the right number of reference
         # all of them have a matching text/title/tags ?

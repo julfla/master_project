@@ -32,9 +32,8 @@ class WarehouseScrapper():
         for binary_name in binary_names:
             binary = json_data['binaries'][binary_name]
             if 'types' in binary and binary['types'] == 'SKP':
-                link_skp = binary['url']             
-        if not link_skp == None:
-        	WarehouseScrapper._download_skp_and_convert_to_tri(model, link_skp)
+                model.url_ink_skp = binary['url']
+                break
         model.image = urllib2.urlopen(link_image).read()
         model.save()
         return model
