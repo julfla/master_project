@@ -36,8 +36,12 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions', # some need stuff added into manage.py
+    'singleton_models',
     'common',
+    'identifier',
     'sketchup_models',
+    'warehouse_scrapper',
     'shape_distribution',
     'partial_view',
     'bootstrap3',

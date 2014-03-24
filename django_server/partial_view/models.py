@@ -12,7 +12,7 @@ import tempfile
 class PointCloudField(with_metaclass(models.SubfieldBase, models.Field)):
     # Recreate python object from db
     def to_python(self, value):
-    	if isinstance(value, PointCloud):
+        if isinstance(value, PointCloud):
             return value
         else:
             temp = PointCloud()
@@ -30,7 +30,7 @@ class PointCloudField(with_metaclass(models.SubfieldBase, models.Field)):
 class PartialView(models.Model):
     view_computer = PartialViewComputer()
 
-	# TODO : should not save if model, theta, or phi blank
+    # TODO : should not save if model, theta, or phi blank
     model = models.ForeignKey(SketchupModel)
     theta = models.FloatField()
     phi = models.FloatField()
@@ -43,7 +43,7 @@ class PartialView(models.Model):
     @staticmethod
     def compute_view(model, theta, phi):
         with tempfile.NamedTemporaryFile() as f :
-            f.write( model.mesh.read() )
+            f.write( model.mesh )
             f.flush()
             PartialView.view_computer.load_mesh(f.name)
 
@@ -59,7 +59,7 @@ class PartialView(models.Model):
     @staticmethod
     def compute_all_views(model):
         with tempfile.NamedTemporaryFile() as f:
-            f.write( model.mesh.read() )
+            f.write( model.mesh )
             f.flush()
             PartialView.view_computer.load_mesh(f.name)
         
@@ -79,7 +79,7 @@ class PartialView(models.Model):
     @staticmethod
     def display_view(model, theta, phi):
         with tempfile.NamedTemporaryFile() as f :
-            f.write( model.mesh.read() )
+            f.write( model.mesh )
             f.flush()
             PartialView.view_computer.load_mesh(f.name)
         PartialView.view_computer.display_mesh(theta, phi)

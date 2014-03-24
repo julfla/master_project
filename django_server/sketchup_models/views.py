@@ -23,7 +23,7 @@ def model_mesh(request, google_id):
         model = SketchupModel.find_google_id(google_id)
         if model.mesh == None:
             return HttpResponseNotFound()
-        response = HttpResponse(model.mesh.read(), mimetype="text/plain")
+        response = HttpResponse(model.mesh, mimetype="text/plain")
         response['Content-Disposition'] = 'attachment; filename= %s.tri' % model
         return response
     except SketchupModel.DoesNotExist, Sketchup.AttributeError:
