@@ -28,5 +28,5 @@ class ShapeDistribution(models.Model):
     @staticmethod
     def compute(cloud):
         temp = ShapeDistribution()
-        temp._cpp_object = Distribution( cloud )
+        temp._cpp_object = Distribution( cloud._cpp_pointcloud )
         return temp

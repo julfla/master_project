@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'singleton_models',
     'common',
     'identifier',
+    'pointcloud',
     'sketchup_models',
     'warehouse_scrapper',
     'shape_distribution',

@@ -5,27 +5,10 @@ from django.utils.six import with_metaclass
 
 from sketchup_models.models import SketchupModel
 from shape_distribution.models import ShapeDistribution
-from common.libs.libpypartialview import PointCloud, PartialViewComputer
+from pointcloud.models import PointCloud
+from common.libs.libpypartialview import PartialViewComputer
 # from common.libs.libpydescriptors import Distribution
 import tempfile
-
-class PointCloudField(with_metaclass(models.SubfieldBase, models.Field)):
-    # Recreate python object from db
-    def to_python(self, value):
-        if isinstance(value, PointCloud):
-            return value
-        else:
-            temp = PointCloud()
-            if value is not None and len(value) > 0: 
-                temp.serialized_data = value.__str__()
-            return temp
-
-    # Serialize python object to be stored in db
-    def get_prep_value(self, value):
-        if isinstance(value, PointCloud):
-            return value.serialized_data
-        else:
-            return value
 
 class PartialView(models.Model):
     view_computer = PartialViewComputer()
@@ -34,7 +17,7 @@ class PartialView(models.Model):
     model = models.ForeignKey(SketchupModel)
     theta = models.FloatField()
     phi = models.FloatField()
-    pointcloud = PointCloudField()
+    pointcloud = EmbeddedModelField(PointCloud, blank=True, null=True)
     distribution = EmbeddedModelField(ShapeDistribution, blank=True, null=True)
 
     class Meta:
@@ -52,7 +35,9 @@ class PartialView(models.Model):
         view.model = model
         view.theta = theta
         view.phi = phi
-        view.pointcloud = PartialView.view_computer.compute_view(theta, phi)
+        view.pointcloud = PointCloud()
+        cpp_cloud = PartialView.view_computer.compute_view(theta, phi)
+        view.pointcloud._cpp_pointcloud = cpp_cloud
         view.distribution = ShapeDistribution.compute( view.pointcloud )
         return view
 

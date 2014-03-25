@@ -32,8 +32,9 @@ class WarehouseScrapper():
         for binary_name in binary_names:
             binary = json_data['binaries'][binary_name]
             if 'types' in binary and binary['types'] == 'SKP':
-                model.url_ink_skp = binary['url']
+                link_skp = binary['url']
                 break
+        model.url_mesh = link_skp
         model.image = urllib2.urlopen(link_image).read()
         model.save()
         return model
@@ -58,7 +59,7 @@ class WarehouseScrapper():
             "&q&type=SKETCHUP_MODEL&class=entity&Lk=true&title={}"
             .format(keywords)
             )
-        print search_url
+        # print search_url
         json_data = json.load( urllib2.urlopen( search_url ) )
         model_ids = []
         for entry in json_data['entries']:
