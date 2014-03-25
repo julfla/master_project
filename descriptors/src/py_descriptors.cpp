@@ -1,22 +1,65 @@
+#include <vector>
+
+#define NPY_NO_DEPRECATED_API 8
+
 #include <boost/python.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/python/numeric.hpp>
+#include <numpy/ndarrayobject.h>
 
 #include "shape_distribution.h"
 
-inline Distribution load_archive_char(char* path) { return Distribution::load_archive(path); }
+
+namespace bn = boost::python::numeric;
+
+boost::python::object vectorToNumpyArray(std::vector<double> const& vec) { 
+    npy_intp size = vec.size();
+    double * data = size ? const_cast<double *>(&vec[0]) : static_cast<double *>(NULL);
+    PyObject * pyObj = PyArray_SimpleNewFromData(1, &size, NPY_DOUBLE, data);
+    boost::python::handle<> handle ( pyObj );
+    boost::python::numeric::array arr(handle);
+    return arr.copy();
+}
+
+std::string serialize( Distribution & self ) {
+    std::ostringstream oss;
+    boost::archive::text_oarchive archive( oss );
+    archive << self;
+    return oss.str();
+}
+
+void unserialize( Distribution & self, std::string data) {
+    std::istringstream iss( data );
+    boost::archive::text_iarchive archive( iss );
+    archive >> self;
+}
+
+boost::python::object getNumpyArray(Distribution & self) { 
+    return vectorToNumpyArray( self.getDistribution() );
+}
+
+/*****************
+ Needs testing
+******************
+void setNumpyArray(Distribution & self, bn::array arr) {
+    std::vector<double> buff;
+    for (int i = 0; i < 10; ++i)
+        buff.push_back(i);
+    self.setDistribution(buff);
+}
+*/
 
 BOOST_PYTHON_MODULE(libpydescriptors)
 {
     using namespace boost::python;
 
-    typedef std::vector<double> vec_dbl;
+    Py_Initialize();
+    import_array();
+    numeric::array::set_module_and_type("numpy", "ndarray");
 
-    class_<vec_dbl>("ListDouble")
-           .def(vector_indexing_suite<vec_dbl>() );
-
-    class_<Distribution>("ShapeDistribution", no_init)
-            .add_property("data", &Distribution::getDistribution)
-            .def("load_archive", load_archive_char )
-            .staticmethod("load_archive")
-            .def("save_archive", (void (Distribution::*)(const char*) ) &Distribution::save_archive);
+    class_<Distribution>("Distribution")
+            .def( init<pcl::PointCloud<pcl::PointXYZ> * const >() )
+            .add_property( "serialized_data", &serialize, &unserialize )
+            .add_property( "as_numpy_array", &getNumpyArray);
 }

@@ -1,0 +1,12 @@
+.panel.panel-default{'id':"model={model.google_id}"}
+  -# %h1 ={model.google_id}
+  .panel-heading ={model.title}
+  .panel-body
+    .col-md-3
+      %img.img-thumbnail{'src': "/model/={model.google_id}/image/"}
+      %a{'href':"/model/={model.google_id}/mesh/"} Dowload Mesh
+    .col-md-3
+      %p.description ={model.text}
+      %p.tags Tags: 
+        - for tag in model.tags
+          ={tag},

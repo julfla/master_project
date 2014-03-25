@@ -1,0 +1,17 @@
+!!! 5
+{% load bootstrap3 %}
+
+
+%html{'lang':'en'}
+    %head
+        / Load Bootstrap CSS and JavaScript
+        -bootstrap_css
+        -bootstrap_javascript
+        %title
+            -block title
+                Research Project
+        %style
+            body {width: 90%; margin: auto;}
+    %body
+        #content
+            -block content

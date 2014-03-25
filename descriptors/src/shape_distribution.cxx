@@ -4,7 +4,7 @@
 #include <boost/program_options.hpp> //used to parse command line arguments
 
 #include "shape_distribution.h"
-#include "mesh.h"
+#include "mesh.hpp"
 
 
 namespace po = boost::program_options;

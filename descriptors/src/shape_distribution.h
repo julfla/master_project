@@ -14,7 +14,7 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 
-#include "mesh.h"
+#include "mesh.hpp"
 #include "histogram.h"
 
 #define _SAMPLE_LENGTH_ 100000
@@ -41,8 +41,12 @@ public:
 
     std::string to_csv();
 
-    std::vector<double> getDistribution() {
+    std::vector<double> const getDistribution() {
         return distribution;
+    }
+
+    void setDistribution(std::vector<double> distribution) {
+        this->distribution = distribution;
     }
 
     typedef double (* double_distance)(double, double);

@@ -1,8 +1,8 @@
 #ifndef PARTIAL_VIEW_HPP
 #define PARTIAL_VIEW_HPP
 
-//should be defined by cmake... ?
-//#define DEBUG true
+// should be defined by cmake... ?
+// #define DEBUG true
 
 // Include standard headers
 #include <stdio.h>
@@ -35,10 +35,11 @@
 #include <GL/gl.h>
 #include <GL/glx.h>
 
-#include <mesh.h>
+#include <mesh.hpp>
 #include "shader_helper.hpp"
 
-typedef pcl::PointCloud<pcl::PointXYZ> DefaultPointCloud;
+typedef pcl::PointXYZ DefaultPoint;
+typedef pcl::PointCloud<DefaultPoint> DefaultPointCloud;
 
 using namespace glm;
 
@@ -52,6 +53,9 @@ public:
 
     void displayMesh(float theta, float phi);
 
+    PartialViewComputer(int width = 800, int height = 600, float fov = 45.0f) :
+        width(width), height(height), fov(fov), windowsLessContextSet(false), glfwContextSet(false) {}
+
     PartialViewComputer(std::string tri_path, int width = 800, int height = 600, float fov = 45.0f) :
         width(width), height(height), fov(fov), windowsLessContextSet(false), glfwContextSet(false) {loadMesh(tri_path);}
 
@@ -61,13 +65,19 @@ private:
 
     bool presets();
 
+    glm::mat4 ViewMatrix(float theta, float phi);
+
+    glm::mat4 ProjectionMatrix(float theta, float phi);
+
     void init_MVP(float theta, float phi);
 
     void draw();
 
+    void pixel_vector_to_pointcloud(std::vector<float> * data, DefaultPointCloud * cloud);
+
     void build_cloud_from_framebuffer(DefaultPointCloud * cloud);
 
-    void build_cloud_from_pixelbuffer(DefaultPointCloud * cloud);
+    // void build_cloud_from_pixelbuffer(DefaultPointCloud * cloud);
 
     void free_gpu();
 
@@ -81,7 +91,7 @@ private:
     float max_relative_position[3]; // used to remove the border effect..
     float min_relative_position[3]; //
     std::vector<glm::vec3> g_vertex_buffer_data; // vertice of the model
-    std::vector<glm::vec3> outter_box; // a cubic box containing all the model
+    double containing_diameter;
     glm::vec3 centroid; //centroid of the model
     float scale_factor;
     int width, height;
