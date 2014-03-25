@@ -61,6 +61,7 @@ INSTALLED_APPS = (
     'warehouse_scrapper',
     'shape_distribution',
     'partial_view',
+    'system_evaluation',
 )
 
 MIDDLEWARE_CLASSES = (
