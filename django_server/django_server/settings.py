@@ -26,6 +26,21 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# See here : https://github.com/cyberj/django-ignoretests
+TEST_RUNNER="ignoretests.DjangoIgnoreTestSuiteRunner"
+
+IGNORE_TESTS = (
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django_extensions',
+    'singleton_models',
+    'bootstrap3',
+    )
+
 
 # Application definition
 
@@ -36,11 +51,17 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions', # some need stuff added into manage.py
+    'singleton_models',
+    'bootstrap3',
     'common',
+    'identifier',
+    'pointcloud',
     'sketchup_models',
+    'warehouse_scrapper',
     'shape_distribution',
     'partial_view',
-    'bootstrap3',
+    'system_evaluation',
 )
 
 MIDDLEWARE_CLASSES = (

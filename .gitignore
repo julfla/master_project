@@ -1,6 +1,7 @@
 # Ignore local build, bin files
 bin
 build
+tmp
 
 # Ignore pip virtual env
 env

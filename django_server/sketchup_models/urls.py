@@ -4,5 +4,5 @@ urlpatterns = patterns('',
     url(r'^(.+)/image/', 'sketchup_models.views.model_image'),
     url(r'^(.+)/mesh/', 'sketchup_models.views.model_mesh'),
     url(r'^scrap/(.+)/', 'sketchup_models.views.scrap_model'),
-    url(r'^(.+)/', 'sketchup_models.views.search_models')
+    url(r'^index.html', 'sketchup_models.views.index')
 )

@@ -5,9 +5,15 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 from sketchup_models.models import SketchupModel
+from warehouse_scrapper.models import WarehouseScrapper
 
-def search_models(request, keywords):
-    models = SketchupModel.search_warehouse(keywords)   
+def index(request):
+    keywords = request.GET.get('keywords')
+    print keywords
+    if keywords == None:
+        models = []
+    else:
+        models = WarehouseScrapper.search_for_models(keywords)
     return render_to_response('default.html', {'models': models}, 
         context_instance=RequestContext(request))
 
@@ -21,10 +27,12 @@ def model_image(request, google_id):
 def model_mesh(request, google_id):
     try:
         model = SketchupModel.find_google_id(google_id)
-        response = HttpResponse(model.mesh.read(), mimetype="text/plain")
+        if model.mesh == None:
+            return HttpResponseNotFound()
+        response = HttpResponse(model.mesh, mimetype="text/plain")
         response['Content-Disposition'] = 'attachment; filename= %s.tri' % model
         return response
-    except SketchupModel.DoesNotExist:
+    except SketchupModel.DoesNotExist, Sketchup.AttributeError:
         return HttpResponseNotFound()
 
 def scrap_model(request, google_id):

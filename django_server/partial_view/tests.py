@@ -42,6 +42,7 @@ class TestPartialView(TestCase):
         view.theta = 0.0
         view.phi = 1.345
         view.model = SketchupModel.find_google_id("test1")
+        self.assertEqual( PartialView.objects.count(), 0 )
         view.save()
         self.assertEqual( PartialView.objects.count(), 1 )
 

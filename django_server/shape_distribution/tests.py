@@ -6,8 +6,6 @@ from shape_distribution.models import ShapeDistribution
 from common.libs.libpydescriptors import Distribution
 import numpy
 
-from unittest import skip
-
 class TestShapeDistribution(TestCase):
     def setUp(self):
 
@@ -24,7 +22,6 @@ class TestShapeDistribution(TestCase):
         self.view = PartialView.compute_view(self.test_model, 0.0, 0.0)
         self.distribution = ShapeDistribution.compute( self.view.pointcloud )
 
-    # @skip("Bug Eigen3")
     def test_write_and_read(self):
         """
         Tests writing then reading of a PointCloudStorage and ShapeDistribution.
@@ -37,6 +34,6 @@ class TestShapeDistribution(TestCase):
         """
         Tests that we can use the data as a numpy array.
         """
-        array = self.distribution._cpp_object.as_numpy_array
+        array = self.distribution.as_numpy_array
         self.assertTrue( isinstance(array, numpy.ndarray) )
         self.assertEqual( array.size, 480 )

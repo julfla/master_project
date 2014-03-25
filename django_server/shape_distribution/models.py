@@ -25,8 +25,16 @@ class DistributionField(with_metaclass(models.SubfieldBase, models.Field)):
 class ShapeDistribution(models.Model):
     _cpp_object = DistributionField()
 
+    @property
+    def serialized_data(self):
+        return self._cpp_object.serialized_data
+
+    @property
+    def as_numpy_array(self):
+        return self._cpp_object.as_numpy_array
+
     @staticmethod
     def compute(cloud):
         temp = ShapeDistribution()
-        temp._cpp_object = Distribution( cloud )
+        temp._cpp_object = Distribution( cloud._cpp_pointcloud )
         return temp
