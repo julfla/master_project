@@ -1,18 +1,19 @@
 #include <boost/python.hpp>
 #include <boost/python/wrapper.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include <boost/assign/std/vector.hpp> // for 'operator+=() on vectors'
+
+
 
 // see this post : http://eigen.tuxfamily.org/dox-devel/group__TopicUnalignedArrayAssert.html
-#define EIGEN_DONT_ALIGN_STATICALLY true
+// #define EIGEN_DONT_ALIGN_STATICALLY true
+#define EIGEN_DONT_VECTORIZE true
+#define EIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT true
 
-#include "partial_view.h"
 #include "pointcloud_serialization.hpp"
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include "partial_view.h"
 
 using namespace boost::python;
-using namespace boost::assign;
 
 std::string serialize_pointCloud( DefaultPointCloud & self ) {
     std::ostringstream oss;
@@ -27,24 +28,27 @@ void unserialize_pointcloud( DefaultPointCloud & self, std::string data) {
     archive >> self;
 }
 
-void save_point_cloud_as_pcd( DefaultPointCloud& self, char* path) { 
+void save_point_cloud_as_pcd( DefaultPointCloud& self, const char* path) { 
     pcl::io::savePCDFileASCII(path, self); 
 }
 
-/*
-DefaultPointCloud read_point_cloud_from_pcd( std::string path) {
-    DefaultPointCloud::Ptr cloud (new DefaultPointCloud);
-    pcl::io::loadPCDFile<DefaultPoint> (path, *cloud);
-    return *cloud;
+DefaultPointCloud read_point_cloud_from_pcd( const char* path) {
+    DefaultPointCloud cloud;
+    if( pcl::io::loadPCDFile<DefaultPoint> (path, cloud) == -1) {
+        std::string error_msg("File " + std::string(path) + " can't be read.");
+        throw error_msg;
+    }
+    return cloud;
 }
-*/
 
 BOOST_PYTHON_MODULE(libpypartialview)
 {
     class_<DefaultPointCloud>("PointCloud")
             .def( "size", &DefaultPointCloud::size )
             .add_property( "serialized_data", &serialize_pointCloud, &unserialize_pointcloud )
-            .def( "save_pcd", &save_point_cloud_as_pcd);
+            .def( "save_pcd", &save_point_cloud_as_pcd)
+            .def( "load_pcd", &read_point_cloud_from_pcd)
+            .staticmethod( "load_pcd" );
 
     class_<PartialViewComputer>("PartialViewComputer")
             .def("display_mesh", &PartialViewComputer::displayMesh )
