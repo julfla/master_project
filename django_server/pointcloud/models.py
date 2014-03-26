@@ -34,3 +34,9 @@ class PointCloud(models.Model):
 
     def save_pcd(self, path):
         return self._cpp_pointcloud.save_pcd(path)
+
+    @staticmethod
+    def load_pcd(path):
+        temp = PointCloud()
+        temp._cpp_pointcloud = CppPointCloud.load_pcd(path)
+        return temp
