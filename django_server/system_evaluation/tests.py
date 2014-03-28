@@ -10,5 +10,4 @@ class TestSystemEvaluation(TestCase):
         manager = ExampleManager()
         self.assertTrue(manager.size() > 0)
         res = manager.get_random_model()
-        open("tmp/test.pcd", 'w+').write(res['pcd'].read())
-        open("tmp/test.png", 'w+').write(res['img'].read())
+        print res

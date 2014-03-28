@@ -20,10 +20,27 @@ class ExampleManager:
         img_path = re.sub('.pcd', '.png', pcd_path)
 
         res = {}
-        res['pcd'] = pcd_tar_file.extractfile(pcd_path)
-        res['img'] = img_tar_file.extractfile(img_path)
+        res['pcd'] = pcd_path
+        res['img'] = img_path
         return res
 
+    def get_image(self, path):
+        return img_tar_file.extractfile(path)
+
+    def get_pcd(self, path):
+        return pcd_tar_file.extractfile(path)
+
+
+
 class SystemEvaluation(models.Model):
-    pass
+    user = models.CharField(max_length = 50, default="Anonymous")
+    
+class IdentificationAttempt(models.Model):
+    evaluation = models.ForeignKey(SystemEvaluation)
+    img_path = models.CharField(max_length=255)
+    pcd_path = models.CharField(max_length=255)
+    identification_result = models.CharField(max_length=255)
+    user_agreed = models.BooleanField()
+    user_indentification = models.CharField(max_length=255)
+
 
