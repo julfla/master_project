@@ -1,9 +1,10 @@
 from singleton_models.models import SingletonModel
 from django.db import models
+from djangotoolbox.fields import ListField
 
 class Identifier(SingletonModel):
 
-    categories = models.TextField()
+    categories = ListField()
     
     @staticmethod
     def instance():
@@ -17,11 +18,19 @@ class Identifier(SingletonModel):
         Returns the category of the pointcloud object if its category is known.
         If not, throws an exception.
         """
-        raise "Identification failed."
+        if len( self.categories ) == 0: raise IndexError("Identifier is empty.")
+
+        # TODO
+        # first behaviour so that can be used in integration.
+        from random import randint
+        if randint(0, 1) == 0:
+            raise Exception("Identification failed.")
+        else:
+            return self.categories[0]
 
     def train(self, model, category):
         """
         Incrementaly trains the classifier with the new model.
         If the category is not known yet, then it is added and returns true.
         """
-        return True
+        return None
