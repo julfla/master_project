@@ -22,3 +22,7 @@ class TestSystemEvaluation(TestCase):
         # test that the files correspond to an accessible path
         self.assertTrue( os.path.isfile( img_file.name ) )
         self.assertTrue( os.path.isfile( pcd_file.name ) )
+        # test that the temporary file pcd_file is destroyed on closure
+        pcd_path = pcd_file.name
+        pcd_file = None
+        self.assertTrue( not os.path.isfile( pcd_path ) )
