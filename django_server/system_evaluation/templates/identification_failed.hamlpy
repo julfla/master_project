@@ -1,0 +1,21 @@
+-extends "base_html.hamlpy"
+
+-block content
+  .panel.panel-default
+    .panel-heading= "Identification failed ..."
+    .panel-body
+      .col-md-4
+        %img.img-thumbnail{'src': "/system/={attempt.pk}/image/"}
+      .col-md-8
+        %p This model could not have been identified. What is it ?
+        %p Search the database, and select the closest models.
+        %form.form-inline{'method':'GET', 'action':'?'}
+          %label
+            Search for models
+            %input.form-control{'name': 'keywords', 'placeholder': "Keywords...", 'value': "={keywords}"}
+          %button.btn.btn-default{'type':"submit", 'value':"Submit"} Search
+  - for model in models
+    - if forloop.counter0|divisibleby:4
+      .col-md-12
+    .col-md-3
+      -include 'model_preview.html' with model=model

@@ -1,0 +1,22 @@
+-extends "base_html.hamlpy"
+
+-block content
+  .panel.panel-default
+    .panel-heading= "Identification succeed !"
+    .panel-body
+      .col-md-4
+        %img.img-thumbnail{'src': "/system/={attempt.pk}/image/"}
+      .col-md-8
+        %p This model has been identified as a ={attempt.identification_result}. Do you agree ?
+        %form
+          .radios
+            %label.radio-inline
+              %input{'type': 'radio', 'id':'user_argreed_true', 'name': 'user_argreed', 'value':'True'}
+              Yes
+            %label.radio-inline
+              %input{'type':'radio', 'id':'user_argreed_false', 'name':'user_argreed', 'value':'False'}
+              No
+          %label
+            My own choice
+            %input.form-control{'type':'text', 'id':'user_identification', 'name':'user_indentification', 'placeholder':'Your choice here...'}
+        %button.btn.btn-default{'type':'submit'} Next
