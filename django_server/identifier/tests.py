@@ -6,7 +6,7 @@ class SimpleTest(TestCase):
 
     def test_exception_when_no_existing_category(self):
         pointcloud = PointCloud.load_pcd("pointcloud/fixtures/cloud.pcd")
-        identifier = Identifier.instance()
+        identifier = Identifier()
         self.assertRaises( IndexError, identifier.identify, pointcloud )
         identifier.categories.append( "banana" )
         try:
