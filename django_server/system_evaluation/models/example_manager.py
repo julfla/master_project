@@ -36,7 +36,6 @@ class ExampleManager:
                 )
         pcd_path = u"rgbd-dataset/{}/{}/{}.pcd".format(category_name, object_name, example_name)
         # the temporary file will be automatically deleted when pcd_file closes
-        # pcd_file = tarfile.open( tar_path )
         archive = tarfile.open(tar_path)
         pcd_file = tempfile.NamedTemporaryFile()
         pcd_file.write( archive.extractfile( pcd_path ).read() )

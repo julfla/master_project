@@ -1,5 +1,9 @@
 -extends "base_html.hamlpy"
 
+-block style
+  :plain
+    input[type=checkbox] {display: none;}
+    input:checked + div > .panel-heading {background-color: green !important;}
 -block content
   .panel.panel-default
     .panel-heading= "Identification failed ..."
@@ -14,8 +18,25 @@
             Search for models
             %input.form-control{'name': 'keywords', 'placeholder': "Keywords...", 'value': "={keywords}"}
           %button.btn.btn-default{'type':"submit", 'value':"Submit"} Search
-  - for model in models
-    - if forloop.counter0|divisibleby:4
-      .col-md-12
-    .col-md-3
-      -include 'model_preview.html' with model=model
+  - if models|length > 0
+    #list-models.container-fluid
+      - for model in models
+        .col-md-3
+          %label{'for':'cb={model.google_id}'}
+            %input{'type':'checkbox', 'id':'cb={model.google_id}', 'name':"={model.google_id}"}
+            -include 'model_preview.html' with model=model
+    %form{'id':'train-form', 'method':'GET', 'action':'/system/={attempt.pk}/train/'}
+      %input{'type':'hidden', 'name':'category', 'value': "={keywords}"}
+      %input{'type':'hidden', 'name':'google_ids', 'id':'input_google_ids'}
+      %button.btn.btn-default{'type':"submit", 'value':"Submit"} Train the identifier
+
+    :javascript
+      $( "#train-form" ).submit(function( event ) {
+        var google_ids = [];
+        $( "#list-models input:checked" ).each(function(i, element) {
+          console.log( element )
+          google_ids.push($(element).attr("name"));
+        });
+        $("#input_google_ids").val(google_ids.join());
+        console.log( google_ids );
+      });
