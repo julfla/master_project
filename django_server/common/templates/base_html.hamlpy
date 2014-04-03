@@ -1,7 +1,6 @@
 !!! 5
 {% load bootstrap3 %}
 
-
 %html{'lang':'en'}
     %head
         / Load Bootstrap CSS and JavaScript
@@ -17,6 +16,7 @@
         %script
             -block script
     %body
-        #content
-            -block content
-              ={content_html}
+        -block body
+        .content
+          -block content
+          ={content_html}
