@@ -36,6 +36,17 @@ class WarehouseScrapper():
 
     @staticmethod
     def scrap_one_model(google_id):
+
+        skp_binary_tag = ['s', 's13', 's8', 's7', 's6']
+        img_binary_tag = ['lt', 'bot_st']
+
+        def get_one_url(json_binary, tag_list):
+            for tag in tag_list:
+                if tag in json_binary:
+                    print "tag {} found.".format(tag)
+                    return json_binary[tag]['contentUrl']
+            raise KeyError("Tags {} cannot be found.".format(tag_list))
+
         model_url = ("https://3dwarehouse.sketchup.com/3dw/GetEntity?id={}".
         format(google_id))
         model = SketchupModel()
@@ -44,15 +55,9 @@ class WarehouseScrapper():
         model.title = json_data['title']
         model.text = json_data['description']
         model.tags = json_data['tags']
-        # retreive the image
-        link_image = json_data['binaries']['lt']['url']
-        link_skp = None # the model can have no skp file associated with
-        binary_names = json_data['binaryNames']
-        for binary_name in binary_names:
-            binary = json_data['binaries'][binary_name]
-            if 'types' in binary and binary['types'] == 'SKP':
-                link_skp = binary['url']
-                break
+        # retreive the image and skp url
+        link_image = get_one_url(json_data['binaries'], img_binary_tag)
+        link_skp = get_one_url(json_data['binaries'], skp_binary_tag)
         model.url_mesh = link_skp
         model.image = WarehouseCache.get_ressource(link_image)
         model.save()
