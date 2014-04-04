@@ -35,8 +35,8 @@
 #include <GL/gl.h>
 #include <GL/glx.h>
 
-#include <mesh.hpp>
-#include "shader_helper.hpp"
+#include "mesh/mesh.hpp"
+#include "partial_pointcloud/shader_helper.hpp"
 
 typedef pcl::PointXYZ DefaultPoint;
 typedef pcl::PointCloud<DefaultPoint> DefaultPointCloud;

@@ -1,4 +1,4 @@
-#include "partial_view.h"
+#include "partial_pointcloud/partial_view.h"
 #include <glm/gtx/norm.hpp> // prived glm::length2 for euclidian norm of glm::vec
 
 #ifdef DEBUG

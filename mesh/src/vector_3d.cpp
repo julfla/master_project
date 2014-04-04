@@ -1,4 +1,4 @@
-#include"vector_3d.hpp"
+#include"mesh/vector_3d.hpp"
 
 Vector_3D operator*(double scalar, const Vector_3D& vect) {
     return vect * scalar;
