@@ -7,25 +7,33 @@
 -block content
   .panel.panel-default
     .panel-heading= "Identification failed ..."
-    .panel-body
+    .panel-body.container-fluid
       .col-md-4
-        %img.img-thumbnail{'src': "/system/={attempt.pk}/image/"}
-      .col-md-8
+        %img.img-thumbnail{'src': "/system/attempt/={attempt.pk}/image/"}
+      .col-md-4
         %p This model could not have been identified. What is it ?
         %p Search the database, and select the closest models.
-        %form.form-inline{'method':'GET', 'action':'?'}
-          %label
-            Search for models
-            %input.form-control{'name': 'keywords', 'placeholder': "Keywords...", 'value': "={keywords}"}
-          %button.btn.btn-default{'type':"submit", 'value':"Submit"} Search
+        -include '_search_bar.html' with action='?'
   - if models|length > 0
     #list-models.container-fluid
       - for model in models
+        - if forloop.counter0|divisibleby:4
+          - if forloop.counter0 == 0
+            :plain 
+              <div class="row">
+          - else
+            :plain
+              </div><div class="row">
         .col-md-3
           %label{'for':'cb={model.google_id}'}
             %input{'type':'checkbox', 'id':'cb={model.google_id}', 'name':"={model.google_id}"}
             -include 'model_preview.html' with model=model
-    %form{'id':'train-form', 'method':'GET', 'action':'/system/={attempt.pk}/train/'}
+        - if forloop.counter1 == models|length
+          :plain
+            </div>
+    %form{'id':'train-form', 'method':'GET', 'action':'/system/train/'}
+      %input{'type':'hidden', 'name':'evaluation_session_id', 'value':'={attempt.evaluation_session_id}'}
+      %input{'type':'hidden', 'name':'identification_attempt_id', 'value':'={attempt.pk}'}
       %input{'type':'hidden', 'name':'category', 'value': "={keywords}"}
       %input{'type':'hidden', 'name':'google_ids', 'id':'input_google_ids'}
       %button.btn.btn-default{'type':"submit", 'value':"Submit"} Train the identifier
