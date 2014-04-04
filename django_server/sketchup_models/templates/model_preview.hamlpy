@@ -1,5 +1,4 @@
 .panel.panel-default{'id':"model={model.google_id}"}
   .panel-heading ={model.title}
   .panel-body
-    .col-md-12
       %img.img-thumbnail{'src': "/model/={model.google_id}/image/"}
