@@ -1,8 +1,7 @@
 #include <boost/python.hpp>
 #include <boost/python/wrapper.hpp>
 
-
-
+// fix a bug when the class is exposed to python
 // see this post : http://eigen.tuxfamily.org/dox-devel/group__TopicUnalignedArrayAssert.html
 // #define EIGEN_DONT_ALIGN_STATICALLY true
 #define EIGEN_DONT_VECTORIZE true

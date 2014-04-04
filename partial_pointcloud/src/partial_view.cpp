@@ -1,11 +1,6 @@
 #include "partial_pointcloud/partial_view.h"
 #include <glm/gtx/norm.hpp> // prived glm::length2 for euclidian norm of glm::vec
-
-#ifdef DEBUG
-#define DEBUG_MSG(str) do { cout << str << std::endl; } while( false )
-#else
-#define DEBUG_MSG(str) do { } while ( false )
-#endif
+#include "debug_helper.hpp"
 
 void PartialViewComputer::loadMesh(std::string path) {
     //parse the file

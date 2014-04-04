@@ -13,6 +13,9 @@ ExternalProject_Add(skp2tri
 	INSTALL_COMMAND ""
 )
 
+# Project common include dir
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
+
 # Add all subprojects
 ADD_SUBDIRECTORY(mesh)
 ADD_SUBDIRECTORY(descriptors)
