@@ -85,7 +85,7 @@ def train_identifier(request):
         models.append( SketchupModel.find_google_id(google_id) )
 
     # TODO : train !!!!!
-    # Identifier.instance().train(models, category)
+    Identifier.instance().train(models, category)
     # then redirect to a new attempt
 
     html_page = "category: {}\nmodels: {}".format(category, models.__str__())

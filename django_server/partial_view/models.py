@@ -25,6 +25,7 @@ class PartialView(models.Model):
 
     @staticmethod
     def compute_view(model, theta, phi):
+        print "Computing views for model {}...".format( model )
         with tempfile.NamedTemporaryFile() as f :
             f.write( model.mesh )
             f.flush()
@@ -46,6 +47,7 @@ class PartialView(models.Model):
         with tempfile.NamedTemporaryFile() as f:
             f.write( model.mesh )
             f.flush()
+            print "loading mesh from file({})".format(f.name)
             PartialView.view_computer.load_mesh(f.name)
         
         SQRT_NUMBER_VIEWS = 8 # 8 * 8 = 64 views per object
