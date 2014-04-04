@@ -22,15 +22,21 @@ ADD_SUBDIRECTORY(descriptors)
 ADD_SUBDIRECTORY(partial_pointcloud)
 ADD_SUBDIRECTORY(tools)
 
-# The tests cannot compiled for now on...
+
+####### TESTS #######
+
 
 # Find requirements and sources for tests
-# FIND_PACKAGE(CppUnit REQUIRED)
-# IF( NOT CPPUNIT_FOUND )
-#     MESSAGE(FATAL_ERROR "Module CppUnit required and not found.")
-# ENDIF()
-# INCLUDE_DIRECTORIES(${CPPUNIT_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR})
-# FILE(GLOB SRC_TEST */test/*.cpp)
-# FILE(GLOB SRC */src/*.cpp)
-# ADD_EXECUTABLE(test EXCLUDE_FROM_ALL test_runner.cxx ${SRC_TEST} ${SRC})
-# target_link_libraries(test ${CPPUNIT_LIBRARY} ${Boost_LIBRARIES})
+FIND_PACKAGE(CppUnit REQUIRED)
+IF( NOT CPPUNIT_FOUND )
+    MESSAGE(FATAL_ERROR "Module CppUnit required and not found.")
+ENDIF()
+FILE(GLOB SRC_TEST */test/*.cpp)
+INCLUDE_DIRECTORIES(
+	${PROJECT_SOURCE_DIR}/mesh/include
+	${PROJECT_SOURCE_DIR}/descriptors/include
+	${PROJECT_SOURCE_DIR}/partial_pointcloud/include
+)
+ADD_EXECUTABLE(test EXCLUDE_FROM_ALL test_runner.cxx ${SRC_TEST})
+TARGET_LINK_LIBRARIES(test mesh descriptors ${CPPUNIT_LIBRARY})
+SET_TARGET_PROPERTIES(test PROPERTIES EXCLUDE_FROM_ALL true)

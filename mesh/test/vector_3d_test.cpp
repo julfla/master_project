@@ -1,4 +1,4 @@
-#include "../src/vector_3d.h"
+#include "../include/mesh/vector_3d.hpp"
 #include <cppunit/extensions/HelperMacros.h>
 #include <cppunit/TestFixture.h>
 

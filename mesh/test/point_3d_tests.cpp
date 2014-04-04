@@ -1,4 +1,4 @@
-#include "../src/point_3d.h"
+#include "../include/mesh/point_3d.hpp"
 #include <cppunit/extensions/HelperMacros.h>
 #include <cppunit/TestFixture.h>
 

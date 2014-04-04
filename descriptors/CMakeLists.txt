@@ -10,7 +10,7 @@ INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 LINK_DIRECTORIES(${LIBRARY_OUTPUT_PATH})
 
 ADD_LIBRARY(descriptors SHARED src/shape_distribution.cpp src/histogram.cpp)
-TARGET_INCLUDE_DIRECTORIES(descriptors PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+TARGET_INCLUDE_DIRECTORIES(descriptors PUBLIC ${PCL_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include)
 TARGET_LINK_LIBRARIES(descriptors mesh ${Boost_LIBRARIES})
 
 ADD_EXECUTABLE(distribution src/shape_distribution.cxx)
