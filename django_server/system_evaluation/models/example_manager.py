@@ -16,7 +16,7 @@ class ExampleManager:
     # retrieves one random pcd and img from the dataset
     # this function must be modified if the architecture of the dataset changes
     @staticmethod
-    def get_random_model():
+    def get_random_example():
         index = randint(0, ExampleManager.size() - 1)
         img_path = os.listdir( img_folder_path )[index]
         return os.path.splitext( img_path )[0]
