@@ -240,11 +240,23 @@ void PartialViewComputer::pixel_vector_to_pointcloud(std::vector<float> * data, 
     }
     DEBUG_MSG( width * height << " pixels." );
     DEBUG_MSG( cloud->size() << " points in cloud." );
-    if (!cloud->empty()) {
+    if ( cloud->empty () ) {
         std::stringstream message;
         message << "empty cloud unexpected, here some information :" << std::endl;
         message << "data->size() = " << data->size() << std::endl;
         message << "numberOfPixels = " << width * height << std::endl;
+        // return max, min and average of data :
+        float min = std::numeric_limits<float>::max();
+        float max = - std::numeric_limits<float>::max();
+        float avr = 0;
+        for (std::vector<float>::iterator it = data->begin(); it < data->end(); ++it) {
+            if ( *it < min ) { min = *it;}
+            if ( *it > max ) { max = *it;}
+            avr += *it;
+        }
+        avr /= data->size();
+        message << "max: " << max << "   min: " << min << "   mean : " << avr;
+        DEBUG_MSG( message.str() );
         throw(message.str());
     }
 }
