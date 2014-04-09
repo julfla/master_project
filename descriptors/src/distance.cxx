@@ -1,4 +1,4 @@
-#include "shape_distribution.h"
+#include "descriptors/shape_distribution.h"
 #include <iostream>
 
 #include <cstdlib>

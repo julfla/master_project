@@ -59,7 +59,8 @@ class PartialView(models.Model):
                 view.model = model
                 view.theta = pi * i / SQRT_NUMBER_VIEWS
                 view.phi = 2 * pi * j / SQRT_NUMBER_VIEWS
-                view.pointcloud = PartialView.view_computer.compute_view(view.theta, view.phi)
+                view.pointcloud = PointCloud()
+                view.pointcloud._cpp_pointcloud = PartialView.view_computer.compute_view(view.theta, view.phi)
                 view.distribution = ShapeDistribution.compute( view.pointcloud )
                 view.save()
 

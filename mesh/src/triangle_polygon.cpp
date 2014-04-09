@@ -1,4 +1,4 @@
-#include "triangle_polygon.hpp"
+#include "mesh/triangle_polygon.hpp"
 
 boost::minstd_rand TrianglePolygon::generator(std::time(0));
 

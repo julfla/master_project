@@ -1,4 +1,4 @@
-#include "shape_distribution.h"
+#include "descriptors/shape_distribution.h"
 
 #include <algorithm> //provide sort std::vector::sort
 #include <map>

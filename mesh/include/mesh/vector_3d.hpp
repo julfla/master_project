@@ -2,7 +2,7 @@
 #define VECTOR_3D_H
 
 #include <cmath>  // for abs
-#include "point_3d.hpp"
+#include "mesh/point_3d.hpp"
 #include <boost/random.hpp>  // for get random point
 
 class Vector_3D {

@@ -1,11 +1,8 @@
-#include "partial_view.h"
+#include "partial_pointcloud/partial_view.h"
 #include <glm/gtx/norm.hpp> // prived glm::length2 for euclidian norm of glm::vec
-
-#ifdef DEBUG
-#define DEBUG_MSG(str) do { cout << str << std::endl; } while( false )
-#else
-#define DEBUG_MSG(str) do { } while ( false )
-#endif
+#include "debug_helper.hpp"
+#include <stdio.h>
+#include <stdlib.h>
 
 void PartialViewComputer::loadMesh(std::string path) {
     //parse the file
@@ -153,7 +150,6 @@ glm::mat4 PartialViewComputer::ProjectionMatrix(float theta, float phi) {
 }
 
 void PartialViewComputer::init_MVP(float theta, float phi) {
-
     glm::mat4 Model   = glm::translate(- centroid);
     glm::mat4 View    = ViewMatrix(theta, phi);
     glm::mat4 Projection = ProjectionMatrix(theta, phi);
@@ -165,7 +161,6 @@ void PartialViewComputer::init_MVP(float theta, float phi) {
             min_relative_position[1],
             min_relative_position[2]);
     SCALING = glm::translate(-translation) * glm::scale(scale_factor, scale_factor, scale_factor);
-
 }
 
 DefaultPointCloud PartialViewComputer::compute_view(float theta, float phi){
@@ -177,11 +172,6 @@ DefaultPointCloud PartialViewComputer::compute_view(float theta, float phi){
     draw();
     DefaultPointCloud cloud;
     build_cloud_from_framebuffer(&cloud);
-    //build_cloud_from_pixelbuffer(&cloud);
-
-    DEBUG_MSG( width * height << " pixels." );
-    DEBUG_MSG( cloud.size() << " points in cloud." );
-    assert(!cloud.empty());
     return cloud;
 }
 
@@ -248,6 +238,26 @@ void PartialViewComputer::pixel_vector_to_pointcloud(std::vector<float> * data, 
                 )*/
             cloud->push_back(pcl::PointXYZ(x,y,z));
     }
+    DEBUG_MSG( width * height << " pixels." );
+    DEBUG_MSG( cloud->size() << " points in cloud." );
+    if ( cloud->empty () ) {
+        DEBUG_MSG( "Vertice to draw : " << g_vertex_buffer_data.size() );
+        DEBUG_MSG( "empty cloud unexpected, here some information :" );
+        DEBUG_MSG( "data->size() = " << data->size() );
+        DEBUG_MSG( "numberOfPixels = " << width * height );
+        // return max, min and average of data :
+        float min = std::numeric_limits<float>::max();
+        float max = - std::numeric_limits<float>::max();
+        float avr = 0;
+        for (std::vector<float>::iterator it = data->begin(); it < data->end(); ++it) {
+            if ( *it < min ) { min = *it;}
+            if ( *it > max ) { max = *it;}
+            avr += *it;
+        }
+        avr /= data->size();
+        DEBUG_MSG( "max: " << max << "   min: " << min << "   mean : " << avr );
+        assert( !cloud->empty() );
+    }
 }
 
 void PartialViewComputer::build_cloud_from_framebuffer(DefaultPointCloud * cloud) {
@@ -274,14 +284,6 @@ void PartialViewComputer::build_cloud_from_framebuffer(DefaultPointCloud * cloud
     //At deinit:
     glDeleteFramebuffers(1,&fbo);
 }
-
-/*
-void PartialViewComputer::build_cloud_from_pixelbuffer(DefaultPointCloud * cloud) {
-    std::vector<float> data(width*height*3);
-    glReadBuffer(GL_BACK);
-    glReadPixels(0,0,width,height,GL_RGB,GL_FLOAT,&data[0]);
-    pixel_vector_to_pointcloud( &data, cloud);
-}*/
 
 bool PartialViewComputer::setGLFWContext(const char* window_name) {
 

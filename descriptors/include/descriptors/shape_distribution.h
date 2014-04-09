@@ -14,8 +14,8 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 
-#include "mesh.hpp"
-#include "histogram.h"
+#include "mesh/mesh.hpp"
+#include "descriptors/histogram.h"
 
 #define _SAMPLE_LENGTH_ 100000
 

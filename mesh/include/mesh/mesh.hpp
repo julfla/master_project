@@ -10,8 +10,8 @@
 
 #include "boost/random.hpp"
 
-#include "triangle_polygon.hpp"
-#include "point_3d.hpp"
+#include "mesh/triangle_polygon.hpp"
+#include "mesh/point_3d.hpp"
 
 
 class Mesh {

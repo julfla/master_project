@@ -53,3 +53,17 @@ class TestPartialView(TestCase):
         view.theta = 1.0
         view.save()
         self.assertEqual( PartialView.objects.count(), 2 )
+
+    def test_empty_pointcloud(self):
+        """
+        The pointcloud is sometimes returned empty.
+        It seems to be random and about 1/10 of the time
+        We test here the stability.
+        """
+        test_model = SketchupModel.find_google_id("test1")
+        number_of_attempt = 100
+        for i in range(number_of_attempt):
+            print "Compute cloud {} on {}".format(i, number_of_attempt)
+            # Generate the pointcloud
+            view  = PartialView.compute_view( test_model, 0.0, 0.0)
+            self.assertTrue( view.pointcloud.size() > 0 )

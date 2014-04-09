@@ -1,4 +1,4 @@
-#include "histogram.h"
+#include "descriptors/histogram.h"
 #include <iostream>
 
 Histogram::Histogram(std::vector<double> *sorted_data, int n_bins, bool normalize) {
