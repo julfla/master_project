@@ -8,7 +8,7 @@
 #include <boost/python/numeric.hpp>
 #include <numpy/ndarrayobject.h>
 
-#include "shape_distribution.h"
+#include "descriptors/shape_distribution.h"
 
 
 namespace bn = boost::python::numeric;

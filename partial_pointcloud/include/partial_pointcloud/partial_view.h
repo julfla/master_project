@@ -1,9 +1,6 @@
 #ifndef PARTIAL_VIEW_HPP
 #define PARTIAL_VIEW_HPP
 
-// should be defined by cmake... ?
-// #define DEBUG true
-
 // Include standard headers
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,8 +32,8 @@
 #include <GL/gl.h>
 #include <GL/glx.h>
 
-#include <mesh.hpp>
-#include "shader_helper.hpp"
+#include "mesh/mesh.hpp"
+#include "partial_pointcloud/shader_helper.hpp"
 
 typedef pcl::PointXYZ DefaultPoint;
 typedef pcl::PointCloud<DefaultPoint> DefaultPointCloud;

@@ -1,4 +1,4 @@
-#include "../src/triangle_polygon.h"
+#include "../include/mesh/triangle_polygon.hpp"
 #include <cppunit/extensions/HelperMacros.h>
 #include <cppunit/TestFixture.h>
 

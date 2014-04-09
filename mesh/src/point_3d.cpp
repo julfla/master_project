@@ -1,4 +1,4 @@
-#include "point_3d.hpp"
+#include "mesh/point_3d.hpp"
 
 std::ostream & operator<<(std::ostream &out, const Point_3D &point) {
     out << "x:" << point.x;

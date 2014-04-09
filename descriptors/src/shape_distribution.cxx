@@ -3,8 +3,8 @@
 #include <pcl/io/pcd_io.h>
 #include <boost/program_options.hpp> //used to parse command line arguments
 
-#include "shape_distribution.h"
-#include "mesh.hpp"
+#include "descriptors/shape_distribution.h"
+#include "mesh/mesh.hpp"
 
 
 namespace po = boost::program_options;

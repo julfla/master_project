@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include "point_3d.hpp"
-#include "vector_3d.hpp"
+#include "mesh/point_3d.hpp"
+#include "mesh/vector_3d.hpp"
 #include "boost/random.hpp"
 #include <sstream>  // to read file
 

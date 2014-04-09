@@ -2,8 +2,8 @@
 #include <string>
 
 #include <boost/program_options.hpp> //used to parse command line arguments
-#include "partial_view.h"
-#include "../descriptors/src/shape_distribution.h"
+#include "partial_pointcloud/partial_view.h"
+#include "descriptors/shape_distribution.h"
 
 namespace po = boost::program_options;
 using namespace std;

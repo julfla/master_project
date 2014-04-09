@@ -1,17 +1,16 @@
 #include <boost/python.hpp>
 #include <boost/python/wrapper.hpp>
 
-
-
+// fix a bug when the class is exposed to python
 // see this post : http://eigen.tuxfamily.org/dox-devel/group__TopicUnalignedArrayAssert.html
 // #define EIGEN_DONT_ALIGN_STATICALLY true
 #define EIGEN_DONT_VECTORIZE true
 #define EIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT true
 
-#include "pointcloud_serialization.hpp"
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include "partial_view.h"
+#include "partial_pointcloud/pointcloud_serialization.hpp"
+#include "partial_pointcloud/partial_view.h"
 
 using namespace boost::python;
 

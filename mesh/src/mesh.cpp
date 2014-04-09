@@ -1,6 +1,6 @@
 #include <string>
 
-#include "mesh.hpp"
+#include "mesh/mesh.hpp"
 
 Mesh::Mesh(std::string path_file) {
     std::ifstream in_stream(path_file.c_str());

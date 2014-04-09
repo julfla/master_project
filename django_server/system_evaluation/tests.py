@@ -10,7 +10,7 @@ class TestSystemEvaluation(TestCase):
     	"""
         manager = ExampleManager()
         self.assertTrue(manager.size() > 0)
-        example_name = manager.get_random_model()
+        example_name = manager.get_random_example()
         # test the foramt of the example_name
         self.assertEqual( example_name,
             re.match('[a-z_]+_[0-9]+_[0-9]+_[0-9]+', example_name).group(0) )
