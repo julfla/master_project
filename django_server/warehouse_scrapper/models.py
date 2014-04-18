@@ -70,7 +70,9 @@ class WarehouseScrapper():
             tmp_file.write( WarehouseCache.get_ressource(url_skp) )
             tmp_file.flush()
             cvt_cmd = 'WINEDEBUG=-all, ../bin/skp2tri.exe {0} {0}'
-            os.system(cvt_cmd.format(tmp_file.name) )
+            if os.system(cvt_cmd.format(tmp_file.name)) != 0:
+                raise ("Error on skp2tri conversion : model: {}, url: {}".
+                    format(model.google_id, url) )
             tmp_file.seek(0)
             model.mesh = tmp_file.read()
 
