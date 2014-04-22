@@ -42,15 +42,16 @@ class PartialView(models.Model):
     model = models.ForeignKey(SketchupModel)
     theta = models.FloatField()
     phi = models.FloatField()
-    distribution = EmbeddedModelField(ShapeDistribution)
+    _distribution = EmbeddedModelField(ShapeDistribution, blank=True, null=True)
 
     class Meta:
         unique_together = (("model", "theta", "phi"),)
 
-    def __init__(self, *args, **kwargs):
-        super(PartialView, self).__init__(*args, **kwargs)
-        if kwargs.pop('distribution', None) == None:
-            self.distribution = ShapeDistribution.compute( self.pointcloud )
+    @property
+    def distribution(self):
+        if self._distribution == None:
+            self._distribution = ShapeDistribution.compute( self.pointcloud )
+        return self._distribution
 
     @property
     def pointcloud(self):
@@ -68,6 +69,7 @@ class PartialView(models.Model):
                 theta = pi * i / SQRT_NUMBER_VIEWS
                 phi = 2 * pi * j / SQRT_NUMBER_VIEWS
                 view = PartialView(model=model, theta=theta, phi=phi)
+                view.distribution # force computation of distribution while mesh is loaded
                 view.save()
 
     @staticmethod
