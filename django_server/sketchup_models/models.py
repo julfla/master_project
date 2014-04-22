@@ -26,9 +26,7 @@ class SketchupModel(models.Model):
         elif self.url_mesh and not self._mesh:
             warehouse_scrapper.models.WarehouseScrapper._download_skp_and_convert_to_tri(self, self.url_mesh)
             self.save()
-            return self.mesh
-        else:
-            return self._mesh
+        return self._mesh
 
     @mesh.setter
     def mesh(self, value):
