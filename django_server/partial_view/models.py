@@ -49,9 +49,13 @@ class PartialView(models.Model):
 
     @property
     def distribution(self):
-        if self._distribution == None:
+        if not self._distribution:
             self._distribution = ShapeDistribution.compute( self.pointcloud )
         return self._distribution
+
+    @distribution.setter
+    def distribution(self, value):
+        self._distribution = value
 
     @property
     def pointcloud(self):
