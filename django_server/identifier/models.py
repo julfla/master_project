@@ -48,8 +48,8 @@ class Identifier(models.Model):
         for model in models:
             category.models.add( model.pk )
         category.save()
-        print self._get_example_matrix()
-        return None
+        (X, Y) = self._get_example_matrix()
+        print "Size X => {}     Size Y => {}".format(X.shape, Y.shape)
 
     def _recompute_svm(self):
         """
@@ -71,5 +71,5 @@ class Identifier(models.Model):
                 for view in model.partialview_set.all():
                     arr = numpy.vstack( [arr, view.distribution.as_numpy_array] )
             X = numpy.vstack( [X, arr] )
-            Y = numpy.vstack( [Y, idx * numpy.ones( [len(category.models), 1] ) ] )
+            Y = numpy.vstack( [Y, idx * numpy.ones( [len(category.models) * 64, 1] ) ] )
         return (X, Y)
