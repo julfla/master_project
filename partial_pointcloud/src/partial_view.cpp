@@ -3,8 +3,15 @@
 #include "debug_helper.hpp"
 #include <stdio.h>
 #include <stdlib.h>
+#include <sstream>
 
 void PartialViewComputer::loadMesh(std::string path) {
+    float x_max, y_max, z_max;
+    x_max = y_max = z_max = - std::numeric_limits<float>::max();
+    float x_min, y_min, z_min;
+    x_min = y_min = z_min = std::numeric_limits<float>::max();
+    float x_mean, y_mean, z_mean;
+
     //parse the file
     std::ifstream in_stream(path.c_str());
     if(!in_stream.good())
@@ -17,29 +24,18 @@ void PartialViewComputer::loadMesh(std::string path) {
             vertex.x = (float) tri.getPoints()[i].getX();
             vertex.y = (float) tri.getPoints()[i].getY();
             vertex.z = (float) tri.getPoints()[i].getZ();
-            g_vertex_buffer_data.push_back(vertex);
+            if(vertex.x > x_max) x_max = vertex.x;
+            if(vertex.x < x_min) x_min = vertex.x;
+            if(vertex.y > y_max) y_max = vertex.y;
+            if(vertex.y < y_min) y_min = vertex.y;
+            if(vertex.z > z_max) z_max = vertex.z;
+            if(vertex.z < z_min) z_min = vertex.z;
+            g_vertex_buffer_data.push_back(vertex.x);
+            g_vertex_buffer_data.push_back(vertex.y);
+            g_vertex_buffer_data.push_back(vertex.z);
         }
     }
     in_stream.close();
-
-    //comptute the containing box and the centroid
-
-    float x_max, y_max, z_max;
-    x_max = y_max = z_max = - std::numeric_limits<float>::max();
-    float x_min, y_min, z_min;
-    x_min = y_min = z_min = std::numeric_limits<float>::max();
-    float x_mean, y_mean, z_mean;
-
-    // TODO : remove and do while parsing file !!
-    for(std::vector<glm::vec3>::iterator it = g_vertex_buffer_data.begin(); it < g_vertex_buffer_data.end(); ++it) {
-        if(it->x > x_max) x_max = it->x;
-        if(it->x < x_min) x_min = it->x;
-        if(it->y > y_max) y_max = it->y;
-        if(it->y < y_min) y_min = it->y;
-        if(it->z > z_max) z_max = it->z;
-        if(it->z < z_min) z_min = it->z;
-    }
-
     x_mean = ( x_max + x_min) / 2;
     y_mean = ( y_max + y_min) / 2;
     z_mean = ( z_max + z_min) / 2;
@@ -76,6 +72,7 @@ void PartialViewComputer::loadMesh(std::string path) {
             containing_diameter = glm::length(*it);
     }
 
+    DEBUG_MSG( g_vertex_buffer_data.size() / 9 << " triangles loaded." );
     DEBUG_MSG( x_min << " < x < " << x_max << " average : " << x_mean );
     DEBUG_MSG( y_min << " < y < " << y_max << " average : " << y_mean );
     DEBUG_MSG( z_min << " < z < " << z_max << " average : " << z_mean );
@@ -120,7 +117,7 @@ bool PartialViewComputer::presets() {
 
     glGenBuffers(1, &vertexbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glBufferData(GL_ARRAY_BUFFER, g_vertex_buffer_data.size() * sizeof(glm::vec3), &g_vertex_buffer_data[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, g_vertex_buffer_data.size() * sizeof(float), &g_vertex_buffer_data[0], GL_STATIC_DRAW);
 
     return true;
 }
@@ -128,7 +125,6 @@ bool PartialViewComputer::presets() {
 glm::mat4 PartialViewComputer::ViewMatrix(float theta, float phi) {
     //coodinate on a 1 radius sphere
     glm::vec3 cam_pos(std::sin(theta) * std::cos(phi), std::sin(theta) * std::sin(phi), std::cos(theta));
-
     DEBUG_MSG( "Cam Info :" << cam_pos.x << " " << cam_pos.y << " " << cam_pos.z );
     return glm::lookAt(
                 cam_pos, // Coordinates of the camera, in World Space
@@ -187,8 +183,8 @@ void PartialViewComputer::draw() {
     glUniform1f(SCALE_ID, scale_factor);
 
     // 1rst attribute buffer : vertices
-    glEnableVertexAttribArray(vertexPosition_modelspaceID);
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    glEnableVertexAttribArray(vertexPosition_modelspaceID);
     glVertexAttribPointer(
                 vertexPosition_modelspaceID, // The attribute we want to configure
                 3,                           // size
@@ -199,7 +195,7 @@ void PartialViewComputer::draw() {
                 );
 
     // Draw the triangleS !
-    glDrawArrays(GL_TRIANGLES, 0, g_vertex_buffer_data.size()*3);
+    glDrawArrays(GL_TRIANGLES, 0, g_vertex_buffer_data.size());
 
     glDisableVertexAttribArray(vertexPosition_modelspaceID);
 }
@@ -241,8 +237,8 @@ void PartialViewComputer::pixel_vector_to_pointcloud(std::vector<float> * data, 
     DEBUG_MSG( width * height << " pixels." );
     DEBUG_MSG( cloud->size() << " points in cloud." );
     if ( cloud->empty () ) {
-        DEBUG_MSG( "Vertice to draw : " << g_vertex_buffer_data.size() );
         DEBUG_MSG( "empty cloud unexpected, here some information :" );
+        DEBUG_MSG( "Triangles to be drawn : " << g_vertex_buffer_data.size() / 9 );
         DEBUG_MSG( "data->size() = " << data->size() );
         DEBUG_MSG( "numberOfPixels = " << width * height );
         // return max, min and average of data :
@@ -255,8 +251,7 @@ void PartialViewComputer::pixel_vector_to_pointcloud(std::vector<float> * data, 
             avr += *it;
         }
         avr /= data->size();
-        DEBUG_MSG( "max: " << max << "   min: " << min << "   mean : " << avr );
-        assert( !cloud->empty() );
+        DEBUG_MSG( "Datavalues : max: " << max << "   min: " << min << "   mean : " << avr );        
     }
 }
 
@@ -271,18 +266,17 @@ void PartialViewComputer::build_cloud_from_framebuffer(DefaultPointCloud * cloud
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER,fbo);
 
     draw();
-
     //after drawing
     std::vector<float> data(width*height*3);
     glReadBuffer(GL_COLOR_ATTACHMENT0);
     glReadPixels(0,0,width,height,GL_RGB,GL_FLOAT,&data[0]);
-
     pixel_vector_to_pointcloud( &data, cloud);
 
     // Return to onscreen rendering:
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER,0);
     //At deinit:
     glDeleteFramebuffers(1,&fbo);
+    // assert( !cloud->empty() );
 }
 
 bool PartialViewComputer::setGLFWContext(const char* window_name) {

@@ -58,6 +58,11 @@ public:
 
     ~PartialViewComputer() {free_gpu();}
 
+    // should be private but exposed for stability tweak
+    void free_gpu();
+
+    // should be private but exposed for stability tweak
+    bool setGLFWContext(const char* window_name = NULL);
 private:
 
     bool presets();
@@ -74,11 +79,6 @@ private:
 
     void build_cloud_from_framebuffer(DefaultPointCloud * cloud);
 
-    // void build_cloud_from_pixelbuffer(DefaultPointCloud * cloud);
-
-    void free_gpu();
-
-    bool setGLFWContext(const char* window_name = NULL);
 
     // Create an windowless opengl context
     // credit : http://renderingpipeline.com/2012/05/windowless-opengl/
@@ -87,7 +87,7 @@ private:
     bool windowsLessContextSet, glfwContextSet;
     float max_relative_position[3]; // used to remove the border effect..
     float min_relative_position[3]; //
-    std::vector<glm::vec3> g_vertex_buffer_data; // vertice of the model
+    std::vector<float> g_vertex_buffer_data; // vertice of the model
     double containing_diameter;
     glm::vec3 centroid; //centroid of the model
     float scale_factor;
