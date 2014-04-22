@@ -31,7 +31,7 @@ class PartialCloudComputer():
         cloud._cpp_pointcloud = self._cpp_computer.compute_view(theta, phi)
         return cloud
 
-    def display_view(model, theta, phi):
+    def display_view(self, sketchup_model, theta, phi):
         if self._loaded_model_id != sketchup_model.google_id :
             self.load_model(sketchup_model)
         self._cpp_computer.display_mesh(theta, phi)
