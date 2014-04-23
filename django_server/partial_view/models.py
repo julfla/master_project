@@ -76,7 +76,6 @@ class PartialView(models.Model):
                 view.distribution # force computation of distribution while mesh is loaded
                 view.save()
 
-    @staticmethod
-    def display_view(model, theta, phi):
-        PartialCloudComputer().display_view(model, theta, phi)
+    def display(self):
+        PartialCloudComputer().display_view(self.model, self.theta, self.phi)
     
