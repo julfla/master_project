@@ -1,11 +1,36 @@
 from django.db import models
 from djangotoolbox.fields import ListField, SetField
-
-import numpy
+from django.utils.six import with_metaclass
 
 from sketchup_models.models import SketchupModel
 from shape_distribution.models import ShapeDistribution, SHAPE_DISTRIBUTION_SIZE
 from partial_view.models import PartialView
+
+from sklearn import svm
+import numpy
+
+class SVCField(with_metaclass(models.SubfieldBase, models.Field)):
+    from sklearn.externals import joblib
+    # Recreate python object from db
+    def to_python(self, value):
+        if isinstance(value, svm.classes.SVC):
+            return value
+        else:
+            import tempfile
+            with tempfile.NamedTemporaryFile() as f :
+                f.write( value )
+                f.flush()
+                return joblib.load(f.name)
+
+    # Serialize python object to be stored in db
+    def get_prep_value(self, value):
+        if isinstance(value, svm.classes.SVC):
+            import tempfile
+            with tempfile.NamedTemporaryFile() as f :
+                joblib.dump(value, f.name)
+                return f.read()
+        else:
+            return value
 
 class Category(models.Model):
     name = models.CharField(unique=True, max_length=255)
@@ -14,6 +39,7 @@ class Category(models.Model):
 class Identifier(models.Model):
 
     categories = ListField()
+    classifier = SVCField()
     
     @staticmethod
     def instance():
@@ -31,6 +57,10 @@ class Identifier(models.Model):
 
         # TODO
         # first behaviour so that can be used in integration.
+        distribution = ShapeDistribution(pointcloud)
+        category_idx = self.classifier.predict(distribution.as_numpy_array)[0]
+        print "Object identify as {}".format(categories[category_idx])
+
         from random import randint
         if randint(0, 1) == 0:
             raise Exception("Identification failed.")
@@ -50,6 +80,10 @@ class Identifier(models.Model):
         category.save()
         (X, Y) = self._get_example_matrix()
         print "Size X => {}     Size Y => {}".format(X.shape, Y.shape)
+        self.classifier = svm.SVC(kernel='linear')
+        print self.classfier.fit(X, Y)
+        self.save()
+
 
     def _recompute_svm(self):
         """
