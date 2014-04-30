@@ -1,24 +1,13 @@
 from django.http import HttpResponse, HttpResponseNotFound
+from django.shortcuts import get_object_or_404
 
-from django.template import RequestContext
-
-from sketchup_models.models import SketchupModel
 from partial_view.models import PartialView
 
-import tempfile
+def image_plot_distribution(request, partial_view_id):
+    view = get_object_or_404(PartialView, pk=partial_view_id)
+    from shape_distribution.views import distribution_image
+    return distribution_image(request, view.distribution)
 
-def view_pcd(request, google_id):
-    try:
-    	print "Request pcd"
-        model = SketchupModel.find_google_id(google_id)
-        print "Init View"
-        view = PartialView()
-        view.compute_view(model, 0.0, 0.0)
-        print "View Initialized"
-        f = tempfile.NamedTemporaryFile()
-        view.pointcloud.save_pcd(f.name)
-        return HttpResponse(f.read(), mimetype="text/plain")
-    except SketchupModel.DoesNotExist:
-        return HttpResponseNotFound()
+
 
 
