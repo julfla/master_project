@@ -10,15 +10,22 @@ pcd_tars_path = u"/home/julien/rgbd-dataset/pcd_tars"
 class ExampleManager:
     # returns the number of example available
     @staticmethod
-    def size():
-        return len(os.listdir( img_folder_path ))
+    def list_examples(list_categories=None):
+        examles = os.listdir( img_folder_path )
+        if list_categories is None:
+            return examles
+        exp = "({})_\d+_\d+_\d+".format( '|'.join(list_categories) )
+        m = re.compile(exp)
+        res = [f for f in examles if m.search(f)]
+        return res
 
     # retrieves one random pcd and img from the dataset
     # this function must be modified if the architecture of the dataset changes
     @staticmethod
-    def get_random_example():
-        index = randint(0, ExampleManager.size() - 1)
-        img_path = os.listdir( img_folder_path )[index]
+    def get_random_example(list_categories=None):
+        number_examples = len(ExampleManager.list_examples(list_categories))
+        index = randint(0, number_examples - 1)
+        img_path = ExampleManager.list_examples(list_categories)[index]
         return os.path.splitext( img_path )[0]
 
     @staticmethod

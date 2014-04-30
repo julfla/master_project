@@ -9,7 +9,6 @@ class TestSystemEvaluation(TestCase):
     	Test that example manager is able to retreive some test models from the database.
     	"""
         manager = ExampleManager()
-        self.assertTrue(manager.size() > 0)
         example_name = manager.get_random_example()
         # test the foramt of the example_name
         self.assertEqual( example_name,
@@ -26,3 +25,11 @@ class TestSystemEvaluation(TestCase):
         pcd_path = pcd_file.name
         pcd_file = None
         self.assertTrue( not os.path.isfile( pcd_path ) )
+
+    def test_restrict_to_some_categories(self):
+        """
+        Test that we can restrict the ful database of example to some categories only
+        """
+        manager = ExampleManager()
+        for example in ExampleManager().list_examples( ['banana', 'bowl'] ):
+            assertTrue( example.startswith('banana') or example.startswith('bowl'))
