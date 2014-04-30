@@ -36,7 +36,7 @@ def identification_result(request, identification_attempt_id="5337c2b1a533a32d6e
             )
 
 def image(request, identification_attempt_id):
-    attempt = get_object_or_404(IdentificationAttempt, pk=identification_attempt_id
+    attempt = get_object_or_404(IdentificationAttempt, pk=identification_attempt_id)
     image = ExampleManager.get_image(attempt.example)
     return HttpResponse(image.read(), mimetype="image/png")
 

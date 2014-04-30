@@ -8,13 +8,12 @@ class TestSystemEvaluation(TestCase):
     	"""
     	Test that example manager is able to retreive some test models from the database.
     	"""
-        manager = ExampleManager()
-        example_name = manager.get_random_example()
+        example_name = ExampleManager.get_random_example()
         # test the foramt of the example_name
         self.assertEqual( example_name,
             re.match('[a-z_]+_[0-9]+_[0-9]+_[0-9]+', example_name).group(0) )
-        img_file = manager.get_image( example_name )
-        pcd_file = manager.get_pcd( example_name )
+        img_file = ExampleManager.get_image( example_name )
+        pcd_file = ExampleManager.get_pcd( example_name )
         # check that the files are not empty
         self.assertTrue( img_file.read() > 0 )
         self.assertTrue( pcd_file.read() > 0 )
@@ -30,6 +29,20 @@ class TestSystemEvaluation(TestCase):
         """
         Test that we can restrict the ful database of example to some categories only
         """
-        manager = ExampleManager()
-        for example in ExampleManager().list_examples( ['banana', 'bowl'] ):
-            assertTrue( example.startswith('banana') or example.startswith('bowl'))
+
+        def contain_examples_and_example_correct(categories):
+            examples = ExampleManager.list_examples( categories )
+            self.assertTrue( len(examples) > 0 )
+            for example in examples:
+                for category in categories:
+                    if example.startswith(category): return
+                self.fail("example {} does not start with one of {}".format(example, categories))
+
+        # test for only one
+        contain_examples_and_example_correct( ['banana'] )
+        # test for two
+        contain_examples_and_example_correct( ['banana', 'bowl'] )
+        # test for three
+        contain_examples_and_example_correct( ['banana', 'bowl', 'sponge'] )
+        # test for composed word
+        contain_examples_and_example_correct( ['food_can'] )

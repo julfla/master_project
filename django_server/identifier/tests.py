@@ -24,42 +24,34 @@ class SimpleTest(TestCase):
             # can raise if Indentification failed
             pass
 
-    def test_identification_banana_vs_bowl(self):
+    def test_identification_banana_vs_bowl_vs_food_can(self):
+        # Getting the dataset
         bowl_ids = ['fa61e604661d4aa66658ecd96794a1cd',
             'f74bba9a22e044dea3769fcd5f96f4',
             'd2e1dc9ee02834c71621c7edb823fc53']
         banana_ids = ['f6e6117261dca163713c042b393cc65b',
             'ba0d56295321002718ddbf38fa69c501',
             '7d78e217e0ba160fe2b248b8bb97d290']
+        food_can_ids = ['38dd2a8d2c984e2b6c1cd53dbc9f7b8e',
+            'f818771f4b0727e330612f5c0ef21eb8',
+            '612abb2fadd1c44e846564a8a219239b']        
         bowls = []
         for bowl_id in bowl_ids:
             bowls.append( SketchupModel.find_google_id(bowl_id) )
         bananas = []
         for banana_id in banana_ids:
             bananas.append( SketchupModel.find_google_id(banana_id) )
-
+        food_cans = []
+        for food_can_id in food_can_ids:
+            food_cans.append( SketchupModel.find_google_id(food_can_id) )
+        # Training
         iden = Identifier()
-        self.assertEquals( len(iden.categories), 0)
         iden.train( bananas, 'banana')
-        self.assertEquals( len(iden.categories), 1)
         iden.train( bowls, 'bowl')
-        self.assertEquals( len(iden.categories), 2)
-
-        print "Identification of SketchupModels"
-        import random
-        print "Bananas"
-        for banana in bananas:
-            choice = random.choice( banana.partialview_set.all() )
-            iden.identify( choice.pointcloud )
-        print "Bowls"
-        for bowl in bowls:
-            choice = random.choice( bowl.partialview_set.all() )
-            iden.identify( choice.pointcloud )
-
-
-        print "Identification of real objects"
+        iden.train( food_cans, 'food_can')
+        # Identification
         for i in range(20):
-            example = ExampleManager.get_random_example()
+            example = ExampleManager.get_random_example(['banana', 'bowl', 'food_can'])
             pcd_file = ExampleManager.get_pcd( example )
             print "Identification of file {}".format( example )
             cloud = PointCloud.load_pcd( pcd_file.name )

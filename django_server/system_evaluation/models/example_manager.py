@@ -14,7 +14,7 @@ class ExampleManager:
         examles = os.listdir( img_folder_path )
         if list_categories is None:
             return examles
-        exp = "({})_\d+_\d+_\d+".format( '|'.join(list_categories) )
+        exp = "\A({})[0-9_]+".format( '|'.join(list_categories) )
         m = re.compile(exp)
         res = [f for f in examles if m.search(f)]
         return res
