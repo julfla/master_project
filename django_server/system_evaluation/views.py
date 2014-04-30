@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseNotFound
 import datetime
 
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 
 from sketchup_models.models import SketchupModel
@@ -36,10 +36,7 @@ def identification_result(request, identification_attempt_id="5337c2b1a533a32d6e
             )
 
 def image(request, identification_attempt_id):
-    try:
-        attempt = IdentificationAttempt.objects.get(pk=identification_attempt_id)
-    except IdentificationAttempt.DoesNotExist:
-        return HttpResponseNotFound()
+    attempt = get_object_or_404(IdentificationAttempt, pk=identification_attempt_id
     image = ExampleManager.get_image(attempt.example)
     return HttpResponse(image.read(), mimetype="image/png")
 
@@ -60,10 +57,7 @@ def new_session(request):
         )
 
 def new_attempt(request, evaluation_session_id):
-    try:
-        session = EvaluationSession.objects.get(pk=evaluation_session_id)
-    except EvaluationSession.DoesNotExist: 
-        return HttpResponseNotFound()
+    session = get_object_or_404(EvaluationSession, pk=evaluation_session_id)
     attempt = IdentificationAttempt()
     attempt.evaluation_session = session
     attempt.example = ExampleManager.get_random_example()
@@ -80,6 +74,8 @@ def new_attempt(request, evaluation_session_id):
 
 def train_identifier(request):
     category = request.GET['category']
+    evaluation_session_id = request.GET['evaluation_session_id']
+    session = get_object_or_404(EvaluationSession, pk=evaluation_session_id)
     models = []
     for google_id in request.GET['google_ids'].split(","):
         models.append( SketchupModel.find_google_id(google_id) )
@@ -87,6 +83,6 @@ def train_identifier(request):
     # TODO : train !!!!!
     Identifier.instance().train(models, category)
     # then redirect to a new attempt
+    print "category: {}\nmodels: {}".format(category, models.__str__())
 
-    html_page = "category: {}\nmodels: {}".format(category, models.__str__())
-    return HttpResponse(html_page, mimetype="text/plain")
+    return redirect('/system/session/{}/attempt/new'.format(session.pk) )
