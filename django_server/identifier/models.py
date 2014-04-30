@@ -17,14 +17,12 @@ class SVCField(with_metaclass(models.SubfieldBase, models.Field)):
         if isinstance(value, svm.classes.SVC):
             return value
         elif value is not None and len(value) > 0:
-            print "Loading SVC"
             return pickle.loads(value)
         return None
             
     # Serialize python object to be stored in db
     def get_prep_value(self, value):
         if isinstance(value, svm.classes.SVC):
-            print "Serializing SVC"
             return pickle.dumps( value )
         else:
             return value
