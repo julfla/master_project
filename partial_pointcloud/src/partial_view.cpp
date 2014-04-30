@@ -20,19 +20,18 @@ void PartialViewComputer::loadMesh(std::string path) {
     while (std::getline(in_stream, line)) {
         TrianglePolygon tri(line);
         for(int i = 0; i < 3; ++i) {
-            glm::vec3 vertex;
-            vertex.x = (float) tri.getPoints()[i].getX();
-            vertex.y = (float) tri.getPoints()[i].getY();
-            vertex.z = (float) tri.getPoints()[i].getZ();
-            if(vertex.x > x_max) x_max = vertex.x;
-            if(vertex.x < x_min) x_min = vertex.x;
-            if(vertex.y > y_max) y_max = vertex.y;
-            if(vertex.y < y_min) y_min = vertex.y;
-            if(vertex.z > z_max) z_max = vertex.z;
-            if(vertex.z < z_min) z_min = vertex.z;
-            g_vertex_buffer_data.push_back(vertex.x);
-            g_vertex_buffer_data.push_back(vertex.y);
-            g_vertex_buffer_data.push_back(vertex.z);
+            float x = (float) tri.getPoints()[i].getX();
+            float y = (float) tri.getPoints()[i].getY();
+            float z = (float) tri.getPoints()[i].getZ();
+            if(x > x_max) x_max = x;
+            if(x < x_min) x_min = x;
+            if(y > y_max) y_max = y;
+            if(y < y_min) y_min = y;
+            if(z > z_max) z_max = z;
+            if(z < z_min) z_min = z;
+            g_vertex_buffer_data.push_back(x);
+            g_vertex_buffer_data.push_back(y);
+            g_vertex_buffer_data.push_back(z);
         }
     }
     in_stream.close();
@@ -228,10 +227,10 @@ void PartialViewComputer::pixel_vector_to_pointcloud(std::vector<float> * data, 
         if(!isBackground)
             //this is to fix, due to some border effect, some pix do not represent the position
             //because the background is white they are augmented. Bug only with GLFW ??*
-            /*if ( min_relative_position[0] <= x && x <= max_relative_position[0]
-                && min_relative_position[1] <= y && y <= max_relative_position[1]
-                && min_relative_position[2] <= z && z <= max_relative_position[2]
-                )*/
+            if ( x <= max_relative_position[0] - min_relative_position[0]
+                && y <= max_relative_position[1] - min_relative_position[1]
+                && z <= max_relative_position[2] - min_relative_position[2]
+                )
             cloud->push_back(pcl::PointXYZ(x,y,z));
     }
     DEBUG_MSG( width * height << " pixels." );
