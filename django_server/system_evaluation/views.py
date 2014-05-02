@@ -8,7 +8,6 @@ from sketchup_models.models import SketchupModel
 from pointcloud.models import PointCloud
 from system_evaluation.models import ExampleManager, IdentificationAttempt, EvaluationSession
 from warehouse_scrapper.models import WarehouseScrapper
-from identifier.models import Identifier
 from system_evaluation.forms import *
 
 def identification_result(request, identification_attempt_id="5337c2b1a533a32d6ecbd809"):
@@ -65,7 +64,7 @@ def new_attempt(request, evaluation_session_id):
     print "Load {} pointcloud <{}> for identification".format(attempt.example, pcd_file.name)
     pointcloud = PointCloud.load_pcd( pcd_file.name )
     try:
-        attempt.identification_result = Identifier.instance().identify( pointcloud )
+        attempt.identification_result = session.identifier.identify( pointcloud )
         attempt.identification_succeed = True
     except:
         attempt.identification_succeed = False
@@ -81,7 +80,7 @@ def train_identifier(request):
         models.append( SketchupModel.find_google_id(google_id) )
 
     # TODO : train !!!!!
-    Identifier.instance().train(models, category)
+    session.identifier.train(models, category)
     # then redirect to a new attempt
     print "category: {}\nmodels: {}".format(category, models.__str__())
 
