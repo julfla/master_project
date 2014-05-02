@@ -22,7 +22,7 @@ class ExampleManager:
     # retrieves one random pcd and img from the dataset
     # this function must be modified if the architecture of the dataset changes
     @staticmethod
-    def get_random_example(list_categories=None):
+    def get_random_example(list_categories=['banana','bowl']):
         number_examples = len(ExampleManager.list_examples(list_categories))
         index = randint(0, number_examples - 1)
         img_path = ExampleManager.list_examples(list_categories)[index]

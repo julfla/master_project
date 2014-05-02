@@ -6,7 +6,7 @@
       .panel-heading= "Identification succeed !"
       .panel-body
         .col-md-6
-          %img.img-thumbnail{'src': "/system/attempt/={attempt.pk}/image/"}
+          %img.img-thumbnail{'src': "/system/session/={session_id}/attempt/={attempt_index}/image/"}
         .col-md-6
           %p This model has been identified as a ={attempt.identification_result}.
           -include 'bootstrap_form.html' with form=form

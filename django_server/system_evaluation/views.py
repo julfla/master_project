@@ -10,32 +10,36 @@ from system_evaluation.models import ExampleManager, IdentificationAttempt, Eval
 from warehouse_scrapper.models import WarehouseScrapper
 from system_evaluation.forms import *
 
-def identification_result(request, identification_attempt_id="5337c2b1a533a32d6ecbd809"):
-    attempt = IdentificationAttempt.objects.get(pk=identification_attempt_id)
+def identification_result(request, evaluation_session_id, identification_attempt_index):
+    session = get_object_or_404(EvaluationSession, pk=evaluation_session_id)
+    attempt = session.attempts[int(identification_attempt_index)]
     if attempt.identification_succeed:
-        print "attempt {} succeed !".format(attempt.pk)
+        print "attempt {} succeed !".format(identification_attempt_index)
         if request.method == 'POST':
             form = AgreeWithIdentificationForm(request.POST)
             if form.is_valid():
                 attempt.user_argreed = form.cleaned_data['user_argreed']
                 attempt.user_identification = form.cleaned_data['user_identification']
-                attempt.save()
-                return redirect('/system/session/{}/attempt/new'.format(attempt.evaluation_session_id) )
+                session.save()
+                return redirect('/system/session/{}/attempt/new'.format(evaluation_session_id) )
         else:
             form = AgreeWithIdentificationForm()
         return render_to_response('identification_succeed.html',
-            {'attempt':attempt, 'form':form}, context_instance=RequestContext(request) )
+            {'attempt':attempt, 'attempt_index':identification_attempt_index,
+             'session_id':session.pk, 'form':form}, context_instance=RequestContext(request) )
     else:
-        print "attempt {} failed ...".format(attempt.pk)
+        print "attempt {} failed ...".format(identification_attempt_index)
         keywords = request.GET.get('keywords')
         models = WarehouseScrapper.search_for_models(keywords) if keywords else []
         return render_to_response('identification_failed.html',
-            {'attempt': attempt, 'models': models, 'keywords':keywords if keywords else ""}, 
+            {'attempt': attempt, 'attempt_index':identification_attempt_index,
+             'session_id':session.pk,'models': models, 'keywords':keywords if keywords else ""}, 
             context_instance=RequestContext(request)
             )
 
-def image(request, identification_attempt_id):
-    attempt = get_object_or_404(IdentificationAttempt, pk=identification_attempt_id)
+def image(request, evaluation_session_id, identification_attempt_index):
+    session = get_object_or_404(EvaluationSession, pk=evaluation_session_id)
+    attempt = session.attempts[int(identification_attempt_index)]
     image = ExampleManager.get_image(attempt.example)
     return HttpResponse(image.read(), mimetype="image/png")
 
@@ -58,7 +62,6 @@ def new_session(request):
 def new_attempt(request, evaluation_session_id):
     session = get_object_or_404(EvaluationSession, pk=evaluation_session_id)
     attempt = IdentificationAttempt()
-    attempt.evaluation_session = session
     attempt.example = ExampleManager.get_random_example()
     pcd_file = ExampleManager.get_pcd( attempt.example )
     print "Load {} pointcloud <{}> for identification".format(attempt.example, pcd_file.name)
@@ -68,13 +71,15 @@ def new_attempt(request, evaluation_session_id):
         attempt.identification_succeed = True
     except:
         attempt.identification_succeed = False
-    attempt.save()
-    return redirect( '/system/attempt/{}/result/'.format(attempt.pk) )
+    session.attempts.append( attempt )
+    session.save()
+    return redirect( '/system/session/{}/attempt/{}/result/'.format(
+        session.pk, len(session.attempts) - 1)
+    )
 
-def train_identifier(request):
-    category = request.GET['category']
-    evaluation_session_id = request.GET['evaluation_session_id']
+def train_identifier(request, evaluation_session_id):
     session = get_object_or_404(EvaluationSession, pk=evaluation_session_id)
+    category = request.GET['category']
     models = []
     for google_id in request.GET['google_ids'].split(","):
         models.append( SketchupModel.find_google_id(google_id) )

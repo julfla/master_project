@@ -9,7 +9,7 @@
     .panel-heading= "Identification failed ..."
     .panel-body.container-fluid
       .col-md-4
-        %img.img-thumbnail{'src': "/system/attempt/={attempt.pk}/image/"}
+        %img.img-thumbnail{'src': "/system/session/={session_id}/attempt/={attempt_index}/image/"}
       .col-md-4
         %p This model could not have been identified. What is it ?
         %p Search the database, and select the closest models.
@@ -31,9 +31,8 @@
         - if forloop.counter1 == models|length
           :plain
             </div>
-    %form{'id':'train-form', 'method':'GET', 'action':'/system/train/'}
-      %input{'type':'hidden', 'name':'evaluation_session_id', 'value':'={attempt.evaluation_session_id}'}
-      %input{'type':'hidden', 'name':'identification_attempt_id', 'value':'={attempt.pk}'}
+    %form{'id':'train-form', 'method':'GET', 'action':'/system/session/={session_id}/train/'}
+      %input{'type':'hidden', 'name':'identification_attempt_index', 'value':'={attempt_index}'}
       %input{'type':'hidden', 'name':'category', 'value': "={keywords}"}
       %input{'type':'hidden', 'name':'google_ids', 'id':'input_google_ids'}
       %button.btn.btn-default{'type':"submit", 'value':"Submit"} Train the identifier
