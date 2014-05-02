@@ -18,7 +18,7 @@ def identification_result(request, evaluation_session_id, identification_attempt
         if request.method == 'POST':
             form = AgreeWithIdentificationForm(request.POST)
             if form.is_valid():
-                attempt.user_argreed = form.cleaned_data['user_argreed']
+                attempt.user_agreed = form.cleaned_data['user_agreed']
                 attempt.user_identification = form.cleaned_data['user_identification']
                 session.save()
                 return redirect('/system/session/{}/attempt/new'.format(evaluation_session_id) )

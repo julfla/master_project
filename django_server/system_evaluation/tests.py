@@ -1,6 +1,7 @@
 from django.test import TestCase
 from models import ExampleManager
 import re, os
+import forms
 
 class TestSystemEvaluation(TestCase):
 
@@ -46,3 +47,13 @@ class TestSystemEvaluation(TestCase):
         contain_examples_and_example_correct( ['banana', 'bowl', 'sponge'] )
         # test for composed word
         contain_examples_and_example_correct( ['food_can'] )
+
+    def test_form_AgreeWithIdentificationForm_validation(self):
+        from system_evaluation.forms import AgreeWithIdentificationForm
+        # test that user_identification can be null if and only if user disagree
+        form = AgreeWithIdentificationForm(data={'user_agreed': True})
+        self.assertTrue(form.is_valid())
+        form = AgreeWithIdentificationForm(data={'user_agreed': False})
+        self.assertFalse(form.is_valid())
+        form = AgreeWithIdentificationForm(data={'user_agreed': False, 'user_identification': 'choice'})
+        self.assertTrue(form.is_valid())
