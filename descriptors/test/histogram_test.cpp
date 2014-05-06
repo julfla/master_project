@@ -1,7 +1,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <cppunit/TestFixture.h>
 
-#include "../src/shape_distribution.h"
+#include "../include/descriptors/shape_distribution.h"
 #include <cstdio> // needed to create a temp file
 
 class Histogram_Test : public CppUnit::TestFixture{

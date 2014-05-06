@@ -8,7 +8,6 @@ import numpy
 
 class TestShapeDistribution(TestCase):
     def setUp(self):
-
         # TODO : use fixtures, but
         test_model = SketchupModel()
         test_model.google_id = "test1"
@@ -19,7 +18,7 @@ class TestShapeDistribution(TestCase):
         test_model.save()
 
         self.test_model = SketchupModel.find_google_id("test1")
-        self.view = PartialView.compute_view(self.test_model, 0.0, 0.0)
+        self.view = PartialView(model=self.test_model, theta=0.0, phi=0.0)
         self.distribution = ShapeDistribution.compute( self.view.pointcloud )
 
     def test_write_and_read(self):

@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('',
-    url(r'^(.+)/pcd/', 'partial_view.views.view_pcd')
+    url(r'^(.+)/plot_distribution', 'partial_view.views.image_plot_distribution')
 )

@@ -14,21 +14,20 @@ class TestPartialView(TestCase):
         test_model.text = "Description of 'title1' SketchupModel."
         test_model.mesh = file("sketchup_models/fixtures/mesh_can.tri").read()
         test_model.save()
+        self.test_model = SketchupModel.find_google_id("test1")
 
     def test_write_and_read(self):
         """
         Tests writing then reading of a PointCloudStorage and ShapeDistribution.
         """
-        test_model = SketchupModel.find_google_id("test1")
-
         # Generate the pointcloud
-        view  = PartialView.compute_view( test_model, 0.0, 0.0)
+        view  = PartialView(model=self.test_model, theta=0.0, phi=0.0)
         self.assertTrue( view.pointcloud.size() > 0 )
         
         view.save()
         self.assertEqual( PartialView.objects.count(), 1 )
 
-        restored_view = PartialView.objects.all()[:1].get()
+        restored_view = PartialView.objects.get(pk=view.pk)
         self.assertEqual( restored_view.theta, view.theta )
         self.assertEqual( restored_view.phi, view.phi )
         self.assertEqual( restored_view.model, view.model )
@@ -38,18 +37,26 @@ class TestPartialView(TestCase):
         """
         Tests the validation rules for the view.
         """        
-        view = PartialView()
-        view.theta = 0.0
-        view.phi = 1.345
-        view.model = SketchupModel.find_google_id("test1")
         self.assertEqual( PartialView.objects.count(), 0 )
-        view.save()
+        PartialView(model=self.test_model, theta=0.0, phi=1.345).save()
         self.assertEqual( PartialView.objects.count(), 1 )
 
         # If the set model, theta, phi is the same the view should not save
-        view.pk = None # force the instance to be saved as a new one
-        view.save()
+        PartialView(model=self.test_model, theta=0.0, phi=1.345).save()
         self.assertEqual( PartialView.objects.count(), 1 )
-        view.theta = 1.0
-        view.save()
+        PartialView(model=self.test_model, theta=1.0, phi=1.345).save()
         self.assertEqual( PartialView.objects.count(), 2 )
+    
+    @skip("long test activate only when needed")
+    def test_empty_pointcloud(self):
+        """
+        The pointcloud is sometimes returned empty.
+        It seems to be random and about 1/10 of the time
+        We test here the stability.
+        """
+        test_model = SketchupModel.find_google_id("fb01ac920e6b68fd7236c5b88164c0b8")
+        number_of_attempt = 10
+        for i in range(number_of_attempt):
+            print "Compute cloud {} on {}".format(i, number_of_attempt)
+            # Generate the pointcloud
+            PartialView.compute_all_views( test_model )

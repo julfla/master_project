@@ -1,0 +1,4 @@
+-extends "base_html.hamlpy"
+-block body
+  .col-md-4.col-md-offset-4
+    -include 'bootstrap_form.html' with form=form

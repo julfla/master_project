@@ -1,0 +1,13 @@
+-extends "base_html.hamlpy"
+
+-block body
+  .container
+    .panel.panel-default
+      .panel-heading= "Identification succeed !"
+      .panel-body
+        .col-md-6
+          %img.img-thumbnail{'src': "/system/session/={session_id}/attempt/={attempt_index}/image/"}
+        .col-md-6
+          %p This model has been identified as a ={attempt.identification_result}.
+          -include 'bootstrap_form.html' with form=form
+        

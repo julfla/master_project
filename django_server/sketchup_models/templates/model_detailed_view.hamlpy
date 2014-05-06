@@ -1,0 +1,7 @@
+-extends "base_html.hamlpy"
+
+-block content
+  .distribution_plots.container
+    -for view in model.partialview_set.all
+      .col-md-3
+        %img.img-thumbnail{'src': "/partial/={view.pk}/plot_distribution"}

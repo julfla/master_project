@@ -1,0 +1,49 @@
+-extends "base_html.hamlpy"
+
+-block style
+  :plain
+    input[type=checkbox] {display: none;}
+    input:checked + div > .panel-heading {background-color: green !important;}
+-block content
+  .panel.panel-default
+    .panel-heading= "Identification failed ..."
+    .panel-body.container-fluid
+      .col-md-4
+        %img.img-thumbnail{'src': "/system/session/={session_id}/attempt/={attempt_index}/image/"}
+      .col-md-4
+        %p This model could not have been identified. What is it ?
+        %p Search the database, and select the closest models.
+        -include '_search_bar.html' with action='?'
+  - if models|length > 0
+    #list-models.container-fluid
+      - for model in models
+        - if forloop.counter0|divisibleby:4
+          - if forloop.counter0 == 0
+            :plain 
+              <div class="row">
+          - else
+            :plain
+              </div><div class="row">
+        .col-md-3
+          %label{'for':'cb={model.google_id}'}
+            %input{'type':'checkbox', 'id':'cb={model.google_id}', 'name':"={model.google_id}"}
+            -include 'model_preview.html' with model=model
+        - if forloop.counter1 == models|length
+          :plain
+            </div>
+    %form{'id':'train-form', 'method':'GET', 'action':'/system/session/={session_id}/train/'}
+      %input{'type':'hidden', 'name':'identification_attempt_index', 'value':'={attempt_index}'}
+      %input{'type':'hidden', 'name':'category', 'value': "={keywords}"}
+      %input{'type':'hidden', 'name':'google_ids', 'id':'input_google_ids'}
+      %button.btn.btn-default{'type':"submit", 'value':"Submit"} Train the identifier
+
+    :javascript
+      $( "#train-form" ).submit(function( event ) {
+        var google_ids = [];
+        $( "#list-models input:checked" ).each(function(i, element) {
+          console.log( element )
+          google_ids.push($(element).attr("name"));
+        });
+        $("#input_google_ids").val(google_ids.join());
+        console.log( google_ids );
+      });

@@ -6,66 +6,76 @@ from django.utils.six import with_metaclass
 from sketchup_models.models import SketchupModel
 from shape_distribution.models import ShapeDistribution
 from pointcloud.models import PointCloud
-from common.libs.libpypartialview import PartialViewComputer
-# from common.libs.libpydescriptors import Distribution
-import tempfile
+
+
+class PartialCloudComputer():
+    from common.libs.libpypartialview import PartialViewComputer as CppPartialViewComputer
+    _cpp_computer = CppPartialViewComputer()
+    _loaded_model_id = None
+
+    def load_model(self, sketchup_model):
+        print "Loading model {} into PartialCloudComputer...".format( sketchup_model )
+        import tempfile
+        with tempfile.NamedTemporaryFile() as f :
+            f.write( sketchup_model.mesh )
+            f.flush()
+            self._cpp_computer.load_mesh(f.name)
+        PartialCloudComputer._loaded_model_id = sketchup_model.google_id
+
+    def compute_pointcloud(self, sketchup_model, theta, phi):
+        if self._loaded_model_id != sketchup_model.google_id :
+            self.load_model(sketchup_model)
+        print "Computing view for model {} : t={}, p={}".format(
+            sketchup_model.google_id, theta, phi)
+        cloud = PointCloud()
+        cloud._cpp_pointcloud = self._cpp_computer.compute_view(theta, phi)
+        return cloud
+
+    def display_view(self, sketchup_model, theta, phi):
+        if self._loaded_model_id != sketchup_model.google_id :
+            self.load_model(sketchup_model)
+        self._cpp_computer.display_mesh(theta, phi)
 
 class PartialView(models.Model):
-    view_computer = PartialViewComputer()
 
     # TODO : should not save if model, theta, or phi blank
     model = models.ForeignKey(SketchupModel)
     theta = models.FloatField()
     phi = models.FloatField()
-    pointcloud = EmbeddedModelField(PointCloud, blank=True, null=True)
-    distribution = EmbeddedModelField(ShapeDistribution, blank=True, null=True)
+    _distribution = EmbeddedModelField(ShapeDistribution, blank=True, null=True)
 
     class Meta:
         unique_together = (("model", "theta", "phi"),)
 
-    @staticmethod
-    def compute_view(model, theta, phi):
-        with tempfile.NamedTemporaryFile() as f :
-            f.write( model.mesh )
-            f.flush()
-            PartialView.view_computer.load_mesh(f.name)
+    @property
+    def distribution(self):
+        if not self._distribution:
+            self._distribution = ShapeDistribution.compute( self.pointcloud )
+        return self._distribution
 
-        # Instanciate the model and return
-        view = PartialView()
-        view.model = model
-        view.theta = theta
-        view.phi = phi
-        view.pointcloud = PointCloud()
-        cpp_cloud = PartialView.view_computer.compute_view(theta, phi)
-        view.pointcloud._cpp_pointcloud = cpp_cloud
-        view.distribution = ShapeDistribution.compute( view.pointcloud )
-        return view
+    @distribution.setter
+    def distribution(self, value):
+        self._distribution = value
+
+    @property
+    def pointcloud(self):
+        if not hasattr(self, '_pointcloud'):
+            self._pointcloud = PartialCloudComputer().compute_pointcloud(self.model, self.theta, self.phi)
+        return self._pointcloud
 
     @staticmethod
-    def compute_all_views(model):
-        with tempfile.NamedTemporaryFile() as f:
-            f.write( model.mesh )
-            f.flush()
-            PartialView.view_computer.load_mesh(f.name)
-        
+    def compute_all_views(model):        
         SQRT_NUMBER_VIEWS = 8 # 8 * 8 = 64 views per object
-        # from math import pi
         pi = 3.1416
         for i in range(SQRT_NUMBER_VIEWS):
             for j in range(SQRT_NUMBER_VIEWS):
-                view = PartialView()
-                view.model = model
-                view.theta = pi * i / SQRT_NUMBER_VIEWS
-                view.phi = 2 * pi * j / SQRT_NUMBER_VIEWS
-                view.pointcloud = PartialView.view_computer.compute_view(view.theta, view.phi)
-                view.distribution = ShapeDistribution.compute( view.pointcloud )
+                print "Computing view {}_{} for model {}".format(i,j,model.google_id)
+                theta = pi * i / SQRT_NUMBER_VIEWS
+                phi = 2 * pi * j / SQRT_NUMBER_VIEWS
+                view = PartialView(model=model, theta=theta, phi=phi)
+                view.distribution # force computation of distribution while mesh is loaded
                 view.save()
 
-    @staticmethod
-    def display_view(model, theta, phi):
-        with tempfile.NamedTemporaryFile() as f :
-            f.write( model.mesh )
-            f.flush()
-            PartialView.view_computer.load_mesh(f.name)
-        PartialView.view_computer.display_mesh(theta, phi)
-       
+    def display(self):
+        PartialCloudComputer().display_view(self.model, self.theta, self.phi)
+    

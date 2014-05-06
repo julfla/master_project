@@ -1,0 +1,6 @@
+%form.form-inline{'method':'GET', 'action':'={action}'}
+          %label Search for models
+          .input-group
+            %input.form-control{'type':'text', 'placeholder': "Keywords...", 'name':'keywords'}
+              %span.input-group-btn
+                %boutton.btn.btn-default Search

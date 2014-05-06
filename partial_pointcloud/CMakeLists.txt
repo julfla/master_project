@@ -1,18 +1,29 @@
+INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
 FIND_PACKAGE(OpenGL REQUIRED)
 FIND_PACKAGE(GLEW REQUIRED)
 FIND_PACKAGE(GLM REQUIRED)
 #GLFW does not have any FindGLFW.cmake file
 FIND_PACKAGE(PkgConfig REQUIRED)
 pkg_search_module(GLFW REQUIRED libglfw)
+INCLUDE_DIRECTORIES(${GLFW_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR})
+SET(GL_LIBS ${GLEW_LIBRARY} ${OPENGL_LIBRARY} ${GLFW_LIBRARIES} ${GLM_LIBRARIES})
 
-include_directories(${GLFW_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR})
-SET(GL_LIBS ${GLEW_LIBRARY} ${OPENGL_LIBRARY} ${GLFW_LIBRARIES} ${GLM_LIBRARIES} )
+FIND_PACKAGE(Boost 1.53.0 COMPONENTS program_options serialization python system REQUIRED )
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
-ADD_EXECUTABLE(partial_view partial_view.cxx partial_view.cpp)
-add_dependencies(partial_view descritors)
-TARGET_LINK_LIBRARIES(partial_view ${GL_LIBS} ${PCL_LIBRARIES} descriptors)
+FIND_PACKAGE(PCL 1.2 REQUIRED)
+INCLUDE_DIRECTORIES(${PCL_INCLUDE_DIRS})
+LINK_DIRECTORIES(${PCL_LIBRARY_DIRS})
+ADD_DEFINITIONS(${PCL_DEFINITIONS})
 
-add_library(pypartialview SHARED py_partial_view.cpp partial_view.cpp)
-target_link_libraries(pypartialview ${GL_LIBS} ${PCL_LIBRARIES}  ${Boost_LIBRARIES} descriptors)
+ADD_EXECUTABLE(partial_view src/partial_view.cxx src/partial_view.cpp)
+TARGET_LINK_LIBRARIES(partial_view descriptors ${GL_LIBS} ${PCL_LIBRARIES})
 
-set_target_properties(pypartialview PROPERTIES EXCLUDE_FROM_ALL true)
+# Expose PartialView to be used with python
+FIND_PACKAGE(PythonLibs REQUIRED)
+INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIRS})
+ADD_LIBRARY(pypartialview SHARED src/py_partial_view.cpp src/partial_view.cpp)
+TARGET_LINK_LIBRARIES(pypartialview descriptors ${GL_LIBS} ${PCL_LIBRARIES} ${Boost_LIBRARIES})
+
+SET_TARGET_PROPERTIES(pypartialview PROPERTIES EXCLUDE_FROM_ALL true)
