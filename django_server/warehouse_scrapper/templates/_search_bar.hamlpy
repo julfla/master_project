@@ -2,5 +2,5 @@
           %label Search for models
           .input-group
             %input.form-control{'type':'text', 'placeholder': "Keywords...", 'name':'keywords'}
-              %span.input-group-btn
-                %boutton.btn.btn-default Search
+            %span.input-group-btn
+              %button.btn.btn-default{'type':'submit'} Search
