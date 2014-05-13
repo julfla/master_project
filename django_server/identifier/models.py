@@ -42,7 +42,7 @@ class Identifier(models.Model):
         except:
             return Identifier()
     
-    def identify(self, pointcloud):
+    def identify_with_proba(self, pointcloud):
         """
         Returns the category of the pointcloud object if its category is known.
         If not, throws an exception.
@@ -57,7 +57,10 @@ class Identifier(models.Model):
         result_proba = self.classifier.predict_proba( data )
         result_idx = int(self.classifier.predict( data )[0])
         result_name = self.categories[result_idx].name
-        print "proba: {}     result : {} ({})".format( result_proba, result_idx, result_name)
+        return (result_name, result_proba)
+
+    def identify(self, pointcloud):
+        (result_name, result_proba) = self.identify_with_proba(pointcloud)
         return result_name
 
     def train(self, models, category_name):
