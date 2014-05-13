@@ -370,11 +370,13 @@ bool PartialViewComputer::setWindowlessContext() {
 
 void PartialViewComputer::free_gpu() {
     // Cleanup VBO and shader
-    glDeleteBuffers(1, &vertexbuffer);
-    glDeleteProgram(programID);
-    DEBUG_MSG( "GPU Freed." );
+    if( windowsLessContextSet || glfwContextSet ) {
+        glDeleteBuffers(1, &vertexbuffer);
+        glDeleteProgram(programID);
+    }
     // Close OpenGL window and terminate GLFW
     if(glfwContextSet)
         glfwTerminate();
+    DEBUG_MSG( "GPU Freed." );
     windowsLessContextSet = glfwContextSet = false;
 }
