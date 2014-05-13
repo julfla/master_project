@@ -17,7 +17,7 @@ class ExampleManager:
         exp = "\A({})[0-9_]+".format( '|'.join(list_categories) )
         m = re.compile(exp)
         res = [f for f in examles if m.search(f)]
-        return res
+        return map( lambda x: os.path.splitext(x)[0], res)
 
     # retrieves one random pcd and img from the dataset
     # this function must be modified if the architecture of the dataset changes
@@ -25,8 +25,7 @@ class ExampleManager:
     def get_random_example(list_categories=['banana','bowl']):
         number_examples = len(ExampleManager.list_examples(list_categories))
         index = randint(0, number_examples - 1)
-        img_path = ExampleManager.list_examples(list_categories)[index]
-        return os.path.splitext( img_path )[0]
+        return ExampleManager.list_examples(list_categories)[index]
 
     @staticmethod
     def get_image(example_name):
