@@ -3,7 +3,6 @@ from django.db import models
 from djangotoolbox.fields import ListField
 from django_mongodb_engine.fields import GridFSField
 from gridfs import GridOut
-import warehouse_scrapper.models
 
 class CategoryField(ListField):
     def formfield(self, **kwargs):
@@ -24,7 +23,8 @@ class SketchupModel(models.Model):
         if isinstance( self._mesh, GridOut):
             return self._mesh.read()
         elif self.url_mesh and not self._mesh:
-            warehouse_scrapper.models.WarehouseScrapper._download_skp_and_convert_to_tri(self, self.url_mesh)
+            from warehouse_scrapper.models import WarehouseScrapper
+            WarehouseScrapper._download_skp_and_convert_to_tri(self, self.url_mesh)
             self.save()
         return self._mesh
 
@@ -40,6 +40,7 @@ class SketchupModel(models.Model):
         try:
             return SketchupModel.objects.get(google_id=google_id)
         except SketchupModel.DoesNotExist:
-            warehouse_scrapper.models.WarehouseScrapper.scrap_one_model(google_id)
+            from warehouse_scrapper.models import WarehouseScrapper
+            WarehouseScrapper.scrap_one_model(google_id)
             return SketchupModel.objects.get(google_id=google_id)
 
