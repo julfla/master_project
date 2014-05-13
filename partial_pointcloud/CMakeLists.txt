@@ -20,10 +20,14 @@ ADD_DEFINITIONS(${PCL_DEFINITIONS})
 ADD_EXECUTABLE(partial_view src/partial_view.cxx src/partial_view.cpp)
 TARGET_LINK_LIBRARIES(partial_view descriptors ${GL_LIBS} ${PCL_LIBRARIES})
 
+ADD_LIBRARY(partialview SHARED src/partial_view.cpp)
+TARGET_LINK_LIBRARIES(partialview descriptors ${GL_LIBS} ${PCL_LIBRARIES} ${Boost_LIBRARIES})
+SET_TARGET_PROPERTIES(partialview PROPERTIES EXCLUDE_FROM_ALL true)
+
 # Expose PartialView to be used with python
 FIND_PACKAGE(PythonLibs REQUIRED)
 INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIRS})
-ADD_LIBRARY(pypartialview SHARED src/py_partial_view.cpp src/partial_view.cpp)
-TARGET_LINK_LIBRARIES(pypartialview descriptors ${GL_LIBS} ${PCL_LIBRARIES} ${Boost_LIBRARIES})
-
+ADD_LIBRARY(pypartialview SHARED src/py_partial_view.cpp)
+TARGET_LINK_LIBRARIES(pypartialview partialview ${Boost_LIBRARIES})
 SET_TARGET_PROPERTIES(pypartialview PROPERTIES EXCLUDE_FROM_ALL true)
+
