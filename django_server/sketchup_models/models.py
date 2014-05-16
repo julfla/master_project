@@ -21,6 +21,7 @@ class SketchupModel(models.Model):
     @property
     def mesh(self):
         if isinstance( self._mesh, GridOut):
+            self._mesh.seek(0)
             return self._mesh.read()
         elif self.url_mesh and not self._mesh:
             from warehouse_scrapper.models import WarehouseScrapper
