@@ -42,7 +42,6 @@ class Command(BaseCommand):
             if not options['save_file']:
                 options['save_file'] = options['load_file']
             self.load( options['load_file'] )
-            self.initialize_learning_dataset()
         else:
             self.pending_examples = None
             self.done_examples = None
@@ -67,6 +66,9 @@ class Command(BaseCommand):
                 print 'Saving state into {}.'.format( options['save_file'] )
                 self.dump( options['save_file'] )
             return
+        if options['save_file']:
+            print 'Saving state into {}.'.format( options['save_file'] )
+            self.dump( options['save_file'] )
 
     def initialize_learning_dataset(self):
         # Selected models for dataset
@@ -76,10 +78,15 @@ class Command(BaseCommand):
             'f74bba9a22e044dea3769fcd5f96f4',
             'd2e1dc9ee02834c71621c7edb823fc53']
         self.dataset['banana'] = [
-            'f6e6117261dca163713c042b393cc65b',
+            'fa789d123dd3b160d58a9c045d0de89a',
             'ba0d56295321002718ddbf38fa69c501',
             '7d78e217e0ba160fe2b248b8bb97d290']
-
+        """
+        self.dataset['food_box'] = [
+            'f6e6117261dca163713c042b393cc65b',
+            '338a9be4f34c10e6656551518a63a78a',
+            'f822931fe07a7654ce41b639931f9ca1']
+        """
     def perform_learning(self):
         # Retreiving the dataset models
         models = {}
@@ -96,6 +103,7 @@ class Command(BaseCommand):
         self.pending_examples = []
         self.done_examples = []
         for category in self.dataset.keys():
+            # this is super slow ??
             examples = map( lambda x: x.name, Example.filter_categories([category]) )
             for example in examples:
                 self.pending_examples.append({'name': example, 'expected': category})
@@ -123,8 +131,6 @@ class Command(BaseCommand):
                 good_results.append(example)
         print "Identification of {} examples.".format( len(examples) )
         print "Good results : {}%".format(100 * len(good_results)/len(examples))
-
-
 
     def dump(self, state_file_path):
         state = {}
