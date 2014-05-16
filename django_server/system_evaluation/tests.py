@@ -1,10 +1,14 @@
 from django.test import TestCase
-from models import ExampleManager
 import re, os
 import forms
 
+from system_evaluation.models import Example
+from unittest import skip
+
 class TestSystemEvaluation(TestCase):
 
+
+    @skip("ExampleManager does not exist anymore")
     def test_example_manager(self):
     	"""
     	Test that example manager is able to retreive some test models from the database.
@@ -26,6 +30,7 @@ class TestSystemEvaluation(TestCase):
         pcd_file = None
         self.assertTrue( not os.path.isfile( pcd_path ) )
 
+    @skip("ExampleManager does not exist anymore")
     def test_restrict_to_some_categories(self):
         """
         Test that we can restrict the ful database of example to some categories only
@@ -47,6 +52,12 @@ class TestSystemEvaluation(TestCase):
         contain_examples_and_example_correct( ['banana', 'bowl', 'sponge'] )
         # test for composed word
         contain_examples_and_example_correct( ['food_can'] )
+
+    def test_compressed_gridfsfield(self):
+        example = Example(name='test', _compressed=True)
+        example.image_file = 'hello'
+        image_file = example.image_file
+        self.assertEqual( image_file.read(), 'hello')
 
     def test_form_AgreeWithIdentificationForm_validation(self):
         from system_evaluation.forms import AgreeWithIdentificationForm

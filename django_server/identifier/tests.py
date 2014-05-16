@@ -3,7 +3,7 @@ from pointcloud.models import PointCloud
 from sketchup_models.models import SketchupModel
 from identifier.models import Identifier
 from shape_distribution.models import ShapeDistribution
-from system_evaluation.models import ExampleManager
+from system_evaluation.models import Example
 
 class SimpleTest(TestCase):
 
@@ -24,6 +24,8 @@ class SimpleTest(TestCase):
             # can raise if Indentification failed
             pass
 
+    from unittest import skip
+    @skip("Need some preloading, run 'django preload_examples banana bowl food_can'")
     def test_identification_banana_vs_bowl_vs_food_can(self):
         # Getting the dataset
         bowl_ids = ['fa61e604661d4aa66658ecd96794a1cd',
@@ -51,8 +53,8 @@ class SimpleTest(TestCase):
         iden.train( food_cans, 'food_can')
         # Identification
         for i in range(20):
-            example = ExampleManager.get_random_example(['banana', 'bowl', 'food_can'])
-            pcd_file = ExampleManager.get_pcd( example )
+            example = Example.get_random(['banana', 'bowl', 'food_can'])
+            pcd_file = example.pcd_file()
             print "Identification of file {}".format( example )
             cloud = PointCloud.load_pcd( pcd_file.name )
             iden.identify( cloud )
