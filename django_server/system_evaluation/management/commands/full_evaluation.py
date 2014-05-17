@@ -55,17 +55,18 @@ class Command(BaseCommand):
         if self.pending_examples is None and self.done_examples is None:
             self.initialize_list_examples()
         try:
-            for example in self.pending_examples:
+            while len(self.pending_examples):
+                example = self.pending_examples[0]:
                 self.process_example( example )
                 self.done_examples.append( example )
                 self.pending_examples.remove(example)
-            if options['analyze']:
-                self.analyse_results()
         except KeyboardInterrupt:            
             if options['save_file']:
                 print 'Saving state into {}.'.format( options['save_file'] )
                 self.dump( options['save_file'] )
             return
+        if options['analyze']:
+            self.analyse_results()
         if options['save_file']:
             print 'Saving state into {}.'.format( options['save_file'] )
             self.dump( options['save_file'] )
