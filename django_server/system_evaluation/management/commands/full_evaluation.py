@@ -56,7 +56,7 @@ class Command(BaseCommand):
             self.initialize_list_examples()
         try:
             while len(self.pending_examples):
-                example = self.pending_examples[0]:
+                example = self.pending_examples[0]
                 self.process_example( example )
                 self.done_examples.append( example )
                 self.pending_examples.remove(example)
@@ -114,7 +114,7 @@ class Command(BaseCommand):
         number_done = len(self.done_examples)
         number_total = number_done + len(self.pending_examples)
         print 'Dealing with {} ( {}/{}, {}% )'.format( example['name'],
-            number_done, number_total, 100 * number_done / number_total )
+            number_done + 1, number_total, 100 * number_done / number_total )
         pcd_file = Example.objects.get(name=example['name']).pcd_file
         cloud = PointCloud.load_pcd( pcd_file.name )
         (category, proba) = self.identifier.identify_with_proba(cloud)
