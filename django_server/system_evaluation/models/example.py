@@ -76,11 +76,10 @@ class Example(models.Model):
 
     @staticmethod
     def filter_categories(list_categories):
-        temp = []
-        for example in Example.objects.all():
-            if example.category in list_categories:
-                temp.append(example)
-        return temp
+        regex = '({})(_[0-9]+)+'.format(
+            '|'.join(list_categories)
+            )
+        return Example.objects.filter(name__regex=regex)
 
     @staticmethod
     def get_random(list_categories):
@@ -88,4 +87,5 @@ class Example(models.Model):
         examples = Example.filter_categories(list_categories)
         index = randint(0, len(examples) - 1)
         return examples[index]
+
 
