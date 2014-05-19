@@ -6,7 +6,7 @@ from django.template import RequestContext
 
 from sketchup_models.models import SketchupModel
 from pointcloud.models import PointCloud
-from system_evaluation.models import ExampleManager, IdentificationAttempt, EvaluationSession
+from system_evaluation.models import Example, IdentificationAttempt, EvaluationSession
 from warehouse_scrapper.models import WarehouseScrapper
 from system_evaluation.forms import *
 
@@ -40,7 +40,7 @@ def identification_result(request, evaluation_session_id, identification_attempt
 def image(request, evaluation_session_id, identification_attempt_index):
     session = get_object_or_404(EvaluationSession, pk=evaluation_session_id)
     attempt = session.attempts[int(identification_attempt_index)]
-    image = ExampleManager.get_image(attempt.example)
+    image = Example.objects.get(name=attempt.example).image_file()
     return HttpResponse(image.read(), mimetype="image/png")
 
 def new_session(request):
@@ -62,8 +62,9 @@ def new_session(request):
 def new_attempt(request, evaluation_session_id):
     session = get_object_or_404(EvaluationSession, pk=evaluation_session_id)
     attempt = IdentificationAttempt()
-    attempt.example = ExampleManager.get_random_example()
-    pcd_file = ExampleManager.get_pcd( attempt.example )
+    example = Example.get_random()
+    attempt.example = example.name
+    pcd_file = example.pcd_file()
     print "Load {} pointcloud <{}> for identification".format(attempt.example, pcd_file.name)
     pointcloud = PointCloud.load_pcd( pcd_file.name )
     try:

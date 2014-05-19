@@ -1,2 +1,2 @@
-from example_manager import ExampleManager
+from example import Example
 from evaluation_session import EvaluationSession, IdentificationAttempt

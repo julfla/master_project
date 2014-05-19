@@ -3,7 +3,7 @@ from optparse import make_option
 import pickle
 
 from sketchup_models.models import SketchupModel
-from system_evaluation.models import ExampleManager
+from system_evaluation.models import Example
 from identifier.models import Identifier
 from pointcloud.models import PointCloud
 
@@ -14,7 +14,7 @@ class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         # make_option('--dataset',
         #     dest='dataset_file',
-        #     default='evaluation_dataset.json.sample',
+        #     default='evaluation_dataset.pickle.sample',
         #     help='Json file containing model ids of learnign dataset.'),
         make_option('--save',
             dest='save_file',
@@ -30,20 +30,33 @@ class Command(BaseCommand):
             action='store_true',
             default=False,
             help='Display results of evaluation.'),
+        make_option('--learning-only',
+            dest='learning',
+            action='store_true',
+            default=False,
+            help='Performs the learning only, do not evaluate.'),
         )
 
     def handle(self, *args, **options):
         if options['load_file']:
             if not options['save_file']:
                 options['save_file'] = options['load_file']
-            self.load( options['load_file'] ) 
+            self.load( options['load_file'] )
         else:
-            self.init()
-        if options['analyze']:
-            self.analyse_results()
-            return
-        try: 
-            for example in self.pending_examples:
+            self.pending_examples = None
+            self.done_examples = None
+            self.initialize_learning_dataset()
+            self.perform_learning()
+        if options['learning']:
+            if options['save_file']:
+                print 'Saving state into {}.'.format( options['save_file'] )
+                self.dump( options['save_file'] )
+                return
+        if self.pending_examples is None and self.done_examples is None:
+            self.initialize_list_examples()
+        try:
+            while len(self.pending_examples):
+                example = self.pending_examples[0]
                 self.process_example( example )
                 self.done_examples.append( example )
                 self.pending_examples.remove(example)
@@ -52,46 +65,57 @@ class Command(BaseCommand):
                 print 'Saving state into {}.'.format( options['save_file'] )
                 self.dump( options['save_file'] )
             return
+        if options['analyze']:
+            self.analyse_results()
+        if options['save_file']:
+            print 'Saving state into {}.'.format( options['save_file'] )
+            self.dump( options['save_file'] )
 
-    def get_learning_dataset(self):
+    def initialize_learning_dataset(self):
         # Selected models for dataset
-        dataset = {}
-        dataset['bowl'] = [
+        self.dataset = {}
+        self.dataset['bowl'] = [
             'fa61e604661d4aa66658ecd96794a1cd',
             'f74bba9a22e044dea3769fcd5f96f4',
             'd2e1dc9ee02834c71621c7edb823fc53']
-        dataset['banana'] = [
-            'f6e6117261dca163713c042b393cc65b',
+        self.dataset['banana'] = [
+            'fa789d123dd3b160d58a9c045d0de89a',
             'ba0d56295321002718ddbf38fa69c501',
             '7d78e217e0ba160fe2b248b8bb97d290']
+        """
+        self.dataset['food_box'] = [
+            'f6e6117261dca163713c042b393cc65b',
+            '338a9be4f34c10e6656551518a63a78a',
+            'f822931fe07a7654ce41b639931f9ca1']
+        """
+    def perform_learning(self):
         # Retreiving the dataset models
-        for category in dataset.keys():
-            models = []
-            for google_id in dataset[category]:
-                models.append( SketchupModel.find_google_id(google_id) )
-            dataset[category] = models
-        return dataset
-
-    def init(self):
-        dataset = self.get_learning_dataset()
+        models = {}
+        for category in self.dataset.keys():
+            models[category] = []
+            for google_id in self.dataset[category]:
+                models[category].append( SketchupModel.find_google_id(google_id) )
         # Training
         self.identifier = Identifier()
-        for category in dataset.keys():
-            self.identifier.train( dataset[category], category)
+        for category in models.keys():
+            self.identifier.train( models[category], category)
+
+    def initialize_list_examples(self):
         self.pending_examples = []
-        for category in dataset.keys():
-            examples = ExampleManager.list_examples( [category] )
+        self.done_examples = []
+        for category in self.dataset.keys():
+            # this is super slow ??
+            examples = map( lambda x: x.name, Example.filter_categories([category]) )
             for example in examples:
                 self.pending_examples.append({'name': example, 'expected': category})
-        self.done_examples = []
 
     def process_example(self, example):
         # Display of completion
         number_done = len(self.done_examples)
         number_total = number_done + len(self.pending_examples)
         print 'Dealing with {} ( {}/{}, {}% )'.format( example['name'],
-            number_done, number_total, 100 * number_done / number_total )
-        pcd_file = ExampleManager.get_pcd( example['name'] )
+            number_done + 1, number_total, 100 * number_done / number_total )
+        pcd_file = Example.objects.get(name=example['name']).pcd_file
         cloud = PointCloud.load_pcd( pcd_file.name )
         (category, proba) = self.identifier.identify_with_proba(cloud)
         example['actual'] = category
@@ -109,10 +133,9 @@ class Command(BaseCommand):
         print "Identification of {} examples.".format( len(examples) )
         print "Good results : {}%".format(100 * len(good_results)/len(examples))
 
-
-
     def dump(self, state_file_path):
         state = {}
+        state['dataset'] = self.dataset
         state['done_examples'] = self.done_examples
         state['pending_examples'] = self.pending_examples
         state['identifier'] = self.identifier
