@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from optparse import make_option
-import pickle
+import pickle, json
 
 from sketchup_models.models import SketchupModel
 from system_evaluation.models import Example
@@ -12,10 +12,10 @@ class Command(BaseCommand):
         + ' and test vs all bowls and bananas')
 
     option_list = BaseCommand.option_list + (
-        # make_option('--dataset',
-        #     dest='dataset_file',
-        #     default='evaluation_dataset.pickle.sample',
-        #     help='Json file containing model ids of learnign dataset.'),
+        make_option('--dataset',
+            dest='dataset_file',
+            default='evaluation_dataset.json.sample',
+            help='Json file containing model ids of learnign dataset.'),
         make_option('--save',
             dest='save_file',
             default=None,
@@ -45,13 +45,14 @@ class Command(BaseCommand):
         else:
             self.pending_examples = None
             self.done_examples = None
-            self.initialize_learning_dataset()
+            with open( options['dataset_file'] ) as f:
+                self.dataset = json.load(f)
             self.perform_learning()
         if options['learning']:
             if options['save_file']:
                 print 'Saving state into {}.'.format( options['save_file'] )
                 self.dump( options['save_file'] )
-                return
+            return
         if self.pending_examples is None and self.done_examples is None:
             self.initialize_list_examples()
         try:
@@ -71,23 +72,6 @@ class Command(BaseCommand):
             print 'Saving state into {}.'.format( options['save_file'] )
             self.dump( options['save_file'] )
 
-    def initialize_learning_dataset(self):
-        # Selected models for dataset
-        self.dataset = {}
-        self.dataset['bowl'] = [
-            'fa61e604661d4aa66658ecd96794a1cd',
-            'f74bba9a22e044dea3769fcd5f96f4',
-            'd2e1dc9ee02834c71621c7edb823fc53']
-        self.dataset['banana'] = [
-            'fa789d123dd3b160d58a9c045d0de89a',
-            'ba0d56295321002718ddbf38fa69c501',
-            '7d78e217e0ba160fe2b248b8bb97d290']
-        """
-        self.dataset['food_box'] = [
-            'f6e6117261dca163713c042b393cc65b',
-            '338a9be4f34c10e6656551518a63a78a',
-            'f822931fe07a7654ce41b639931f9ca1']
-        """
     def perform_learning(self):
         # Retreiving the dataset models
         models = {}
@@ -132,6 +116,8 @@ class Command(BaseCommand):
                 good_results.append(example)
         print "Identification of {} examples.".format( len(examples) )
         print "Good results : {}%".format(100 * len(good_results)/len(examples))
+        # add per object rate and per category object
+        # display list of unsuccessfull classification with ordered proba results
 
     def dump(self, state_file_path):
         state = {}
