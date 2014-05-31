@@ -40,6 +40,7 @@ DefaultPointCloud read_point_cloud_from_pcd( const char* path) {
     return cloud;
 }
 
+/*
 // sometimes init does not go well, this tweak restart the computer to gain in stability
 DefaultPointCloud compute_view_tweak_int(PartialViewComputer& self, float theta, float phi, int ntime) {
     DefaultPointCloud cloud = self.compute_view(theta, phi);
@@ -54,6 +55,11 @@ DefaultPointCloud compute_view_tweak_int(PartialViewComputer& self, float theta,
 DefaultPointCloud compute_view_tweak(PartialViewComputer& self, float theta, float phi) {
     return compute_view_tweak_int(self, theta, phi, 0);
 }
+*/
+DefaultPointCloud compute_view_tweak(PartialViewComputer& self, float theta, float phi) {
+    return self.compute_view(theta, phi);
+}
+
 
 
 BOOST_PYTHON_MODULE(libpypartialview)

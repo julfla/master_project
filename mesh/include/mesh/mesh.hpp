@@ -35,6 +35,10 @@ public:
         return polygons.size();
     }
 
+    const std::vector<TrianglePolygon> & get_polygons() {
+        return polygons;
+    }
+
 private:
     std::vector<TrianglePolygon> polygons;
     // the map is used to retreive a random point on the mesh

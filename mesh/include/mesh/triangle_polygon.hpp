@@ -39,7 +39,7 @@ public:
         return 0.5*(vect1%vect2)*(vect1%vect2);
     }
 
-    Point_3D* getPoints() {
+    const Point_3D* getPoints() const {
         return points;
     }
 

@@ -1,20 +1,15 @@
-#version 130
+#version 330 core
 
-// Input vertex data, different for all executions of this shader.
-in vec3 vertexPosition_modelspace;
+layout(location = 0) in vec3 vertexPosition_modelspace;
 
-// Output data ; will be interpolated for each fragment.
-out vec4 fragColor;
+out vec3 world_position;
+uniform mat4 M, V, P;
 
-// Values that stay constant for the whole mesh.
-uniform mat4 MVP;
-uniform mat4 MV;
-uniform float SCALE;
-
-void main(){
+void main() {
+	// Set the pixel to world space
+	gl_Position = M * vec4(vertexPosition_modelspace,1);
+	world_position = gl_Position.xyz;
 	
-	gl_Position = MVP * vec4(vertexPosition_modelspace,1.0f);	
-	fragColor = MV * vec4(vertexPosition_modelspace, 1.0f);
-	//fragPosition *= SCALE;
-	
+	// Set the pixel to clip space
+	gl_Position =  P * V * gl_Position;
 }
