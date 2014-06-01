@@ -124,7 +124,7 @@ class Command(BaseCommand):
         state['dataset'] = self.dataset
         state['done_examples'] = self.done_examples
         state['pending_examples'] = self.pending_examples
-        state['identifier'] = self.identifier
+        state['identifier'] = self.identifier.classifier
         with open(state_file_path, 'wb') as handle:
             pickle.dump( state, handle )
         print "State has been saved to {}.".format( state_file_path )
@@ -132,5 +132,6 @@ class Command(BaseCommand):
     def load(self, state_file_path):
         with open(state_file_path, 'r') as handle:
             state = pickle.load( handle )
+        state['identifier'] = Identifier(classifier=state['identifier'])
         self.__dict__.update( state )
         print "State has been restored from {}.".format( state_file_path )
