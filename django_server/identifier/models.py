@@ -1,5 +1,5 @@
 from django.db import models
-from djangotoolbox.fields import ListField, SetField, EmbeddedModelField
+from djangotoolbox.fields import DictField, SetField, EmbeddedModelField
 
 from django.utils.six import with_metaclass
 
@@ -30,10 +30,7 @@ class SVCField(with_metaclass(models.SubfieldBase, models.Field)):
 class Identifier(models.Model):
 
     classifier = SVCField(blank=True, null=True)
-
-    @property
-    def categories(self):
-        return Category.objects.filter(identifier=self).order_by('name')
+    dict_categories = DictField(SetField, default=dict())
     
     @staticmethod
     def instance():
@@ -47,7 +44,7 @@ class Identifier(models.Model):
         Returns the category of the pointcloud object if its category is known.
         If not, throws an exception.
         """
-        if len( self.categories ) < 1 :
+        if len( self.dict_categories ) < 1 :
             print "No category cannot identify"
             raise IndexError("Identifier is empty.")
 
@@ -69,18 +66,18 @@ class Identifier(models.Model):
         If the category is not known yet, then it is added and returns true.
         """
         # retreiving or creating the corresponding category
-        self.save() # make sure that we have a primary key
-        category, created = Category.objects.get_or_create(identifier=self, name=category_name)
-        if created: print "The category {} has been created.".format(category.name)
+        if not category_name in self.dict_categories:
+            self.dict_categories[category_name] = set()
+            print "The category {} has been created.".format(category_name)
+        category = self.dict_categories[category_name]
         
         print "Adding models to category {}.".format( category_name )
         for model in models:
-            category.models.add( model.pk )
-        category.save()
+            category.add( model.google_id )
 
         # training the classifier
         # cannot train with less than two classes
-        if len( self.categories ) >= 2:
+        if len( self.dict_categories ) > 1:
             (X, Y) = self._get_example_matrix()
             print "Size X => {}     Size Y => {}".format(X.shape, Y.shape)
             self.classifier = svm.SVC(kernel='linear', probability=True)
@@ -93,21 +90,14 @@ class Identifier(models.Model):
         """
         X = numpy.zeros( [0, SHAPE_DISTRIBUTION_SIZE] )
         Y = numpy.zeros( [0, 1] )
-        for idx, category in enumerate(self.categories):
+        for idx, (category, model_ids) in enumerate(self.dict_categories.items()):
             arr = numpy.zeros( (0, SHAPE_DISTRIBUTION_SIZE ) )
-            for model in SketchupModel.objects.filter(pk__in=category.models):
+            for model_id in model_ids:
+                model = SketchupModel.find_google_id(model_id)
                 if model.partialview_set.count() == 0:
                     PartialView.compute_all_views(model)
                 for view in model.partialview_set.all():
                     arr = numpy.vstack( [arr, view.distribution.as_numpy_array] )
             X = numpy.vstack( [X, arr] )
-            Y = numpy.vstack( [Y, idx * numpy.ones( [len(category.models) * 64, 1] ) ] )
+            Y = numpy.vstack( [Y, idx * numpy.ones( [len(model_ids) * 64, 1] ) ] )
         return (X, Y)
-
-class Category(models.Model):
-    name = models.CharField(max_length=255)
-    identifier = models.ForeignKey(Identifier)
-    models = SetField(models.ForeignKey( SketchupModel ))
-
-    class Meta:
-        unique_together = (("name", "identifier"),)
