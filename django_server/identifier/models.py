@@ -48,12 +48,10 @@ class Identifier(models.Model):
             print "No category cannot identify"
             raise IndexError("Identifier is empty.")
 
-        # TODO
-        # first behaviour so that can be used in integration.
         data = ShapeDistribution.compute(pointcloud).as_numpy_array
         result_proba = self.classifier.predict_proba( data )
         result_idx = int(self.classifier.predict( data )[0])
-        result_name = self.categories[result_idx].name
+        result_name = self.dict_categories.keys()[result_idx]
         return (result_name, result_proba)
 
     def identify(self, pointcloud):

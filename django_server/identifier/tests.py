@@ -33,27 +33,20 @@ class SimpleTest(TestCase):
             'd2e1dc9ee02834c71621c7edb823fc53']
         banana_ids = ['f6e6117261dca163713c042b393cc65b',
             'ba0d56295321002718ddbf38fa69c501',
-            '7d78e217e0ba160fe2b248b8bb97d290']
-        food_can_ids = ['38dd2a8d2c984e2b6c1cd53dbc9f7b8e',
-            'f818771f4b0727e330612f5c0ef21eb8',
-            '612abb2fadd1c44e846564a8a219239b']        
+            '7d78e217e0ba160fe2b248b8bb97d290']        
         bowls = []
         for bowl_id in bowl_ids:
             bowls.append( SketchupModel.find_google_id(bowl_id) )
         bananas = []
         for banana_id in banana_ids:
             bananas.append( SketchupModel.find_google_id(banana_id) )
-        food_cans = []
-        for food_can_id in food_can_ids:
-            food_cans.append( SketchupModel.find_google_id(food_can_id) )
         # Training
         iden = Identifier()
         iden.train( bananas, 'banana')
         iden.train( bowls, 'bowl')
-        iden.train( food_cans, 'food_can')
         # Identification
         for i in range(20):
-            example = Example.get_random(['banana', 'bowl', 'food_can'])
+            example = Example.get_random(['banana', 'bowl'])
             pcd_file = example.pcd_file()
             print "Identification of file {}".format( example )
             cloud = PointCloud.load_pcd( pcd_file.name )
