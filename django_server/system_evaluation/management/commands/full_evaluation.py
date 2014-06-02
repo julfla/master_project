@@ -87,11 +87,9 @@ class Command(BaseCommand):
     def initialize_list_examples(self):
         self.pending_examples = []
         self.done_examples = []
-        for category in self.dataset.keys():
-            # this is super slow ??
-            examples = map( lambda x: x.name, Example.filter_categories([category]) )
-            for example in examples:
-                self.pending_examples.append({'name': example, 'expected': category})
+        categories = self.dataset.keys()
+        map_f = lambda example: {'name': example.name, 'object_name': example.object_name, 'expected': example.category}
+        self.pending_examples = map( map_f, Example.filter_categories( categories ))
 
     def process_example(self, example):
         # Display of completion
@@ -109,14 +107,33 @@ class Command(BaseCommand):
             example['name'], example['actual'], example['proba'] )
 
     def analyse_results(self):
+        from collections import defaultdict
         examples = self.done_examples
-        good_results = []
+        positives = [a for a in examples if a['expected'] ==  a['actual']]
+
+        positives_by_object = defaultdict(int)
+        positives_by_category = defaultdict(int)
+        for example in positives:
+            positives_by_category[example['expected']] += 1
+            # positives_by_object[example['object_name']] += 1
+
+        total_by_object = defaultdict(int)
+        total_by_category = defaultdict(int)
         for example in examples:
-            if example['actual'] == example['expected']:
-                good_results.append(example)
+            total_by_category[example['expected']] += 1
+            # total_by_object[example['object_name']] += 1
+
         print "Identification of {} examples.".format( len(examples) )
-        print "Good results : {}%".format(100 * len(good_results)/len(examples))
-        # add per object rate and per category object
+        print "Overall results : {}%".format(100 * len(positives)/len(examples))
+
+        print "\nResults by category"
+        for category, p in positives_by_category.items():
+            print '{} : {}%'.format( category, 100 * p / total_by_category[category])
+        
+#        print "\nResults by object"
+#        for obj, p in positives_by_object.items():
+#            print '{} : {}%'.format( obj, 100 * p / total_by_object[category])
+        
         # display list of unsuccessfull classification with ordered proba results
 
     def dump(self, state_file_path):
