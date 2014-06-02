@@ -115,13 +115,13 @@ class Command(BaseCommand):
         positives_by_category = defaultdict(int)
         for example in positives:
             positives_by_category[example['expected']] += 1
-            # positives_by_object[example['object_name']] += 1
+            positives_by_object[example['object_name']] += 1
 
         total_by_object = defaultdict(int)
         total_by_category = defaultdict(int)
         for example in examples:
             total_by_category[example['expected']] += 1
-            # total_by_object[example['object_name']] += 1
+            total_by_object[example['object_name']] += 1
 
         print "Identification of {} examples.".format( len(examples) )
         print "Overall results : {}%".format(100 * len(positives)/len(examples))
@@ -130,9 +130,9 @@ class Command(BaseCommand):
         for category, p in positives_by_category.items():
             print '{} : {}%'.format( category, 100 * p / total_by_category[category])
         
-#        print "\nResults by object"
-#        for obj, p in positives_by_object.items():
-#            print '{} : {}%'.format( obj, 100 * p / total_by_object[category])
+        print "\nResults by object"
+        for obj, p in positives_by_object.items():
+            print '{} : {}%'.format( obj, 100 * p / total_by_object[category])
         
         # display list of unsuccessfull classification with ordered proba results
 
