@@ -35,6 +35,10 @@ public:
 
     ~PartialViewComputer();
 
+    void show_window() {glfwShowWindow(window);}
+
+    void hide_window() {glfwHideWindow(window);}
+
     // should be private but exposed for stability tweak
     // void free_gpu();
 
