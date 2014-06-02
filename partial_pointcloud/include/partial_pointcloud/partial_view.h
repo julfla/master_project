@@ -39,11 +39,6 @@ public:
 
     void hide_window() {glfwHideWindow(window);}
 
-    // should be private but exposed for stability tweak
-    // void free_gpu();
-
-    // should be private but exposed for stability tweak
-    // bool setGLFWContext(const char* window_name = "OpenGL");
 private:
 
     bool init();
@@ -55,31 +50,16 @@ private:
     // Returns a a width*height long vector containing raw data after drawing.
     const std::vector<glm::vec4> framebuffer_data();
 
-    // glm::mat4 ProjectionMatrix(float theta, float phi);
-
     void init_MVP(float theta, float phi);
 
-
-    // void pixel_vector_to_pointcloud(std::vector<float> * data, DefaultPointCloud * cloud);
-
-    // void build_cloud_from_framebuffer(DefaultPointCloud * cloud);
-
-
-    // Create an windowless opengl context
-    // credit : http://renderingpipeline.com/2012/05/windowless-opengl/
-    // bool setWindowlessContext();
-
-    bool windowsLessContextSet, glfwContextSet;
     std::vector<glm::vec3> vertice; // vertice of the model
     glm::vec3 centroid; //centroid of the model
-    float scale_factor; // scaling needed to fir the mesh in a 1 radius sphere
+    float scale_factor; // scaling needed to fit the mesh in a 1 radius sphere
     int width, height;
     float fov;
     GLFWwindow* window;
     glm::mat4 M,V,P;
-    // GLuint VertexArrayID;
-    GLuint programID, mID, vID, pID, vertexbuffer, VertexArrayID;//, framebuffer;
-
+    GLuint programID, mID, vID, pID, vertexbuffer, VertexArrayID;
 };
 
 #endif //PARTIAL_VIEW_HPP
