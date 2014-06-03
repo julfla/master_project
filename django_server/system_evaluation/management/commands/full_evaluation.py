@@ -107,34 +107,41 @@ class Command(BaseCommand):
             example['name'], example['actual'], example['proba'] )
 
     def analyse_results(self):
-        from collections import defaultdict
+        
+        def result_group_by(examples, key, displayed_name=None):
+            from collections import defaultdict
+            if displayed_name is None: displayed_name = key
+            results = defaultdict(lambda : defaultdict(list))
+            for example in examples:
+                key_value = example[key]
+                results[key_value]['all'].append(example)
+                if example['expected'] == example['actual']:
+                    results[key_value]['positives'].append(example) 
+                else:
+                    results[key_value]['negatives'].append(example)
+            for group, item in results.items():
+                results[group]['percentage'] = 100 * len(item['positives']) / len(item['all'])
+            
+            sorted_results = sorted(results.items(), key=lambda x: x[1]['percentage'] )
+            print 'Results by {}'.format(displayed_name)
+            for group, item in sorted_results:
+                error_stats = defaultdict(int)
+                for example in item['negatives']:
+                    error_stats[example['actual']] += 1
+                sorted_error_starts = sorted(error_stats.iteritems(), key=lambda x: x[1], reverse=True)
+                detail_result = ', '.join( map( lambda x: "{}: {}".format(x[0], x[1]), sorted_error_starts ) )
+
+                print '{} : {}% (total: {}) | Errors : {}'.format( 
+                    group, item['percentage'], len(item['all']), detail_result)
+            print ''
+
         examples = self.done_examples
         positives = [a for a in examples if a['expected'] ==  a['actual']]
-
-        positives_by_object = defaultdict(int)
-        positives_by_category = defaultdict(int)
-        for example in positives:
-            positives_by_category[example['expected']] += 1
-            positives_by_object[example['object_name']] += 1
-
-        total_by_object = defaultdict(int)
-        total_by_category = defaultdict(int)
-        for example in examples:
-            total_by_category[example['expected']] += 1
-            total_by_object[example['object_name']] += 1
-
         print "Identification of {} examples.".format( len(examples) )
         print "Overall results : {}%".format(100 * len(positives)/len(examples))
-
-        print "\nResults by category"
-        for category, p in positives_by_category.items():
-            print '{} : {}%'.format( category, 100 * p / total_by_category[category])
-        
-        print "\nResults by object"
-        for obj, p in positives_by_object.items():
-            print '{} : {}%'.format( obj, 100 * p / total_by_object[category])
-        
-        # display list of unsuccessfull classification with ordered proba results
+        print ''
+        result_group_by(examples, 'expected', 'category')
+        result_group_by(examples, 'object_name', 'object')
 
     def dump(self, state_file_path):
         state = {}
@@ -151,3 +158,4 @@ class Command(BaseCommand):
             state = pickle.load( handle )
         self.__dict__.update( state )
         print "State has been restored from {}.".format( state_file_path )
+
