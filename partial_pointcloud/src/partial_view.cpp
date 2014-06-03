@@ -72,6 +72,7 @@ bool PartialViewComputer::init() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_VISIBLE, false); // The window will be hidden
 
     // Open a window and create its OpenGL context
     window = glfwCreateWindow( 1024, 768, "OpenGL", NULL, NULL );
@@ -106,11 +107,11 @@ bool PartialViewComputer::init() {
     vID = glGetUniformLocation(programID, "V");
     pID = glGetUniformLocation(programID, "P");
     DEBUG_MSG( "Initialization finished");
-
 }
 
 DefaultPointCloud PartialViewComputer::compute_view(float theta, float phi) {
     init_MVP(theta, phi);
+    draw();
     std::vector<glm::vec4> data = framebuffer_data();
     DefaultPointCloud cloud;
     for(std::vector<glm::vec4>::iterator it = data.begin(); it < data.end(); ++it) {
@@ -121,15 +122,12 @@ DefaultPointCloud PartialViewComputer::compute_view(float theta, float phi) {
     }
     DEBUG_MSG( "data length : " << data.size() );
     DEBUG_MSG( "cloud size : " << cloud.size() );
-    if (cloud.empty()) { // print additional debug info
-        for(std::vector<glm::vec4>::iterator it = data.begin(); it < data.end(); ++it) {
-            // DEBUG_MSG( "x:" << it->x << "  y:" << it->y << "  z:" << it->z << "  w:" << it->w );
-        }
-    }
+    assert( cloud.size() > 0 );
     return cloud;
 }
 
 int PartialViewComputer::displayMesh(float theta, float phi) {
+    show_window();
     init_MVP(theta, phi);
     do{
         draw();
@@ -139,34 +137,13 @@ int PartialViewComputer::displayMesh(float theta, float phi) {
     } // Stop if the ESC key was pressed or the window was closed
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
            glfwWindowShouldClose(window) == 0 );
-
     return 0;
 }
 
-const std::vector<glm::vec4> PartialViewComputer::framebuffer_data() {
-    // switch rendering to a framebuffer
-    
-    //TODO : we need to draw inside the window once before...
-    // we have to fix this
-    draw();
-    glfwSwapBuffers(window); // Swap buffers
-    
-    GLuint fbo;
-    glGenFramebuffers(1,&fbo);
-    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, vertexbuffer);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER,fbo);
-
-    draw();
-
-    // read data from the fbo
+const std::vector<glm::vec4> PartialViewComputer::framebuffer_data() { 
     std::vector<glm::vec4> data(width*height);
     glReadBuffer(GL_COLOR_ATTACHMENT0);
     glReadPixels(0,0,width,height,GL_RGBA,GL_FLOAT,&data[0]);
-
-    // Return to onscreen rendering:
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER,0);
-    glDeleteFramebuffers(1,&fbo);
-    
     return data;
 }
 
