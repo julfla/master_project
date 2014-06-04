@@ -53,8 +53,7 @@ class Identifier(models.Model):
             raise IndexError("Identifier is empty.")
 
         data = ShapeDistribution.compute(pointcloud).as_numpy_array
-        #result_proba = self.classifier.predict_proba( data )
-        result_proba = None
+        result_proba = self.classifier.decision_function( data )
         result_idx = int(self.classifier.predict( data )[0])
         result_name = self.dict_categories.keys()[result_idx]
         return (result_name, result_proba)
@@ -63,29 +62,33 @@ class Identifier(models.Model):
         (result_name, result_proba) = self.identify_with_proba(pointcloud)
         return result_name
 
-    def train(self, models, category_name):
+    def add_models(self, models, category_name):
         """
-        Incrementaly trains the classifier with the new model.
-        If the category is not known yet, then it is added and returns true.
+        Add models to the category.
+        If the category is not known yet, it will be created.
         """
-        # retreiving or creating the corresponding category
         if not category_name in self.dict_categories:
             self.dict_categories[category_name] = set()
             print "The category {} has been created.".format(category_name)
         category = self.dict_categories[category_name]
-        
         print "Adding models to category {}.".format( category_name )
         for model in models:
             category.add( model.google_id )
 
-        # training the classifier
-        # cannot train with less than two classes
-        if len( self.dict_categories ) > 1:
-            (X, Y) = self._get_example_matrix()
-            print "Size X => {}     Size Y => {}".format(X.shape, Y.shape)
-            self.classifier = svm.LinearSVC()
-            print self.classifier.fit(X, Y)
-        self.save()
+    def train(self):
+        """
+        Train the classifier for all the models that it knows
+        """
+        if len( self.dict_categories ) < 2:
+            print "At least two categories are needed for training..."
+            print "Training is skipped."
+        (X, Y) = self._get_example_matrix()
+        print "Training with {} categories and {} views.".format( 
+            len(self.dict_categories), len(Y)
+            )
+        self.classifier = svm.LinearSVC()
+        print self.classifier.fit(X, Y)
+
 
     def _get_example_matrix(self):
         """

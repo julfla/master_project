@@ -82,7 +82,8 @@ class Command(BaseCommand):
         # Training
         self.identifier = Identifier()
         for category in models.keys():
-            self.identifier.train( models[category], category)
+            self.identifier.add_models( models[category], category)
+        self.identifier.train()
 
     def initialize_list_examples(self):
         self.pending_examples = []
