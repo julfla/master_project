@@ -12,9 +12,13 @@ import pickle
 import numpy
 
 class SVCField(with_metaclass(models.SubfieldBase, models.Field)):
+
+    import inspect
+    svm_classifier_classes = inspect.getmembers(svm.classes, inspect.isclass)
+    svm_classifier_classes = map( lambda x: x[1], svm_classifier_classes)
     # Recreate python object from db
     def to_python(self, value):
-        if isinstance(value, svm.classes.SVC):
+        if value.__class__ in self.svm_classifier_classes:
             return value
         elif value is not None and len(value) > 0:
             return pickle.loads(value)
@@ -22,7 +26,7 @@ class SVCField(with_metaclass(models.SubfieldBase, models.Field)):
             
     # Serialize python object to be stored in db
     def get_prep_value(self, value):
-        if isinstance(value, svm.classes.SVC):
+        if value.__class__ in self.svm_classifier_classes:
             return pickle.dumps( value )
         else:
             return value
@@ -49,7 +53,8 @@ class Identifier(models.Model):
             raise IndexError("Identifier is empty.")
 
         data = ShapeDistribution.compute(pointcloud).as_numpy_array
-        result_proba = self.classifier.predict_proba( data )
+        #result_proba = self.classifier.predict_proba( data )
+        result_proba = None
         result_idx = int(self.classifier.predict( data )[0])
         result_name = self.dict_categories.keys()[result_idx]
         return (result_name, result_proba)
@@ -78,7 +83,7 @@ class Identifier(models.Model):
         if len( self.dict_categories ) > 1:
             (X, Y) = self._get_example_matrix()
             print "Size X => {}     Size Y => {}".format(X.shape, Y.shape)
-            self.classifier = svm.SVC(kernel='linear', probability=True)
+            self.classifier = svm.LinearSVC()
             print self.classifier.fit(X, Y)
         self.save()
 
