@@ -86,7 +86,9 @@ def train_identifier(request, evaluation_session_id):
         models.append( SketchupModel.find_google_id(google_id) )
 
     # TODO : train !!!!!
-    session.identifier.train(models, category)
+    session.identifier.add_models(models, category)
+    session.identifier.train()
+    session.identifier.save()
     # then redirect to a new attempt
     print "category: {}\nmodels: {}".format(category, models.__str__())
 

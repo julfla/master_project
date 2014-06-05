@@ -15,7 +15,7 @@ class SimpleTest(TestCase):
         model = SketchupModel()
         model.google_id = "test1"
         model.mesh = file("sketchup_models/fixtures/mesh_can.tri").read()
-        identifier.train( [model], "test_category" )
+        identifier.add_models( [model], "test_category" )
         try:
             identifier.identify( pointcloud )
         except IndexError:
@@ -42,8 +42,9 @@ class SimpleTest(TestCase):
             bananas.append( SketchupModel.find_google_id(banana_id) )
         # Training
         iden = Identifier()
-        iden.train( bananas, 'banana')
-        iden.train( bowls, 'bowl')
+        iden.add_models( bananas, 'banana')
+        iden.add_models( bowls, 'bowl')
+        iden.train()
         # Identification
         for i in range(20):
             example = Example.get_random(['banana', 'bowl'])
