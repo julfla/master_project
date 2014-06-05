@@ -33,7 +33,7 @@ class SVCField(with_metaclass(models.SubfieldBase, models.Field)):
 
 class Identifier(models.Model):
 
-    classifier = SVCField(blank=True, null=True)
+    classifier = SVCField()
     dict_categories = DictField(SetField, default=dict())
     
     @staticmethod

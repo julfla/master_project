@@ -4,7 +4,7 @@ import pickle, json
 
 from sketchup_models.models import SketchupModel
 from system_evaluation.models import Example
-from identifier.models import Identifier
+from identifier.models import Identifier, svm
 from pointcloud.models import PointCloud
 
 class Command(BaseCommand):
@@ -12,32 +12,46 @@ class Command(BaseCommand):
         + ' and test vs all bowls and bananas')
 
     option_list = BaseCommand.option_list + (
-        make_option('--dataset',
+        make_option('-d', '--dataset',
             dest='dataset_file',
             default='evaluation_dataset.json.sample',
             help='Json file containing model ids of learnign dataset.'),
-        make_option('--save',
+        make_option('-r', '--restrict',
+            dest='categories',
+            default=None,
+            help='Restrict the dataset to a list of category. Separate categories with comma.'),
+        make_option('-o', '--save',
             dest='save_file',
             default=None,
             help=('When interupted, the task state is store in this file,' + 
                 ' so it can be resumed. Default to load parameter if used.')),
-        make_option('--load',
+        make_option('-i', '--load',
             dest='load_file',
             default=None,
             help='Resume task from this file.'),
-        make_option('--analyze',
+        make_option('-a', '--analyze',
             dest='analyze',
             action='store_true',
             default=False,
             help='Display results of evaluation.'),
-        make_option('--learning-only',
+        make_option('-l', '--learning-only',
             dest='learning',
             action='store_true',
             default=False,
             help='Performs the learning only, do not evaluate.'),
+        make_option('-k', '--keep-descriptors',
+            dest='keep-descriptors',
+            action='store_true',
+            default=False,
+            help='Keep the descritors value in the output file.'),
         )
 
-    def handle(self, *args, **options):
+    def create_parser(self, prog_name, subcommand):
+        parser = super(Command, self).create_parser(prog_name, subcommand)
+        parser.disable_interspersed_args()
+        return parser
+
+    def handle(self, *args, **options):     
         if options['load_file']:
             if not options['save_file']:
                 options['save_file'] = options['load_file']
@@ -47,6 +61,15 @@ class Command(BaseCommand):
             self.done_examples = None
             with open( options['dataset_file'] ) as f:
                 self.dataset = json.load(f)
+            if not options['categories'] is None:
+                categories = options['categories'].split(',')
+                for category in categories:
+                    if not category in self.dataset:
+                        print "ERROR : {} in not included in the dataset".format(category)
+                        return
+                print self.dataset
+                self.dataset = {k: self.dataset[k] for k in categories}
+                print self.dataset
             self.perform_learning()
         if options['learning']:
             if options['save_file']:
@@ -80,7 +103,7 @@ class Command(BaseCommand):
             for google_id in self.dataset[category]:
                 models[category].append( SketchupModel.find_google_id(google_id) )
         # Training
-        self.identifier = Identifier()
+        self.identifier = Identifier(classifier=svm.SVC())
         for category in models.keys():
             self.identifier.add_models( models[category], category)
         self.identifier.train()
