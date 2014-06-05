@@ -4,12 +4,21 @@ import pickle, json
 
 from sketchup_models.models import SketchupModel
 from system_evaluation.models import Example
-from identifier.models import Identifier, svm
+from identifier.models import Identifier
 from pointcloud.models import PointCloud
+from sklearn.svm import LinearSVC, SVC
+from sklearn.multiclass import OneVsOneClassifier, OneVsRestClassifier
 
 class Command(BaseCommand):
     help = ('Perform learning from a preset set of models,'
         + ' and test vs all bowls and bananas')
+
+    classifiers_available = {
+        'LinearSVC': LinearSVC(),
+        'SVC': SVC(),
+        'OneVsOne': OneVsOneClassifier(LinearSVC(random_state=0)),
+        'OneVsRest': OneVsRestClassifier(LinearSVC(random_state=0)),
+        }
 
     option_list = BaseCommand.option_list + (
         make_option('-d', '--dataset',
@@ -23,7 +32,7 @@ class Command(BaseCommand):
         make_option('-o', '--save',
             dest='save_file',
             default=None,
-            help=('When interupted, the task state is store in this file,' + 
+            help=('When interupted, the task state is store in this file,' +
                 ' so it can be resumed. Default to load parameter if used.')),
         make_option('-i', '--load',
             dest='load_file',
@@ -44,6 +53,10 @@ class Command(BaseCommand):
             action='store_true',
             default=False,
             help='Keep the descritors value in the output file.'),
+        make_option('-c', '--classifier',
+            dest='classifier_type',
+            default='LinearSVC',
+            help='Kind of classifier to use.')
         )
 
     def create_parser(self, prog_name, subcommand):
@@ -51,7 +64,7 @@ class Command(BaseCommand):
         parser.disable_interspersed_args()
         return parser
 
-    def handle(self, *args, **options):     
+    def handle(self, *args, **options):
         if options['load_file']:
             if not options['save_file']:
                 options['save_file'] = options['load_file']
@@ -70,7 +83,7 @@ class Command(BaseCommand):
                 print self.dataset
                 self.dataset = {k: self.dataset[k] for k in categories}
                 print self.dataset
-            self.perform_learning()
+            self.perform_learning(options['classifier_type'])
         if options['learning']:
             if options['save_file']:
                 print 'Saving state into {}.'.format( options['save_file'] )
@@ -84,7 +97,7 @@ class Command(BaseCommand):
                 self.process_example( example )
                 self.done_examples.append( example )
                 self.pending_examples.remove(example)
-        except KeyboardInterrupt:            
+        except KeyboardInterrupt:
             if options['save_file']:
                 print 'Saving state into {}.'.format( options['save_file'] )
                 self.dump( options['save_file'] )
@@ -95,7 +108,7 @@ class Command(BaseCommand):
             print 'Saving state into {}.'.format( options['save_file'] )
             self.dump( options['save_file'] )
 
-    def perform_learning(self):
+    def perform_learning(self, classifier_type):
         # Retreiving the dataset models
         models = {}
         for category in self.dataset.keys():
@@ -103,7 +116,9 @@ class Command(BaseCommand):
             for google_id in self.dataset[category]:
                 models[category].append( SketchupModel.find_google_id(google_id) )
         # Training
-        self.identifier = Identifier(classifier=svm.SVC())
+        print 'Training using a {} classifier.'.format(classifier_type)
+        classifier = self.classifiers_available[classifier_type]
+        self.identifier = Identifier(classifier=classifier)
         for category in models.keys():
             self.identifier.add_models( models[category], category)
         self.identifier.train()
@@ -113,7 +128,8 @@ class Command(BaseCommand):
         self.done_examples = []
         categories = self.dataset.keys()
         map_f = lambda example: {'name': example.name, 'object_name': example.object_name, 'expected': example.category}
-        self.pending_examples = map( map_f, Example.filter_categories( categories ))
+        for example in Example.filter_categories( categories ).iterator():
+            self.pending_examples.append( map_f(example) )
 
     def process_example(self, example):
         # Display of completion
@@ -131,7 +147,7 @@ class Command(BaseCommand):
             example['name'], example['actual'], example['proba'] )
 
     def analyse_results(self):
-        
+
         def result_group_by(examples, key, displayed_name=None):
             from collections import defaultdict
             if displayed_name is None: displayed_name = key
@@ -140,12 +156,12 @@ class Command(BaseCommand):
                 key_value = example[key]
                 results[key_value]['all'].append(example)
                 if example['expected'] == example['actual']:
-                    results[key_value]['positives'].append(example) 
+                    results[key_value]['positives'].append(example)
                 else:
                     results[key_value]['negatives'].append(example)
             for group, item in results.items():
                 results[group]['percentage'] = 100 * len(item['positives']) / len(item['all'])
-            
+
             sorted_results = sorted(results.items(), key=lambda x: x[1]['percentage'] )
             print 'Results by {}'.format(displayed_name)
             for group, item in sorted_results:
@@ -155,7 +171,7 @@ class Command(BaseCommand):
                 sorted_error_starts = sorted(error_stats.iteritems(), key=lambda x: x[1], reverse=True)
                 detail_result = ', '.join( map( lambda x: "{}: {}".format(x[0], x[1]), sorted_error_starts ) )
 
-                print '{} : {}% (total: {}) | Errors : {}'.format( 
+                print '{} : {}% (total: {}) | Errors : {}'.format(
                     group, item['percentage'], len(item['all']), detail_result)
             print ''
 

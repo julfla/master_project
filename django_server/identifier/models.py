@@ -23,7 +23,7 @@ class SVCField(with_metaclass(models.SubfieldBase, models.Field)):
         elif value is not None and len(value) > 0:
             return pickle.loads(value)
         return None
-            
+
     # Serialize python object to be stored in db
     def get_prep_value(self, value):
         if value.__class__ in self.svm_classifier_classes:
@@ -35,14 +35,14 @@ class Identifier(models.Model):
 
     classifier = SVCField()
     dict_categories = DictField(SetField, default=dict())
-    
+
     @staticmethod
     def instance():
         try:
             return Identifier.objects.all()[0]
         except:
             return Identifier()
-    
+
     def identify_with_proba(self, pointcloud):
         """
         Returns the category of the pointcloud object if its category is known.
@@ -83,7 +83,7 @@ class Identifier(models.Model):
             print "At least two categories are needed for training..."
             print "Training is skipped."
         (X, Y) = self._get_example_matrix()
-        print "Training with {} categories and {} views.".format( 
+        print "Training with {} categories and {} views.".format(
             len(self.dict_categories), len(Y)
             )
         self.classifier = svm.LinearSVC()
@@ -105,5 +105,7 @@ class Identifier(models.Model):
                 for view in model.partialview_set.all():
                     arr = numpy.vstack( [arr, view.distribution.as_numpy_array] )
             X = numpy.vstack( [X, arr] )
-            Y = numpy.vstack( [Y, idx * numpy.ones( [len(model_ids) * 64, 1] ) ] )
+            n_views = arr.shape[0]
+            Y = numpy.vstack( [Y, idx * numpy.ones([ n_views, 1])])
+        Y = numpy.ravel(Y)
         return (X, Y)
