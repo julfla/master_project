@@ -17,7 +17,7 @@ class Command(BaseCommand):
 
     """ Django Command for classification evaluation. """
 
-    dataset = None
+    dataset = dict()
     identifier = None
     pending_examples = []
     done_examples = []
@@ -62,53 +62,66 @@ class Command(BaseCommand):
                     action='store_true',
                     default=False,
                     help='Performs the learning only, do not evaluate.'),
+        make_option('-c', '--classifier',
+                    dest='classifier_type',
+                    default='LinearSVC',
+                    help='Kind of classifier to use.'),
         make_option('-k', '--keep-descriptors',
                     dest='keep-descriptors',
                     action='store_true',
                     default=False,
                     help='Keep the descritors value in the output file.'),
-        make_option('-c', '--classifier',
-                    dest='classifier_type',
-                    default='LinearSVC',
-                    help='Kind of classifier to use.')
+        make_option('--force-dataset',
+                    dest='force_dataset',
+                    action='store_true',
+                    default=False,
+                    help="Force loading from dataset."),
+        make_option('--force-learning',
+                    dest='force_learning',
+                    action='store_true',
+                    default=False,
+                    help="Force relearning."),
+        make_option('--force-descriptors',
+                    dest='force_descriptors',
+                    action='store_true',
+                    default=False,
+                    help="Force recomputation of descriptors."),
         )
 
-    def handle(self, *args, **options):
+    def handle(self, *_, **options):
         """ Handle the command call. """
-        if options['load_file']:
-            if not options['save_file']:
-                options['save_file'] = options['load_file']
+        if 'load_file' in options:
             self.load(options['load_file'])
-        if self.dataset is None:
-            with open(options['dataset_file']) as f:
-                self.dataset = json.load(f)
-            if not options['categories'] is None:
-                categories = options['categories'].split(',')
-                for category in categories:
-                    if category not in self.dataset:
-                        print("ERROR : {}".format(category),
-                              " in not included in the dataset")
-                        return
-                self.dataset = {k: self.dataset[k] for k in categories}
+        if not self.dataset or options['force_dataset']:
+            self.load_dataset(options)
+        if not self.identifier or options['force_learning']:
             self.perform_learning(options['classifier_type'])
         if options['learning']:  # We stop after learning
-            if options['save_file']:
-                print 'Saving state into {}.'.format(options['save_file'])
-                self.dump(options['save_file'])
+            self.dump(options)
             return
         if not self.pending_examples and not self.done_examples:
             self.initialize_list_examples()
         try:
             while len(self.pending_examples):
                 self.process_example(self.pending_examples[0], options)
-            if 'analyze' in options:
+            if options['analyze']:
                 self.analyse_results()
         # The process can be stopped and saved for restart
         except KeyboardInterrupt:
             pass
-        if 'save_file' in options:
-            print 'Saving state into {}.'.format(options['save_file'])
-            self.dump(options['save_file'])
+        self.dump(options)
+
+    def load_dataset(self, options):
+        """ Load the dataset according to the options. """
+        with open(options['dataset_file']) as dataset_file:
+            self.dataset = json.load(dataset_file)
+        if options['categories']:  # We restrict the dataset to some categories
+            categories = options['categories'].split(',')
+            for category in categories:
+                if category not in self.dataset:
+                    raise Exception("{} is not included in the dataset".
+                                    format(category))
+            self.dataset = {k: self.dataset[k] for k in categories}
 
     def perform_learning(self, classifier_type):
         """ Perfrom the learning from the dataset. """
@@ -148,8 +161,10 @@ class Command(BaseCommand):
             number_done + 1,
             number_total,
             100 * number_done / number_total)
-        pcd_file = Example.objects.get(name=example['name']).pcd_file
-        cloud = PointCloud.load_pcd(pcd_file.name)
+        if (options['force_descriptors'] or
+           'shape_distribution' not in example):
+            pcd_file = Example.objects.get(name=example['name']).pcd_file
+            cloud = PointCloud.load_pcd(pcd_file.name)
         (category, proba) = self.identifier.identify_with_proba(cloud)
         example['actual'] = category
         example['proba'] = proba
@@ -167,6 +182,7 @@ class Command(BaseCommand):
     def analyse_results(self):
         """ Analyze the results and print it in the terminal. """
         def result_group_by(examples, key, displayed_name=None):
+            """ Group example by the value of the key provided. """
             from collections import defaultdict
             if displayed_name is None:
                 displayed_name = key
@@ -192,8 +208,7 @@ class Command(BaseCommand):
                 sorted_error_starts = sorted(error_stats.iteritems(),
                                              key=lambda x: x[1], reverse=True)
                 detail_result = ', '.join(
-                    map(lambda x: "{}: {}".format(x[0], x[1]),
-                        sorted_error_starts))
+                    ["{}: {}".format(x[0], x[1]) for x in sorted_error_starts])
 
                 print '{} : {}% (total: {}) | Errors : {}'.format(
                     group, item['percentage'], len(item['all']), detail_result)
@@ -208,8 +223,14 @@ class Command(BaseCommand):
         result_group_by(examples, 'expected', 'category')
         result_group_by(examples, 'object_name', 'object')
 
-    def dump(self, state_file_path):
+    def dump(self, options):
         """ Dump the process in a homemade format. """
+        if options['save_file']:
+            state_file_path = options['save_file']
+        elif options['load_file']:
+            state_file_path = options['load_file']
+        else:
+            return
         state = {}
         state['dataset'] = self.dataset
         state['done_examples'] = self.done_examples
