@@ -38,7 +38,6 @@ class PartialCloudComputer():
 
 class PartialView(models.Model):
 
-    # TODO : should not save if model, theta, or phi blank
     model = models.ForeignKey(SketchupModel)
     theta = models.FloatField()
     phi = models.FloatField()
@@ -64,7 +63,7 @@ class PartialView(models.Model):
         return self._pointcloud
 
     @staticmethod
-    def compute_all_views(model):        
+    def compute_all_views(model):
         SQRT_NUMBER_VIEWS = 8 # 8 * 8 = 64 views per object
         pi = 3.1416
         for i in range(SQRT_NUMBER_VIEWS):
@@ -78,4 +77,4 @@ class PartialView(models.Model):
 
     def display(self):
         PartialCloudComputer().display_view(self.model, self.theta, self.phi)
-    
+

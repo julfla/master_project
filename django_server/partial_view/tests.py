@@ -6,6 +6,7 @@ from partial_view.models import PartialView
 from unittest import skip
 
 class TestPartialView(TestCase):
+
     def setUp(self):
         test_model = SketchupModel()
         test_model.google_id = "test1"
@@ -23,7 +24,7 @@ class TestPartialView(TestCase):
         # Generate the pointcloud
         view  = PartialView(model=self.test_model, theta=0.0, phi=0.0)
         self.assertTrue( view.pointcloud.size() > 0 )
-        
+
         view.save()
         self.assertEqual( PartialView.objects.count(), 1 )
 
@@ -36,7 +37,7 @@ class TestPartialView(TestCase):
     def test_model_validation(self):
         """
         Tests the validation rules for the view.
-        """        
+        """
         self.assertEqual( PartialView.objects.count(), 0 )
         PartialView(model=self.test_model, theta=0.0, phi=1.345).save()
         self.assertEqual( PartialView.objects.count(), 1 )
@@ -46,7 +47,7 @@ class TestPartialView(TestCase):
         self.assertEqual( PartialView.objects.count(), 1 )
         PartialView(model=self.test_model, theta=1.0, phi=1.345).save()
         self.assertEqual( PartialView.objects.count(), 2 )
-    
+
     @skip("long test activate only when needed")
     def test_empty_pointcloud(self):
         """

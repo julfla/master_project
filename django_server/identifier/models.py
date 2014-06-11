@@ -1,3 +1,4 @@
+""" Module for pointcloud identification. """
 
 from django.db import models
 from djangotoolbox.fields import DictField, SetField
@@ -21,7 +22,7 @@ class SVCField(with_metaclass(models.SubfieldBase, models.Field)):
     import inspect
     svm_classifier_classes = inspect.getmembers(svm, inspect.isclass)
     svm_classifier_classes += inspect.getmembers(multiclass, inspect.isclass)
-    svm_classifier_classes = map(lambda x: x[1], svm_classifier_classes)
+    svm_classifier_classes = (x[1] for x in svm_classifier_classes)
 
     def to_python(self, value):
         """ Recreate python object from db. """
@@ -88,15 +89,16 @@ class Identifier(models.Model):
         """ Return the input matrix of example (X). """
         X = numpy.zeros([0, SHAPE_DISTRIBUTION_SIZE])
         Y = numpy.zeros([0, 1])
-        for idx, (category, model_ids) \
-         in enumerate(self.dict_categories.items()):
+        for idx, (category, model_ids) in (enumerate(
+                                           self.dict_categories.items())):
             arr = numpy.zeros((0, SHAPE_DISTRIBUTION_SIZE))
             for model_id in model_ids:
                 model = SketchupModel.find_google_id(model_id)
                 if model.partialview_set.count() == 0:
                     PartialView.compute_all_views(model)
                 for view in model.partialview_set.all():
-                    arr = numpy.vstack([arr, view.distribution.as_numpy_array])
+                    arr = numpy.vstack([arr,
+                                        view.distribution.as_numpy_array])
             X = numpy.vstack([X, arr])
             n_views = arr.shape[0]
             Y = numpy.vstack([Y, idx * numpy.ones([n_views, 1])])

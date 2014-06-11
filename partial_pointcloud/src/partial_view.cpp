@@ -1,33 +1,34 @@
 // Include standard headers
-#include <string>
-#include <vector>
-#include <iostream>
 #include <stdlib.h>
 
 // Include GLEW
 #include <GL/glew.h>
-
 // Include GLFW
 #include <GLFW/glfw3.h>
-
 // Include GLM
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
-#include <glm/gtx/norm.hpp> // provides glm::length2 for euclidian norm of glm::vec
+#include <glm/gtx/norm.hpp>  // glm::length2
+
+#include <string>
+#include <vector>
+#include <iostream>
+
 
 #include "partial_pointcloud/shader_helper.hpp"
 #include "partial_pointcloud/partial_view.h"
 
-#include "debug_helper.hpp" // provides DEBUG_MSG macro
+#include "debug_helper.hpp"  // provides DEBUG_MSG macro
 
 void PartialViewComputer::loadMesh(std::string mesh_path) {
-    DEBUG_MSG( "Loading mesh.");
+    DEBUG_MSG("Loading mesh.");
     Mesh mesh(mesh_path);
-    //add the mesh triangles to the vertice list
+    // add the mesh triangles to the vertice list
     vertice.clear();
-    for ( std::vector<TrianglePolygon>::const_iterator poly = mesh.get_polygons().begin(); 
+    for ( std::vector<TrianglePolygon>::const_iterator poly
+        = mesh.get_polygons().begin();
         poly < mesh.get_polygons().end(); ++poly) {
             for ( int i = 0; i < 3; ++i) {
                 Point_3D pts = poly->getPoints()[i];
@@ -40,7 +41,7 @@ void PartialViewComputer::loadMesh(std::string mesh_path) {
         it < vertice.end(); ++it) {
         centroid += *it;
     }
-    centroid /= vertice.size();    
+    centroid /= vertice.size();
     //scale_factor to use to fit the object in a 1 radius sphere
     scale_factor = 0.0f;
     for (std::vector<glm::vec3>::iterator it = vertice.begin();
@@ -77,7 +78,7 @@ bool PartialViewComputer::init() {
     // Open a window and create its OpenGL context
     window = glfwCreateWindow( 1024, 768, "OpenGL", NULL, NULL );
     if( window == NULL ){
-        std::cerr << "Failed to open GLFW window. " << 
+        std::cerr << "Failed to open GLFW window. " <<
             "If you have an Intel GPU, they are not 3.3 compatible." << std::endl;
         return false;
     }
@@ -96,7 +97,7 @@ bool PartialViewComputer::init() {
     // White background, 4th coordinate to 0 for background segmentation
     glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
     // Enable depth test
-    glEnable(GL_DEPTH_TEST); glDepthFunc(GL_LESS); 
+    glEnable(GL_DEPTH_TEST); glDepthFunc(GL_LESS);
 
     glGenVertexArrays(1, &VertexArrayID);
     glBindVertexArray(VertexArrayID);
@@ -140,7 +141,7 @@ int PartialViewComputer::displayMesh(float theta, float phi) {
     return 0;
 }
 
-const std::vector<glm::vec4> PartialViewComputer::framebuffer_data() { 
+const std::vector<glm::vec4> PartialViewComputer::framebuffer_data() {
     std::vector<glm::vec4> data(width*height);
     glReadBuffer(GL_COLOR_ATTACHMENT0);
     glReadPixels(0,0,width,height,GL_RGBA,GL_FLOAT,&data[0]);
@@ -162,7 +163,7 @@ glm::mat4 PartialViewComputer::view_matrix(float theta, float phi) {
     float x = r * std::sin(theta) * std::cos(phi);
     float y = r * std::sin(theta) * std::sin(phi);
     float z = r * std::cos(theta);
-    
+
     DEBUG_MSG( "Viewing distance :" << r);
     DEBUG_MSG( "Cam Info :" << x << " " << y << " " << z );
     return glm::lookAt(
