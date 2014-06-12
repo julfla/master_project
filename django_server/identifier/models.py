@@ -82,7 +82,6 @@ class Identifier(models.Model):
         (X, Y) = self._get_example_matrix()
         print "Training with {} categories and {} views.".format(
             len(self.dict_categories), len(Y))
-        self.classifier = svm.LinearSVC()
         print self.classifier.fit(X, Y)
 
     def _get_example_matrix(self):

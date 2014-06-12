@@ -13,4 +13,4 @@ def distribution_image(request, distribution):
     response = HttpResponse(content_type='image/png')
     canvas.print_png(response)
     return response
-    
+

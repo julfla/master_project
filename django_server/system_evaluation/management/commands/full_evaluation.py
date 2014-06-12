@@ -90,7 +90,7 @@ class Command(BaseCommand):
 
     def handle(self, *_, **options):
         """ Handle the command call. """
-        if 'load_file' in options:
+        if options['load_file'] in options:
             self.load(options['load_file'])
         if not self.dataset or options['force_dataset']:
             self.load_dataset(options)
@@ -126,6 +126,7 @@ class Command(BaseCommand):
     def perform_learning(self, classifier_type):
         """ Perfrom the learning from the dataset. """
         # Retreiving the dataset models
+        print 'Training using a {} classifier.'.format(classifier_type)
         models = {}
         for category in self.dataset.keys():
             models[category] = []
@@ -133,7 +134,6 @@ class Command(BaseCommand):
                 models[category].append(
                     SketchupModel.find_google_id(google_id))
         # Training
-        print 'Training using a {} classifier.'.format(classifier_type)
         classifier = self.classifiers_available[classifier_type]
         self.identifier = Identifier(classifier=classifier)
         for category in models.keys():
