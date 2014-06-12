@@ -90,7 +90,7 @@ class Command(BaseCommand):
 
     def handle(self, *_, **options):
         """ Handle the command call. """
-        if options['load_file'] in options:
+        if options['load_file']:
             self.load(options['load_file'])
         if not self.dataset or options['force_dataset']:
             self.load_dataset(options)
