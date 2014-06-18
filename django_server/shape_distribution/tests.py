@@ -35,4 +35,4 @@ class TestShapeDistribution(TestCase):
         """
         array = self.distribution.as_numpy_array
         self.assertTrue( isinstance(array, numpy.ndarray) )
-        self.assertEqual( array.size, 480 )
+        self.assertEqual( array.size, 64 )
