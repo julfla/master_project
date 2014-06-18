@@ -10,14 +10,25 @@
 void Distribution::compute_histogram(std::vector<double> sample) {
     std::sort(sample.begin(), sample.end());
     Histogram hist = Histogram(&sample, 64);
+    // Insert the histogram at the end of the current distribution
     this->distribution.insert(this->distribution.end(),
                               hist.data->begin(), hist.data->end());
 }
 
 std::vector<double> Distribution::compute_sample(DefaultCloud * const cloud,
-                                                 int number_points) {
+                                                 int number_points,
+                                                 bool scale_coordinates) {
     if (cloud->empty())
         return std::vector<double>();
+    float x, y, z;
+    x = y = z = 0;
+    if (scale_coordinates) {
+        for (int i = 0; i < cloud->size(); ++i) {
+            x = std::max(x, std::abs(cloud->at(i).x));
+            y = std::max(y, std::abs(cloud->at(i).y));
+            z = std::max(z, std::abs(cloud->at(i).z));
+        }
+    }
     std::vector<double> sample;
     boost::minstd_rand generator;
     boost::uniform_int<> uni_dist;
@@ -28,6 +39,14 @@ std::vector<double> Distribution::compute_sample(DefaultCloud * const cloud,
         // get two random points and compute the distance between them
         pcl::PointXYZ pts1 = cloud->at(uni_dist(generator));
         pcl::PointXYZ pts2 = cloud->at(uni_dist(generator));
+        if (scale_coordinates) {
+            pts1.x /= x;
+            pts2.x /= x;
+            pts1.y /= y;
+            pts2.y /= y;
+            pts1.z /= z;
+            pts2.z /= z;
+        }
         sample.push_back(static_cast<double>(
                              pcl::euclideanDistance(pts1, pts2)));
     }
