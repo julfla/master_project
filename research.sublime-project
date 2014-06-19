@@ -2,7 +2,8 @@
 	"folders":
 	[
 		{
-			"path": "."
+			"follow_symlinks": true,
+			"path": ".",
 		}
 	],
 
@@ -11,6 +12,7 @@
 		"linters":
 		{
 			"pylint": {
+				"@python": 3,
 				"working_dir": ".",
 				"rcfile": "pylintrc",
 				"python_bin": "env/bin/python",
