@@ -1,1 +1,1 @@
-# Create your views here.
+""" Views definitions of identifier app. """

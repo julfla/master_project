@@ -1,4 +1,10 @@
+""" Forms definitions of pointcloud app. """
+
 from django import forms
 
+
 class UploadPcdFileForm(forms.Form):
-    pcd_file  = forms.FileField()
+
+    """ Upload form for a pcd file. """
+
+    pcd_file = forms.FileField()

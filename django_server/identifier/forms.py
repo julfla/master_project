@@ -1,3 +1,3 @@
-from django import forms
+""" Forms definitions of identifier app. """
 
-# place form definition here
+from django import forms

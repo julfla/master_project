@@ -1,5 +1,8 @@
-from django.conf.urls import patterns, include, url
+""" Urls definitions of pointcloud app. """
 
-urlpatterns = patterns('',
+from django.conf.urls import patterns, url
+
+urlpatterns = patterns(
+    '',
     url(r'upload_pcd/', 'pointcloud.views.upload_pcd_file')
 )
