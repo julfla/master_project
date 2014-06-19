@@ -61,7 +61,7 @@ class Identifier(models.Model):
 
     def identify(self, pointcloud):
         """ Return only the identification result, no probability. """
-        (result_name, result_proba) = self.identify_with_proba(pointcloud)
+        (result_name, _) = self.identify_with_proba(pointcloud)
         return result_name
 
     def add_models(self, models, category_name):

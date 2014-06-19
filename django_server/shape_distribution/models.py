@@ -3,7 +3,7 @@ from django.utils.six import with_metaclass
 
 from common.libs.libpydescriptors import Distribution
 
-SHAPE_DISTRIBUTION_SIZE = 480
+SHAPE_DISTRIBUTION_SIZE = 128
 
 class DistributionField(with_metaclass(models.SubfieldBase, models.Field)):
     # Recreate python object from db
