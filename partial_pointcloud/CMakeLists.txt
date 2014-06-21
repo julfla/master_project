@@ -8,7 +8,7 @@ FIND_PACKAGE( GLFW REQUIRED)
 MESSAGE( X11_LIBRARIES ${X11_LIBRARIES})
 
 INCLUDE_DIRECTORIES(${GLFW_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR})
-SET(GL_LIBS ${GLEW_LIBRARY} ${OPENGL_LIBRARY} ${GLFW_LIBRARY} ${GLM_LIBRARIES} ${X11_LIBRARIES} 
+SET(GL_LIBS ${GLEW_LIBRARY} ${OPENGL_LIBRARY} ${GLFW_LIBRARY} ${GLM_LIBRARIES} ${X11_LIBRARIES}
      -lrt
      -lXinerama
      -lXrandr
@@ -26,7 +26,7 @@ ADD_DEFINITIONS(${PCL_DEFINITIONS})
 ADD_EXECUTABLE(partial_view src/partial_view.cxx src/partial_view.cpp src/shader_helper.cpp)
 TARGET_LINK_LIBRARIES(partial_view descriptors ${GL_LIBS} ${PCL_LIBRARIES})
 
-ADD_LIBRARY(partialview SHARED src/partial_view.cpp src/partial_view.cpp src/shader_helper.cpp)
+ADD_LIBRARY(partialview SHARED src/partial_view.cpp src/shader_helper.cpp)
 TARGET_LINK_LIBRARIES(partialview descriptors ${GL_LIBS} ${PCL_LIBRARIES} ${Boost_LIBRARIES})
 SET_TARGET_PROPERTIES(partialview PROPERTIES EXCLUDE_FROM_ALL true)
 
