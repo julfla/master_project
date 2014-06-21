@@ -15,6 +15,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <iostream>
 
 
@@ -175,8 +176,7 @@ double PartialViewComputer::compute_entropy(float theta, float phi) {
     init_MVP(theta, phi);
     draw(true);  // draw the mesh with entropy colors output
     std::vector<glm::vec4> data = framebuffer_data();
-    std::vector<int> pixels_per_triangle;
-    pixels_per_triangle.resize(vertice.size());
+    std::map<int, int> pixels_per_triangle;
     for (std::vector<glm::vec4>::iterator it = data.begin();
          it < data.end(); ++it) {
         // Use the w coordinate for segmenting background
@@ -189,12 +189,10 @@ double PartialViewComputer::compute_entropy(float theta, float phi) {
     }
     double entropy = 0.0;
     double number_pixels = data.size();
-    for (std::vector<int>::iterator it = pixels_per_triangle.begin();
-         it < pixels_per_triangle.end(); ++it) {
-            if (*it > 0) {
-                double ratio = *it / number_pixels;
-                entropy += - ratio * log(ratio);
-            }
+    for (std::map<int, int>::iterator it = pixels_per_triangle.begin();
+         it != pixels_per_triangle.end(); ++it) {
+        double ratio = it->second / number_pixels;
+        entropy += - ratio * log(ratio);
     }
     return entropy;
 }
@@ -271,6 +269,7 @@ void PartialViewComputer::draw(bool entropy_output) {
 }
 
 PartialViewComputer::~PartialViewComputer() {
+    DEBUG_MSG("PartialViewComputer Destuctor");
     // Cleanup VBO
     glDeleteBuffers(1, &vertexbuffer);
     glDeleteBuffers(1, &colorbuffer);
