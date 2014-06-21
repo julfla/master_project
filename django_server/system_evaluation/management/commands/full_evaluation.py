@@ -64,7 +64,7 @@ class Command(BaseCommand):
                     help='Performs the learning only, do not evaluate.'),
         make_option('-c', '--classifier',
                     dest='classifier_type',
-                    default='LinearSVC',
+                    default='SVC',
                     help='Kind of classifier to use.'),
         make_option('-k', '--keep-descriptors',
                     dest='keep-descriptors',

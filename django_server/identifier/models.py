@@ -79,15 +79,16 @@ class Identifier(models.Model):
         if len(self.dict_categories) < 2:
             print "At least two categories are needed for training..."
             print "Training is skipped."
-        (X, Y) = self._get_example_matrix()
+        (X, Y, sample_weights) = self._get_example_matrix()
         print "Training with {} categories and {} views.".format(
             len(self.dict_categories), len(Y))
-        print self.classifier.fit(X, Y)
+        print self.classifier.fit(X, Y, sample_weight=sample_weights)
 
     def _get_example_matrix(self):
         """ Return the input matrix of example (X). """
         X = numpy.zeros([0, SHAPE_DISTRIBUTION_SIZE])
         Y = numpy.zeros([0, 1])
+        sample_weights = []
         for idx, (category, model_ids) in (enumerate(
                                            self.dict_categories.items())):
             arr = numpy.zeros((0, SHAPE_DISTRIBUTION_SIZE))
@@ -98,8 +99,9 @@ class Identifier(models.Model):
                 for view in model.partialview_set.all():
                     arr = numpy.vstack([arr,
                                         view.distribution.as_numpy_array])
+                    sample_weights.append(view.entropy)
             X = numpy.vstack([X, arr])
             n_views = arr.shape[0]
             Y = numpy.vstack([Y, idx * numpy.ones([n_views, 1])])
         Y = numpy.ravel(Y)
-        return (X, Y)
+        return (X, Y, sample_weights)
