@@ -64,7 +64,7 @@ class Command(BaseCommand):
                     help='Performs the learning only, do not evaluate.'),
         make_option('-c', '--classifier',
                     dest='classifier_type',
-                    default='SVC',
+                    default='LinearSVC',
                     help='Kind of classifier to use.'),
         make_option('-k', '--keep-descriptors',
                     dest='keep-descriptors',
@@ -138,6 +138,15 @@ class Command(BaseCommand):
         self.identifier = Identifier(classifier=classifier)
         for category in models.keys():
             self.identifier.add_models(models[category], category)
+        # (x, y, w) = self.identifier._get_example_matrix()
+        # import matplotlib.pyplot as plt
+        # import numpy as np
+        # # w = np.array(w)
+        # # print y
+        # # print w
+        # plt.plot(y, w, 'ro')
+        # print self.dataset.keys()
+        # plt.show()
         self.identifier.train()
 
     def initialize_list_examples(self):
@@ -174,7 +183,7 @@ class Command(BaseCommand):
             shape_distribution = ShapeDistribution.compute(cloud)
             example['shape_distribution'] = shape_distribution.as_numpy_array
         # display of results
-        print '    {} has been identified has a {}, {}'.format(
+        print '    {} has been identified as a {}, {}'.format(
             example['name'], example['actual'], example['proba'])
         self.done_examples.append(example)
         self.pending_examples.remove(example)

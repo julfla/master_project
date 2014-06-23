@@ -16,6 +16,8 @@ class PartialCloudComputer():
 
     @staticmethod
     def load_model(sketchup_model):
+        if PartialCloudComputer._loaded_model_id == sketchup_model.google_id:
+            return
         print "Loading model {} into PartialCloudComputer...".format(
             sketchup_model)
         import tempfile
@@ -27,26 +29,23 @@ class PartialCloudComputer():
 
     @staticmethod
     def compute_pointcloud(sketchup_model, theta, phi):
-        if PartialCloudComputer._loaded_model_id != sketchup_model.google_id:
-            PartialCloudComputer.load_model(sketchup_model)
+        PartialCloudComputer.load_model(sketchup_model)
         print "Computing view for model {} : t={}, p={}".format(
             sketchup_model.google_id, theta, phi)
         cloud = PointCloud()
-        cloud._cpp_pointcloud = (PartialCloudComputer._cpp_computer
-                                 .compute_view(theta, phi))
+        cloud._cpp_pointcloud = PartialCloudComputer._cpp_computer.compute_view(theta, phi)
         return cloud
 
     @staticmethod
     def compute_entropy(sketchup_model, theta, phi):
-        if PartialCloudComputer._loaded_model_id != sketchup_model.google_id:
-            PartialCloudComputer.load_model(sketchup_model)
+        PartialCloudComputer.load_model(sketchup_model)
         return PartialCloudComputer._cpp_computer.compute_entropy(theta, phi)
 
     @staticmethod
     def display_view(sketchup_model, theta, phi):
-        if PartialCloudComputer._loaded_model_id != sketchup_model.google_id:
-            PartialCloudComputer.load_model(sketchup_model)
+        PartialCloudComputer.load_model(sketchup_model)
         PartialCloudComputer._cpp_computer.display_mesh(theta, phi)
+
 
 class PartialView(models.Model):
 
@@ -80,17 +79,18 @@ class PartialView(models.Model):
 
     @staticmethod
     def compute_all_views(model):
-        SQRT_NUMBER_VIEWS = 8 # 8 * 8 = 64 views per object
+        SQRT_NUMBER_VIEWS = 8  # 8 * 8 = 64 views per object
         pi = 3.1416
         for i in range(SQRT_NUMBER_VIEWS):
             for j in range(SQRT_NUMBER_VIEWS):
-                print "Computing view {}_{} for model {}".format(i,j,model.google_id)
+                print "Computing view {}_{} for model {}".format(
+                    i, j, model.google_id)
                 theta = pi * i / SQRT_NUMBER_VIEWS
                 phi = 2 * pi * j / SQRT_NUMBER_VIEWS
                 view = PartialView(model=model, theta=theta, phi=phi)
-                view.distribution # force computation of distribution while mesh is loaded
+                # force computation of distribution while mesh is loaded
+                view.distribution
                 view.save()
 
     def display(self):
         PartialCloudComputer.display_view(self.model, self.theta, self.phi)
-

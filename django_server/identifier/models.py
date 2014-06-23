@@ -79,29 +79,38 @@ class Identifier(models.Model):
         if len(self.dict_categories) < 2:
             print "At least two categories are needed for training..."
             print "Training is skipped."
-        (X, Y, sample_weights) = self._get_example_matrix()
+        (X, Y, W) = self._get_example_matrix()
         print "Training with {} categories and {} views.".format(
             len(self.dict_categories), len(Y))
-        print self.classifier.fit(X, Y, sample_weight=sample_weights)
+        print self.classifier.fit(X, Y)  # sample_weight=W)
+
+
+    def _get_model_example_matrix(self, model):
+        views = model.partialview_set.all()
+        w = []
+        # x = numpy.zeros([0, SHAPE_DISTRIBUTION_SIZE])
+        x = numpy.vstack([v.distribution.as_numpy_array for v in views])
+        w = [v.entropy for v in views]
+        # Scale entropy so that each model has the same weight
+        # max_w = max(w)
+        mean_w = sum(w) / len(w)
+        w = numpy.array([value / mean_w for value in w])
+        return (x, w)
 
     def _get_example_matrix(self):
         """ Return the input matrix of example (X). """
         X = numpy.zeros([0, SHAPE_DISTRIBUTION_SIZE])
-        Y = numpy.zeros([0, 1])
-        sample_weights = []
+        Y = numpy.array([])
+        W = numpy.array([])  # Weights of the samples
         for idx, (category, model_ids) in (enumerate(
                                            self.dict_categories.items())):
-            arr = numpy.zeros((0, SHAPE_DISTRIBUTION_SIZE))
             for model_id in model_ids:
                 model = SketchupModel.find_google_id(model_id)
                 if model.partialview_set.count() == 0:
                     PartialView.compute_all_views(model)
-                for view in model.partialview_set.all():
-                    arr = numpy.vstack([arr,
-                                        view.distribution.as_numpy_array])
-                    sample_weights.append(view.entropy)
-            X = numpy.vstack([X, arr])
-            n_views = arr.shape[0]
-            Y = numpy.vstack([Y, idx * numpy.ones([n_views, 1])])
-        Y = numpy.ravel(Y)
-        return (X, Y, sample_weights)
+                (x, w) = self._get_model_example_matrix(model)
+                y = numpy.array([idx for _ in range(x.shape[0])])
+                X = numpy.vstack([X, x])
+                Y = numpy.concatenate([Y, y])
+                W = numpy.concatenate([W, w])
+        return (X, Y, W)
