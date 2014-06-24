@@ -5,6 +5,7 @@ from optparse import make_option
 import pickle
 import json
 
+from shape_distribution.models import ShapeDistribution
 from sketchup_models.models import SketchupModel
 from system_evaluation.models import Example
 from identifier.models import Identifier
@@ -96,6 +97,9 @@ class Command(BaseCommand):
             self.load_dataset(options)
         if not self.identifier or options['force_learning']:
             self.perform_learning(options['classifier_type'])
+            # We also want to reidentify objects
+            self.pending_examples = self.done_examples
+            self.done_examples = []
         if options['learning']:  # We stop after learning
             self.dump(options)
             return
@@ -170,18 +174,21 @@ class Command(BaseCommand):
             number_done + 1,
             number_total,
             100 * number_done / number_total)
-        if (options['force_descriptors'] or
-           'shape_distribution' not in example):
+        if options['force_descriptors']:
+            # Remove the shape distribution if if was kept.
+            example.pop('shape_distribution')
+        if 'shape_distribution' not in example:
             pcd_file = Example.objects.get(name=example['name']).pcd_file
             cloud = PointCloud.load_pcd(pcd_file.name)
-        (category, proba) = self.identifier.identify_with_proba(cloud)
+            distribution = ShapeDistribution.compute(cloud).as_numpy_array
+        else:
+            distribution = example['shape_distribution']
+        (category, proba) = self.identifier.identify_with_proba(distribution)
         example['actual'] = category
         example['proba'] = proba
         #  we may include the descriptors to the outputs
         if 'keep-descriptors' in options:
-            from shape_distribution.models import ShapeDistribution
-            shape_distribution = ShapeDistribution.compute(cloud)
-            example['shape_distribution'] = shape_distribution.as_numpy_array
+            example['shape_distribution'] = distribution
         # display of results
         print '    {} has been identified as a {}, {}'.format(
             example['name'], example['actual'], example['proba'])

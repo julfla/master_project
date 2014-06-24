@@ -47,21 +47,27 @@ class Identifier(models.Model):
     classifier = SVCField()
     dict_categories = DictField(SetField, default=dict())
 
-    def identify_with_proba(self, pointcloud):
-        """ Return the category of the pointcloud object. """
+    def identify_with_proba(self, data):
+        """ Return the category of the Pointcloud or Distribution object. """
         if len(self.dict_categories) < 1:
             print "No category cannot identify"
             raise IndexError("Identifier is empty.")
-
-        data = ShapeDistribution.compute(pointcloud).as_numpy_array
-        result_proba = self.classifier.decision_function(data)
+        if type(data) == 'PointCloud':
+            data = ShapeDistribution.compute(data)
+        if type(data) == 'ShapeDistribution':
+            data = data.as_numpy_array
+        result_proba = None
+        try:
+            result_proba = self.classifier.decision_function(data)
+        except AttributeError:
+            pass
         result_idx = int(self.classifier.predict(data)[0])
         result_name = self.dict_categories.keys()[result_idx]
         return (result_name, result_proba)
 
-    def identify(self, pointcloud):
+    def identify(self, data):
         """ Return only the identification result, no probability. """
-        (result_name, _) = self.identify_with_proba(pointcloud)
+        (result_name, _) = self.identify_with_proba(data)
         return result_name
 
     def add_models(self, models, category_name):
