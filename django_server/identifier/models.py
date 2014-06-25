@@ -11,6 +11,8 @@ from shape_distribution.models import (ShapeDistribution,
 from partial_view.models import PartialView
 
 from sklearn import svm, multiclass
+from sklearn import tree
+from sklearn import neighbors
 import pickle
 import numpy
 
@@ -22,6 +24,8 @@ class SVCField(with_metaclass(models.SubfieldBase, models.Field)):
     import inspect
     svm_classifier_classes = inspect.getmembers(svm, inspect.isclass)
     svm_classifier_classes += inspect.getmembers(multiclass, inspect.isclass)
+    svm_classifier_classes += inspect.getmembers(tree, inspect.isclass)
+    svm_classifier_classes += inspect.getmembers(neighbors, inspect.isclass)
     svm_classifier_classes = (x[1] for x in svm_classifier_classes)
 
     def to_python(self, value):
@@ -88,18 +92,15 @@ class Identifier(models.Model):
         (X, Y, W) = self._get_example_matrix()
         print "Training with {} categories and {} views.".format(
             len(self.dict_categories), len(Y))
-        print self.classifier.fit(X, Y)  # sample_weight=W)
-
+        print self.classifier.fit(X, Y)  # , sample_weight=W)
 
     def _get_model_example_matrix(self, model):
         views = model.partialview_set.all()
-        w = []
-        # x = numpy.zeros([0, SHAPE_DISTRIBUTION_SIZE])
-        x = numpy.vstack([v.distribution.as_numpy_array for v in views])
         w = [v.entropy for v in views]
-        # Scale entropy so that each model has the same weight
-        # max_w = max(w)
         mean_w = sum(w) / len(w)
+        x = numpy.vstack([v.distribution.as_numpy_array
+                          for v in views if v.entropy > mean_w])
+        # Scale entropy so that each model has the same weight
         w = numpy.array([value / mean_w for value in w])
         return (x, w)
 

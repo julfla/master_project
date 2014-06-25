@@ -11,7 +11,11 @@ from system_evaluation.models import Example
 from identifier.models import Identifier
 from pointcloud.models import PointCloud
 from sklearn.svm import LinearSVC, SVC
-from sklearn.multiclass import OneVsOneClassifier, OneVsRestClassifier
+from sklearn.multiclass import (OneVsOneClassifier,
+                                OneVsRestClassifier,
+                                OutputCodeClassifier)
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
 
 
 class Command(BaseCommand):
@@ -27,10 +31,13 @@ class Command(BaseCommand):
             ' and test it vs the dataset.')
 
     classifiers_available = {
-        'LinearSVC': LinearSVC(),
+        'LinearSVC': LinearSVC(random_state=0),
         'SVC': SVC(),
         'OneVsOne': OneVsOneClassifier(LinearSVC(random_state=0)),
         'OneVsRest': OneVsRestClassifier(LinearSVC(random_state=0)),
+        'DecisionTree': DecisionTreeClassifier(),
+        'KNeighbors': KNeighborsClassifier(),  # n_neighbors=10),
+        'OutputCode': OutputCodeClassifier(LinearSVC(random_state=0)),
         }
 
     option_list = BaseCommand.option_list + (
