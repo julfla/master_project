@@ -1,15 +1,23 @@
 #version 330 core
 
 layout(location = 0) in vec3 vertexPosition_modelspace;
+layout(location = 1) in vec3 vertexColor;
 
-out vec3 world_position;
+out vec3 frag_color;
 uniform mat4 M, V, P;
+uniform float entropyUse;
 
 void main() {
 	// Set the pixel to world space
 	gl_Position = M * vec4(vertexPosition_modelspace,1);
-	world_position = gl_Position.xyz;
-	
+	if (entropyUse > 0.5f) {
+		frag_color = vertexColor;
+	} else {
+		frag_color = gl_Position.xyz;  // color to world space position
+		// world position is inside a 1 radius sphere
+		// but color need to be inside (0,1)
+		frag_color = 0.5f * (vec3(1.0f) + frag_color);
+	}
 	// Set the pixel to clip space
 	gl_Position =  P * V * gl_Position;
 }

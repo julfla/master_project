@@ -5,12 +5,17 @@ from optparse import make_option
 import pickle
 import json
 
+from shape_distribution.models import ShapeDistribution
 from sketchup_models.models import SketchupModel
 from system_evaluation.models import Example
 from identifier.models import Identifier
 from pointcloud.models import PointCloud
 from sklearn.svm import LinearSVC, SVC
-from sklearn.multiclass import OneVsOneClassifier, OneVsRestClassifier
+from sklearn.multiclass import (OneVsOneClassifier,
+                                OneVsRestClassifier,
+                                OutputCodeClassifier)
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
 
 
 class Command(BaseCommand):
@@ -26,10 +31,13 @@ class Command(BaseCommand):
             ' and test it vs the dataset.')
 
     classifiers_available = {
-        'LinearSVC': LinearSVC(),
+        'LinearSVC': LinearSVC(random_state=0),
         'SVC': SVC(),
         'OneVsOne': OneVsOneClassifier(LinearSVC(random_state=0)),
         'OneVsRest': OneVsRestClassifier(LinearSVC(random_state=0)),
+        'DecisionTree': DecisionTreeClassifier(),
+        'KNeighbors': KNeighborsClassifier(),  # n_neighbors=10),
+        'OutputCode': OutputCodeClassifier(LinearSVC(random_state=0)),
         }
 
     option_list = BaseCommand.option_list + (
@@ -96,6 +104,9 @@ class Command(BaseCommand):
             self.load_dataset(options)
         if not self.identifier or options['force_learning']:
             self.perform_learning(options['classifier_type'])
+            # We also want to reidentify objects
+            self.pending_examples = self.done_examples
+            self.done_examples = []
         if options['learning']:  # We stop after learning
             self.dump(options)
             return
@@ -138,6 +149,15 @@ class Command(BaseCommand):
         self.identifier = Identifier(classifier=classifier)
         for category in models.keys():
             self.identifier.add_models(models[category], category)
+        # (x, y, w) = self.identifier._get_example_matrix()
+        # import matplotlib.pyplot as plt
+        # import numpy as np
+        # # w = np.array(w)
+        # # print y
+        # # print w
+        # plt.plot(y, w, 'ro')
+        # print self.dataset.keys()
+        # plt.show()
         self.identifier.train()
 
     def initialize_list_examples(self):
@@ -161,20 +181,23 @@ class Command(BaseCommand):
             number_done + 1,
             number_total,
             100 * number_done / number_total)
-        if (options['force_descriptors'] or
-           'shape_distribution' not in example):
+        if options['force_descriptors']:
+            # Remove the shape distribution if if was kept.
+            example.pop('shape_distribution')
+        if 'shape_distribution' not in example:
             pcd_file = Example.objects.get(name=example['name']).pcd_file
             cloud = PointCloud.load_pcd(pcd_file.name)
-        (category, proba) = self.identifier.identify_with_proba(cloud)
+            distribution = ShapeDistribution.compute(cloud).as_numpy_array
+        else:
+            distribution = example['shape_distribution']
+        (category, proba) = self.identifier.identify_with_proba(distribution)
         example['actual'] = category
         example['proba'] = proba
         #  we may include the descriptors to the outputs
         if 'keep-descriptors' in options:
-            from shape_distribution.models import ShapeDistribution
-            shape_distribution = ShapeDistribution.compute(cloud)
-            example['shape_distribution'] = shape_distribution.as_numpy_array
+            example['shape_distribution'] = distribution
         # display of results
-        print '    {} has been identified has a {}, {}'.format(
+        print '    {} has been identified as a {}, {}'.format(
             example['name'], example['actual'], example['proba'])
         self.done_examples.append(example)
         self.pending_examples.remove(example)

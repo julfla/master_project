@@ -10,7 +10,8 @@ using namespace std;
 
 #define SQRT_NUMBER_VIEWS 8
 
-bool process_cloud(string output_path, string output_format, pcl::PointCloud<pcl::PointXYZ> * cloud) {
+bool process_cloud(string output_path, string output_format,
+                   pcl::PointCloud<pcl::PointXYZ> * cloud) {
 
     if(output_format == "pcd") {
         if (cloud->empty()) {
@@ -39,18 +40,20 @@ bool process_cloud(string output_path, string output_format, pcl::PointCloud<pcl
     return true;
 }
 
-int compute_view(PartialViewComputer &comp, float theta, float phi, 
-    bool view_image, bool no_clobber, string output_format, string output_path) {
+int compute_view(PartialViewComputer &comp, float theta, float phi,
+                 bool view_image, bool no_clobber, string output_format,
+                 string output_path) {
     // check if file already exists
-    if ( no_clobber && ifstream(output_path.c_str()) )
+    if ( no_clobber && ifstream(output_path.c_str()) ) {
         return 0;
-    else {
+    } else {
         if (view_image)
-            comp.displayMesh(theta,phi);
-        if (output_format == "none") // no output needed
+            comp.displayMesh(theta, phi);
+        cout << "Entropy is " << comp.compute_entropy(theta, phi) << endl;
+        if (output_format == "none")  // no output needed
             return 0;
         pcl::PointCloud<pcl::PointXYZ> cloud = comp.compute_view(theta, phi);
-        if(!process_cloud(output_path, output_format, &cloud))
+        if (!process_cloud(output_path, output_format, &cloud))
             return -1;
     }
     return 0;
@@ -87,7 +90,7 @@ int main(int argc, char **argv) {
     bool view_image = vm["view-image"].as<bool>();
     bool no_clobber = vm["no-clobber"].as<bool>();
     string output_format = vm["output-format"].as<string>();
-    
+
     if (vm.count("input")) {
         input_path = vm["input"].as<string>();
     } else {

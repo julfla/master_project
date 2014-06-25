@@ -11,6 +11,8 @@ from shape_distribution.models import (ShapeDistribution,
 from partial_view.models import PartialView
 
 from sklearn import svm, multiclass
+from sklearn import tree
+from sklearn import neighbors
 import pickle
 import numpy
 
@@ -22,6 +24,8 @@ class SVCField(with_metaclass(models.SubfieldBase, models.Field)):
     import inspect
     svm_classifier_classes = inspect.getmembers(svm, inspect.isclass)
     svm_classifier_classes += inspect.getmembers(multiclass, inspect.isclass)
+    svm_classifier_classes += inspect.getmembers(tree, inspect.isclass)
+    svm_classifier_classes += inspect.getmembers(neighbors, inspect.isclass)
     svm_classifier_classes = (x[1] for x in svm_classifier_classes)
 
     def to_python(self, value):
@@ -47,21 +51,27 @@ class Identifier(models.Model):
     classifier = SVCField()
     dict_categories = DictField(SetField, default=dict())
 
-    def identify_with_proba(self, pointcloud):
-        """ Return the category of the pointcloud object. """
+    def identify_with_proba(self, data):
+        """ Return the category of the Pointcloud or Distribution object. """
         if len(self.dict_categories) < 1:
             print "No category cannot identify"
             raise IndexError("Identifier is empty.")
-
-        data = ShapeDistribution.compute(pointcloud).as_numpy_array
-        result_proba = self.classifier.decision_function(data)
+        if type(data) == 'PointCloud':
+            data = ShapeDistribution.compute(data)
+        if type(data) == 'ShapeDistribution':
+            data = data.as_numpy_array
+        result_proba = None
+        try:
+            result_proba = self.classifier.decision_function(data)
+        except AttributeError:
+            pass
         result_idx = int(self.classifier.predict(data)[0])
         result_name = self.dict_categories.keys()[result_idx]
         return (result_name, result_proba)
 
-    def identify(self, pointcloud):
+    def identify(self, data):
         """ Return only the identification result, no probability. """
-        (result_name, _) = self.identify_with_proba(pointcloud)
+        (result_name, _) = self.identify_with_proba(data)
         return result_name
 
     def add_models(self, models, category_name):
@@ -79,27 +89,35 @@ class Identifier(models.Model):
         if len(self.dict_categories) < 2:
             print "At least two categories are needed for training..."
             print "Training is skipped."
-        (X, Y) = self._get_example_matrix()
+        (X, Y, W) = self._get_example_matrix()
         print "Training with {} categories and {} views.".format(
             len(self.dict_categories), len(Y))
-        print self.classifier.fit(X, Y)
+        print self.classifier.fit(X, Y)  # , sample_weight=W)
+
+    def _get_model_example_matrix(self, model):
+        views = model.partialview_set.all()
+        w = [v.entropy for v in views]
+        mean_w = sum(w) / len(w)
+        x = numpy.vstack([v.distribution.as_numpy_array
+                          for v in views if v.entropy > mean_w])
+        # Scale entropy so that each model has the same weight
+        w = numpy.array([value / mean_w for value in w])
+        return (x, w)
 
     def _get_example_matrix(self):
         """ Return the input matrix of example (X). """
         X = numpy.zeros([0, SHAPE_DISTRIBUTION_SIZE])
-        Y = numpy.zeros([0, 1])
+        Y = numpy.array([])
+        W = numpy.array([])  # Weights of the samples
         for idx, (category, model_ids) in (enumerate(
                                            self.dict_categories.items())):
-            arr = numpy.zeros((0, SHAPE_DISTRIBUTION_SIZE))
             for model_id in model_ids:
                 model = SketchupModel.find_google_id(model_id)
                 if model.partialview_set.count() == 0:
                     PartialView.compute_all_views(model)
-                for view in model.partialview_set.all():
-                    arr = numpy.vstack([arr,
-                                        view.distribution.as_numpy_array])
-            X = numpy.vstack([X, arr])
-            n_views = arr.shape[0]
-            Y = numpy.vstack([Y, idx * numpy.ones([n_views, 1])])
-        Y = numpy.ravel(Y)
-        return (X, Y)
+                (x, w) = self._get_model_example_matrix(model)
+                y = numpy.array([idx for _ in range(x.shape[0])])
+                X = numpy.vstack([X, x])
+                Y = numpy.concatenate([Y, y])
+                W = numpy.concatenate([W, w])
+        return (X, Y, W)
