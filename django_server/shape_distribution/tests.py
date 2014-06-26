@@ -2,9 +2,11 @@ from django.test import TestCase
 
 from sketchup_models.models import SketchupModel
 from partial_view.models import PartialView
-from shape_distribution.models import ShapeDistribution
+from shape_distribution.models import (ShapeDistribution,
+                                       SHAPE_DISTRIBUTION_SIZE)
 from common.libs.libpydescriptors import Distribution
 import numpy
+
 
 class TestShapeDistribution(TestCase):
     def setUp(self):
@@ -25,14 +27,14 @@ class TestShapeDistribution(TestCase):
         """
         Tests writing then reading of a PointCloudStorage and ShapeDistribution.
         """
-        self.assertEqual( ShapeDistribution.objects.count(), 0 )
+        self.assertEqual(ShapeDistribution.objects.count(), 0)
         self.distribution.save()
-        self.assertEqual( ShapeDistribution.objects.count(), 1 )
+        self.assertEqual(ShapeDistribution.objects.count(), 1)
 
     def test_data_as_numpy_array(self):
         """
         Tests that we can use the data as a numpy array.
         """
         array = self.distribution.as_numpy_array
-        self.assertTrue( isinstance(array, numpy.ndarray) )
-        self.assertEqual( array.size, 128 )
+        self.assertTrue(isinstance(array, numpy.ndarray))
+        self.assertEqual(array.size, SHAPE_DISTRIBUTION_SIZE)
