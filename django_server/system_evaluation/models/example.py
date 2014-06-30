@@ -6,6 +6,10 @@ from zlib import compress, decompress
 import re, tempfile
 
 class Example(models.Model):
+
+    class Meta:
+        app_label = 'system_evaluation'
+
     name = models.CharField(unique=True, max_length=255)
     _compressed = models.BooleanField(default=False)
     _pcd_raw = GridFSField()
@@ -13,7 +17,7 @@ class Example(models.Model):
 
     def compress_gridfsfield(self, data):
         import zlib
-        if 'read' in dir(data): data = data.read() 
+        if 'read' in dir(data): data = data.read()
         if self.compressed:
             return zlib.compress( data )
         else:
@@ -46,14 +50,14 @@ class Example(models.Model):
     def pcd_file(self):
         tmpfile = tempfile.NamedTemporaryFile()
         tmpfile.write( self.decompress_gridfsfield(self._pcd_raw) )
-        tmpfile.flush()        
+        tmpfile.flush()
         tmpfile.seek(0)
         return tmpfile
 
     @pcd_file.setter
     def pcd_file(self, value):
         self._pcd_raw = self.compress_gridfsfield(value)
-    
+
     @property
     def image_file(self):
         tmpfile = tempfile.NamedTemporaryFile()

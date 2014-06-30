@@ -3,6 +3,10 @@ from djangotoolbox.fields import ListField, EmbeddedModelField
 from identifier.models import Identifier
 
 class IdentificationAttempt(models.Model):
+
+    class Meta:
+        app_label = 'system_evaluation'
+
     example = models.CharField(max_length=255)
     identification_succeed = models.BooleanField()
     identification_result = models.CharField(max_length=255)
@@ -10,6 +14,10 @@ class IdentificationAttempt(models.Model):
     user_indentification = models.CharField(max_length=255)
 
 class EvaluationSession(models.Model):
+
+    class Meta:
+        app_label = 'system_evaluation'
+
     attempts = ListField(EmbeddedModelField('IdentificationAttempt'))
     user = models.CharField(max_length = 50, default="Anonymous")
     identifier = models.ForeignKey('identifier.Identifier')
