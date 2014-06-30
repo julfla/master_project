@@ -1,6 +1,7 @@
 """ Define a Django Command to seed the examples database. """
 
 from django.core.management.base import BaseCommand
+from django.core.files import File
 from optparse import make_option
 from system_evaluation.models import Example
 
@@ -59,11 +60,10 @@ class Command(BaseCommand):
         for example_image_member in example_image_members:
             # without the _crop.png
             example_path = re.sub('_crop.png', '', example_image_member.name)
-            example = Example(name=example_path.split('/')[-1],
-                              _compressed=True)
+            example = Example(name=example_path.split('/')[-1])
             # escape if object exists already
             if Example.objects.filter(name=example.name).exists():
-                return
+                break
             print "Adding object {}".format(example.name)
             # we need to donwload the pcd tar now
             if pcd_tar is None:
@@ -73,8 +73,8 @@ class Command(BaseCommand):
             for example_pcd_member in pcd_tar.getmembers():
                 if m.match(example_pcd_member.name):
                     break
-            example.pcd_file = pcd_tar.extractfile(example_pcd_member)
-            example.image_file = image_tar.extractfile(example_image_member)
+            example.pcd = File(pcd_tar.extractfile(example_pcd_member))
+            example.image = File(image_tar.extractfile(example_image_member))
             example.save()
 
     def handle(self, *args, **options):
