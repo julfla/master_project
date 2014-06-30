@@ -1,9 +1,5 @@
 from django.db import models
-from django_mongodb_engine.fields import GridFSField
-from gridfs import GridOut
-
-from zlib import compress, decompress
-import re, tempfile
+import re
 
 
 def get_example_path(instance, filename):
@@ -37,6 +33,7 @@ class Example(models.Model):
 
     @staticmethod
     def filter_categories(list_categories):
+        """ Return the example of the specified categories. """
         regex = '({})(_[0-9]+)+'.format(
             '|'.join(list_categories)
             )
@@ -44,6 +41,7 @@ class Example(models.Model):
 
     @staticmethod
     def get_random(list_categories):
+        """ Return a radom example of the specified categories. """
         from random import randint
         examples = Example.filter_categories(list_categories)
         index = randint(0, len(examples) - 1)
