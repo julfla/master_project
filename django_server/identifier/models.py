@@ -26,13 +26,13 @@ class SVCField(with_metaclass(models.SubfieldBase, models.Field)):
     svm_classifier_classes += inspect.getmembers(multiclass, inspect.isclass)
     svm_classifier_classes += inspect.getmembers(tree, inspect.isclass)
     svm_classifier_classes += inspect.getmembers(neighbors, inspect.isclass)
-    svm_classifier_classes = (x[1] for x in svm_classifier_classes)
+    svm_classifier_classes = set([x[1] for x in svm_classifier_classes])
 
     def to_python(self, value):
         """ Recreate python object from db. """
         if value.__class__ in self.svm_classifier_classes:
             return value
-        elif value is not None and len(value) > 0:
+        elif value and len(value) > 0:
             return pickle.loads(value)
         return None
 
@@ -65,8 +65,11 @@ class Identifier(models.Model):
             result_proba = self.classifier.decision_function(data)
         except AttributeError:
             pass
-        result_idx = int(self.classifier.predict(data)[0])
-        result_name = self.dict_categories.keys()[result_idx]
+        try:
+            result_idx = int(self.classifier.predict(data)[0])
+            result_name = self.dict_categories.keys()[result_idx]
+        except ValueError:
+            result_name = 'Unknown'
         return (result_name, result_proba)
 
     def identify(self, data):
@@ -99,7 +102,7 @@ class Identifier(models.Model):
         w = [v.entropy for v in views]
         mean_w = sum(w) / len(w)
         x = numpy.vstack([v.distribution.as_numpy_array
-                          for v in views if v.entropy > mean_w])
+                          for v in views])  # if v.entropy > mean_w])
         # Scale entropy so that each model has the same weight
         w = numpy.array([value / mean_w for value in w])
         return (x, w)

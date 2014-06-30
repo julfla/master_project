@@ -15,8 +15,9 @@ from sklearn.multiclass import (OneVsOneClassifier,
                                 OneVsRestClassifier,
                                 OutputCodeClassifier)
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.neighbors import KNeighborsClassifier
-
+from sklearn.neighbors import KNeighborsClassifier, RadiusNeighborsClassifier
+from collections import defaultdict
+import operator
 
 class Command(BaseCommand):
 
@@ -36,7 +37,13 @@ class Command(BaseCommand):
         'OneVsOne': OneVsOneClassifier(LinearSVC(random_state=0)),
         'OneVsRest': OneVsRestClassifier(LinearSVC(random_state=0)),
         'DecisionTree': DecisionTreeClassifier(),
-        'KNeighbors': KNeighborsClassifier(),  # n_neighbors=10),
+        'KNeighbors': KNeighborsClassifier(weights='distance',
+                                           n_neighbors=5,
+                                           leaf_size=64),
+        'RadiusNeighbors': RadiusNeighborsClassifier(weights='distance',
+                                                     n_neighbors=5,
+                                                     leaf_size=30,
+                                                     radius=10.0),
         'OutputCode': OutputCodeClassifier(LinearSVC(random_state=0)),
         }
 
@@ -174,13 +181,15 @@ class Command(BaseCommand):
     def process_example(self, example, options):
         """ Process one example, and remove it from the pending list. """
         # Display of completion
+        # if example['expected'] == 'food_can':
+        #     example['expected'] = 'soda_can'
         number_done = len(self.done_examples)
         number_total = number_done + len(self.pending_examples)
-        print 'Dealing with {} ( {}/{}, {}% )'.format(
-            example['name'],
-            number_done + 1,
-            number_total,
-            100 * number_done / number_total)
+        # print 'Dealing with {} ( {}/{}, {}% )'.format(
+        #     example['name'],
+        #     number_done + 1,
+        #     number_total,
+        #     100 * number_done / number_total)
         if options['force_descriptors']:
             # Remove the shape distribution if if was kept.
             example.pop('shape_distribution')
@@ -197,8 +206,8 @@ class Command(BaseCommand):
         if 'keep-descriptors' in options:
             example['shape_distribution'] = distribution
         # display of results
-        print '    {} has been identified as a {}, {}'.format(
-            example['name'], example['actual'], example['proba'])
+        # print '    {} has been identified as a {}, {}'.format(
+        #     example['name'], example['actual'], example['proba'])
         self.done_examples.append(example)
         self.pending_examples.remove(example)
 
@@ -206,7 +215,6 @@ class Command(BaseCommand):
         """ Analyze the results and print it in the terminal. """
         def result_group_by(examples, key, displayed_name=None):
             """ Group example by the value of the key provided. """
-            from collections import defaultdict
             if displayed_name is None:
                 displayed_name = key
             results = defaultdict(lambda: defaultdict(list))
@@ -244,7 +252,26 @@ class Command(BaseCommand):
             100 * len(positives)/len(examples))
         print ''
         result_group_by(examples, 'expected', 'category')
-        result_group_by(examples, 'object_name', 'object')
+        # result_group_by(examples, 'object_name', 'object')
+        object_name_set = set([example['object_name']
+                               for example in self.done_examples])
+        positives = 0
+        total = len(object_name_set)
+        for object_name in sorted(object_name_set):
+            results_count = defaultdict(int)
+            expected = None
+            for example in [example for example in self.done_examples
+                            if example['object_name'] == object_name]:
+                if not expected:
+                    expected = example['expected']
+                results_count[example['actual']] += 1
+            result = max(results_count.iteritems(),
+                         key=operator.itemgetter(1))[0]
+            if expected == result:
+                positives += 1
+            else:
+                print "{} is classified as a {}".format(object_name, result)
+        print positives, " / ", total, " (", 100 * positives / total, "%)"
 
     def dump(self, options):
         """ Dump the process in a homemade format. """
