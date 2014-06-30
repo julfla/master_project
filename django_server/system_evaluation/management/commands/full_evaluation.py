@@ -18,6 +18,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier, RadiusNeighborsClassifier
 from collections import defaultdict
 import operator
+from django_server.settings import MEDIA_ROOT
 
 class Command(BaseCommand):
 
@@ -194,8 +195,9 @@ class Command(BaseCommand):
             # Remove the shape distribution if if was kept.
             example.pop('shape_distribution')
         if 'shape_distribution' not in example:
-            pcd_file = Example.objects.get(name=example['name']).pcd_file
-            cloud = PointCloud.load_pcd(pcd_file.name)
+            pcd_path = Example.objects.get(name=example['name']).pcd.name
+            pcd_path = str(MEDIA_ROOT + pcd_path)
+            cloud = PointCloud.load_pcd(pcd_path)
             distribution = ShapeDistribution.compute(cloud).as_numpy_array
         else:
             distribution = example['shape_distribution']
