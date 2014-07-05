@@ -8,3 +8,6 @@ env
 
 # Ignore python files
 *.pyc
+
+# Django files
+/django_server/media

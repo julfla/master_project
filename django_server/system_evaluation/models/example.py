@@ -14,46 +14,61 @@ def get_example_path(instance, filename):
                              basename(filename))
 
 
-class Example(models.Model):
+class ExampleObject(models.Model):
+
+    """ An object from the dataset with several video sequences.
+
+    The model contains also information regarding how to download the dataset
+    and where is it store is downloaded.
+    """
+
+    name = models.CharField(max_length=50, unique=True)
+    category = models.CharField(max_length=50)
+    url_pcd_tar = models.URLField()
+    url_image_tar = models.URLField()
+    pcd_tar = models.FileField(upload_to="rgbd-dataset/pcd_tar")
+    image_tar = models.FileField(upload_to="rgbd-dataset/image_tar")
 
     class Meta:
+        app_label = "system_evaluation"
+
+
+class VideoSequence(models.Model):
+
+    """ Sequence of frames from the dataset. """
+
+    sequence_id = models.IntegerField()
+    example_object = models.ForeignKey(ExampleObject,
+                                       related_name="sequences")
+
+    class Meta:
+        unique_together = (("sequence_id", "example_object"),)
+        app_label = "system_evaluation"
+
+
+class Frame(models.Model):
+
+    """ One frame of an example sequence.
+
+    It contains the reference on how to retreive the pcd and image.
+    """
+
+    frame_id = models.IntegerField()
+    video_sequence = models.ForeignKey(VideoSequence,
+                                       related_name="frames")
+
+    class Meta:
+        unique_together = (("frame_id", "video_sequence"),)
         app_label = 'system_evaluation'
 
-    name = models.CharField(unique=True, max_length=255)
-    pcd = models.FileField(upload_to=get_example_path)
-    image = models.FileField(upload_to=get_example_path)
 
-    @property
-    def category(self):
-        return re.search('([a-z]+(_[a-z]+)*)+', self.name).group(0)
-
-    @property
-    def object_name(self):
-        return re.search('[a-z_]+_[0-9]+', self.name).group(0)
-
-    @staticmethod
-    def filter_categories(list_categories):
-        """ Return the example of the specified categories. """
-        regex = '({})(_[0-9]+)+'.format(
-            '|'.join(list_categories)
-            )
-        return Example.objects.filter(name__regex=regex)
-
-    @staticmethod
-    def get_random(list_categories):
-        """ Return a radom example of the specified categories. """
-        from random import randint
-        examples = Example.filter_categories(list_categories)
-        index = randint(0, len(examples) - 1)
-        return examples[index]
-
-# Receive the pre_delete signal and delete the file associated with the example
+# Deletion of files when deleting a ExampleObject
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 
 
-@receiver(pre_delete, sender=Example)
+@receiver(pre_delete, sender=ExampleObject)
 def mymodel_delete(sender, instance, **kwargs):
     # Pass false so FileField doesn't save the model.
-    instance.image.delete(False)
-    instance.pcd.delete(False)
+    instance.pcd_tar.delete(False)
+    instance.image_tar.delete(False)

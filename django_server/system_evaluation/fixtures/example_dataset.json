@@ -1,0 +1,2702 @@
+[
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "bowl_1",
+		"category": "bowl",
+		"url_pcd_tar": "http://0.0.0.0:8000/static/bowl_1_pcd.tar",
+		"url_image_tar": "http://0.0.0.0:8000/static/bowl_1_image.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "bowl_2",
+		"category": "bowl",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/bowl_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/bowl_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "bowl_3",
+		"category": "bowl",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/bowl_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/bowl_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "bowl_4",
+		"category": "bowl",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/bowl_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/bowl_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "bowl_5",
+		"category": "bowl",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/bowl_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/bowl_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "bowl_6",
+		"category": "bowl",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/bowl_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/bowl_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "banana_1",
+		"category": "banana",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/banana_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/banana_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "banana_2",
+		"category": "banana",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/banana_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/banana_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "banana_3",
+		"category": "banana",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/banana_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/banana_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "banana_4",
+		"category": "banana",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/banana_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/banana_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "apple_1",
+		"category": "apple",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/apple_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/apple_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "apple_2",
+		"category": "apple",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/apple_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/apple_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "apple_3",
+		"category": "apple",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/apple_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/apple_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "apple_4",
+		"category": "apple",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/apple_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/apple_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "apple_5",
+		"category": "apple",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/apple_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/apple_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "ball_1",
+		"category": "ball",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/ball_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/ball_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "ball_2",
+		"category": "ball",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/ball_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/ball_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "ball_3",
+		"category": "ball",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/ball_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/ball_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "ball_4",
+		"category": "ball",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/ball_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/ball_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "ball_5",
+		"category": "ball",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/ball_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/ball_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "ball_6",
+		"category": "ball",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/ball_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/ball_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "ball_7",
+		"category": "ball",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/ball_7.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/ball_7.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "bell_pepper_1",
+		"category": "bell_pepper",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/bell_pepper_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/bell_pepper_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "bell_pepper_2",
+		"category": "bell_pepper",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/bell_pepper_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/bell_pepper_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "bell_pepper_3",
+		"category": "bell_pepper",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/bell_pepper_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/bell_pepper_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "bell_pepper_4",
+		"category": "bell_pepper",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/bell_pepper_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/bell_pepper_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "bell_pepper_5",
+		"category": "bell_pepper",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/bell_pepper_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/bell_pepper_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "bell_pepper_6",
+		"category": "bell_pepper",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/bell_pepper_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/bell_pepper_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "binder_1",
+		"category": "binder",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/binder_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/binder_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "binder_2",
+		"category": "binder",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/binder_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/binder_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "binder_3",
+		"category": "binder",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/binder_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/binder_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "calculator_1",
+		"category": "calculator",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/calculator_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/calculator_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "calculator_2",
+		"category": "calculator",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/calculator_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/calculator_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "calculator_3",
+		"category": "calculator",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/calculator_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/calculator_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "calculator_4",
+		"category": "calculator",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/calculator_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/calculator_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "calculator_5",
+		"category": "calculator",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/calculator_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/calculator_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "camera_1",
+		"category": "camera",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/camera_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/camera_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "camera_2",
+		"category": "camera",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/camera_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/camera_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "camera_3",
+		"category": "camera",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/camera_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/camera_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "cap_1",
+		"category": "cap",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/cap_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/cap_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "cap_2",
+		"category": "cap",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/cap_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/cap_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "cap_3",
+		"category": "cap",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/cap_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/cap_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "cap_4",
+		"category": "cap",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/cap_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/cap_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "cell_phone_1",
+		"category": "cell_phone",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/cell_phone_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/cell_phone_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "cell_phone_2",
+		"category": "cell_phone",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/cell_phone_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/cell_phone_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "cell_phone_3",
+		"category": "cell_phone",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/cell_phone_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/cell_phone_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "cell_phone_4",
+		"category": "cell_phone",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/cell_phone_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/cell_phone_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "cell_phone_5",
+		"category": "cell_phone",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/cell_phone_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/cell_phone_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "cereal_box_1",
+		"category": "cereal_box",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/cereal_box_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/cereal_box_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "cereal_box_2",
+		"category": "cereal_box",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/cereal_box_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/cereal_box_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "cereal_box_3",
+		"category": "cereal_box",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/cereal_box_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/cereal_box_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "cereal_box_4",
+		"category": "cereal_box",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/cereal_box_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/cereal_box_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "cereal_box_5",
+		"category": "cereal_box",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/cereal_box_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/cereal_box_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "coffee_mug_1",
+		"category": "coffee_mug",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/coffee_mug_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/coffee_mug_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "coffee_mug_2",
+		"category": "coffee_mug",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/coffee_mug_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/coffee_mug_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "coffee_mug_3",
+		"category": "coffee_mug",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/coffee_mug_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/coffee_mug_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "coffee_mug_4",
+		"category": "coffee_mug",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/coffee_mug_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/coffee_mug_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "coffee_mug_5",
+		"category": "coffee_mug",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/coffee_mug_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/coffee_mug_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "coffee_mug_6",
+		"category": "coffee_mug",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/coffee_mug_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/coffee_mug_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "coffee_mug_7",
+		"category": "coffee_mug",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/coffee_mug_7.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/coffee_mug_7.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "coffee_mug_8",
+		"category": "coffee_mug",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/coffee_mug_8.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/coffee_mug_8.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "comb_1",
+		"category": "comb",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/comb_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/comb_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "comb_2",
+		"category": "comb",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/comb_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/comb_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "comb_3",
+		"category": "comb",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/comb_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/comb_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "comb_5",
+		"category": "comb",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/comb_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/comb_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "dry_battery_1",
+		"category": "dry_battery",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/dry_battery_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/dry_battery_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "dry_battery_2",
+		"category": "dry_battery",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/dry_battery_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/dry_battery_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "dry_battery_3",
+		"category": "dry_battery",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/dry_battery_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/dry_battery_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "dry_battery_4",
+		"category": "dry_battery",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/dry_battery_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/dry_battery_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "dry_battery_5",
+		"category": "dry_battery",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/dry_battery_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/dry_battery_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "dry_battery_6",
+		"category": "dry_battery",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/dry_battery_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/dry_battery_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "flashlight_1",
+		"category": "flashlight",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/flashlight_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/flashlight_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "flashlight_2",
+		"category": "flashlight",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/flashlight_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/flashlight_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "flashlight_3",
+		"category": "flashlight",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/flashlight_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/flashlight_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "flashlight_4",
+		"category": "flashlight",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/flashlight_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/flashlight_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "flashlight_5",
+		"category": "flashlight",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/flashlight_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/flashlight_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_bag_1",
+		"category": "food_bag",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_bag_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_bag_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_bag_2",
+		"category": "food_bag",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_bag_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_bag_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_bag_3",
+		"category": "food_bag",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_bag_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_bag_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_bag_4",
+		"category": "food_bag",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_bag_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_bag_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_bag_5",
+		"category": "food_bag",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_bag_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_bag_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_bag_6",
+		"category": "food_bag",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_bag_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_bag_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_bag_7",
+		"category": "food_bag",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_bag_7.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_bag_7.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_bag_8",
+		"category": "food_bag",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_bag_8.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_bag_8.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_box_1",
+		"category": "food_box",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_box_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_box_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_box_2",
+		"category": "food_box",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_box_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_box_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_box_3",
+		"category": "food_box",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_box_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_box_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_box_4",
+		"category": "food_box",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_box_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_box_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_box_5",
+		"category": "food_box",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_box_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_box_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_box_6",
+		"category": "food_box",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_box_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_box_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_box_7",
+		"category": "food_box",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_box_7.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_box_7.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_box_8",
+		"category": "food_box",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_box_8.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_box_8.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_box_9",
+		"category": "food_box",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_box_9.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_box_9.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_box_10",
+		"category": "food_box",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_box_10.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_box_10.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_box_11",
+		"category": "food_box",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_box_11.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_box_11.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_box_12",
+		"category": "food_box",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_box_12.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_box_12.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_can_1",
+		"category": "food_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_can_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_can_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_can_2",
+		"category": "food_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_can_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_can_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_can_3",
+		"category": "food_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_can_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_can_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_can_4",
+		"category": "food_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_can_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_can_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_can_5",
+		"category": "food_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_can_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_can_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_can_6",
+		"category": "food_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_can_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_can_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_can_7",
+		"category": "food_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_can_7.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_can_7.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_can_8",
+		"category": "food_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_can_8.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_can_8.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_can_9",
+		"category": "food_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_can_9.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_can_9.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_can_10",
+		"category": "food_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_can_10.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_can_10.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_can_11",
+		"category": "food_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_can_11.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_can_11.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_can_12",
+		"category": "food_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_can_12.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_can_12.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_can_13",
+		"category": "food_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_can_13.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_can_13.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_can_14",
+		"category": "food_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_can_14.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_can_14.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_cup_1",
+		"category": "food_cup",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_cup_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_cup_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_cup_2",
+		"category": "food_cup",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_cup_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_cup_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_cup_3",
+		"category": "food_cup",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_cup_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_cup_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_cup_4",
+		"category": "food_cup",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_cup_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_cup_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_cup_5",
+		"category": "food_cup",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_cup_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_cup_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_jar_1",
+		"category": "food_jar",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_jar_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_jar_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_jar_2",
+		"category": "food_jar",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_jar_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_jar_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_jar_3",
+		"category": "food_jar",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_jar_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_jar_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_jar_4",
+		"category": "food_jar",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_jar_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_jar_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_jar_5",
+		"category": "food_jar",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_jar_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_jar_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "food_jar_6",
+		"category": "food_jar",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/food_jar_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/food_jar_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "garlic_1",
+		"category": "garlic",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/garlic_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/garlic_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "garlic_2",
+		"category": "garlic",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/garlic_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/garlic_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "garlic_3",
+		"category": "garlic",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/garlic_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/garlic_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "garlic_4",
+		"category": "garlic",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/garlic_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/garlic_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "garlic_5",
+		"category": "garlic",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/garlic_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/garlic_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "garlic_6",
+		"category": "garlic",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/garlic_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/garlic_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "garlic_7",
+		"category": "garlic",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/garlic_7.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/garlic_7.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "glue_stick_1",
+		"category": "glue_stick",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/glue_stick_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/glue_stick_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "glue_stick_2",
+		"category": "glue_stick",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/glue_stick_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/glue_stick_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "glue_stick_3",
+		"category": "glue_stick",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/glue_stick_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/glue_stick_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "glue_stick_4",
+		"category": "glue_stick",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/glue_stick_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/glue_stick_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "glue_stick_5",
+		"category": "glue_stick",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/glue_stick_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/glue_stick_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "glue_stick_6",
+		"category": "glue_stick",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/glue_stick_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/glue_stick_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "greens_1",
+		"category": "greens",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/greens_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/greens_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "greens_2",
+		"category": "greens",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/greens_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/greens_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "greens_3",
+		"category": "greens",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/greens_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/greens_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "greens_4",
+		"category": "greens",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/greens_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/greens_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "hand_towel_1",
+		"category": "hand_towel",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/hand_towel_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/hand_towel_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "hand_towel_2",
+		"category": "hand_towel",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/hand_towel_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/hand_towel_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "hand_towel_3",
+		"category": "hand_towel",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/hand_towel_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/hand_towel_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "hand_towel_4",
+		"category": "hand_towel",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/hand_towel_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/hand_towel_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "hand_towel_5",
+		"category": "hand_towel",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/hand_towel_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/hand_towel_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "instant_noodles_1",
+		"category": "instant_noodles",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/instant_noodles_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/instant_noodles_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "instant_noodles_2",
+		"category": "instant_noodles",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/instant_noodles_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/instant_noodles_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "instant_noodles_3",
+		"category": "instant_noodles",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/instant_noodles_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/instant_noodles_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "instant_noodles_4",
+		"category": "instant_noodles",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/instant_noodles_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/instant_noodles_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "instant_noodles_5",
+		"category": "instant_noodles",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/instant_noodles_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/instant_noodles_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "instant_noodles_6",
+		"category": "instant_noodles",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/instant_noodles_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/instant_noodles_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "instant_noodles_7",
+		"category": "instant_noodles",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/instant_noodles_7.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/instant_noodles_7.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "instant_noodles_8",
+		"category": "instant_noodles",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/instant_noodles_8.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/instant_noodles_8.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "keyboard_1",
+		"category": "keyboard",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/keyboard_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/keyboard_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "keyboard_2",
+		"category": "keyboard",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/keyboard_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/keyboard_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "keyboard_3",
+		"category": "keyboard",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/keyboard_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/keyboard_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "keyboard_4",
+		"category": "keyboard",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/keyboard_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/keyboard_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "keyboard_5",
+		"category": "keyboard",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/keyboard_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/keyboard_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "kleenex_1",
+		"category": "kleenex",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/kleenex_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/kleenex_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "kleenex_2",
+		"category": "kleenex",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/kleenex_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/kleenex_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "kleenex_3",
+		"category": "kleenex",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/kleenex_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/kleenex_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "kleenex_4",
+		"category": "kleenex",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/kleenex_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/kleenex_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "kleenex_5",
+		"category": "kleenex",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/kleenex_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/kleenex_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "lemon_1",
+		"category": "lemon",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/lemon_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/lemon_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "lemon_2",
+		"category": "lemon",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/lemon_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/lemon_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "lemon_3",
+		"category": "lemon",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/lemon_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/lemon_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "lemon_4",
+		"category": "lemon",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/lemon_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/lemon_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "lemon_5",
+		"category": "lemon",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/lemon_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/lemon_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "lemon_6",
+		"category": "lemon",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/lemon_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/lemon_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "lightbulb_1",
+		"category": "lightbulb",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/lightbulb_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/lightbulb_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "lightbulb_2",
+		"category": "lightbulb",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/lightbulb_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/lightbulb_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "lightbulb_3",
+		"category": "lightbulb",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/lightbulb_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/lightbulb_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "lightbulb_4",
+		"category": "lightbulb",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/lightbulb_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/lightbulb_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "lime_1",
+		"category": "lime",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/lime_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/lime_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "lime_2",
+		"category": "lime",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/lime_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/lime_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "lime_3",
+		"category": "lime",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/lime_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/lime_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "lime_4",
+		"category": "lime",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/lime_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/lime_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "marker_1",
+		"category": "marker",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/marker_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/marker_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "marker_2",
+		"category": "marker",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/marker_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/marker_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "marker_3",
+		"category": "marker",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/marker_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/marker_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "marker_4",
+		"category": "marker",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/marker_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/marker_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "marker_5",
+		"category": "marker",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/marker_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/marker_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "marker_6",
+		"category": "marker",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/marker_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/marker_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "marker_7",
+		"category": "marker",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/marker_7.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/marker_7.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "marker_8",
+		"category": "marker",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/marker_8.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/marker_8.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "marker_9",
+		"category": "marker",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/marker_9.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/marker_9.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "mushroom_1",
+		"category": "mushroom",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/mushroom_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/mushroom_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "mushroom_2",
+		"category": "mushroom",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/mushroom_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/mushroom_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "mushroom_3",
+		"category": "mushroom",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/mushroom_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/mushroom_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "notebook_1",
+		"category": "notebook",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/notebook_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/notebook_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "notebook_2",
+		"category": "notebook",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/notebook_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/notebook_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "notebook_3",
+		"category": "notebook",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/notebook_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/notebook_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "notebook_4",
+		"category": "notebook",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/notebook_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/notebook_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "notebook_5",
+		"category": "notebook",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/notebook_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/notebook_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "onion_1",
+		"category": "onion",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/onion_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/onion_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "onion_2",
+		"category": "onion",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/onion_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/onion_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "onion_3",
+		"category": "onion",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/onion_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/onion_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "onion_4",
+		"category": "onion",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/onion_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/onion_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "onion_5",
+		"category": "onion",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/onion_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/onion_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "onion_6",
+		"category": "onion",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/onion_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/onion_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "orange_1",
+		"category": "orange",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/orange_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/orange_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "orange_2",
+		"category": "orange",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/orange_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/orange_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "orange_3",
+		"category": "orange",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/orange_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/orange_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "orange_4",
+		"category": "orange",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/orange_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/orange_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "peach_1",
+		"category": "peach",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/peach_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/peach_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "peach_2",
+		"category": "peach",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/peach_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/peach_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "peach_3",
+		"category": "peach",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/peach_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/peach_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "pear_1",
+		"category": "pear",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/pear_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/pear_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "pear_2",
+		"category": "pear",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/pear_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/pear_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "pear_3",
+		"category": "pear",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/pear_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/pear_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "pear_4",
+		"category": "pear",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/pear_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/pear_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "pear_7",
+		"category": "pear",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/pear_7.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/pear_7.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "pear_8",
+		"category": "pear",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/pear_8.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/pear_8.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "pitcher_1",
+		"category": "pitcher",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/pitcher_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/pitcher_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "pitcher_2",
+		"category": "pitcher",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/pitcher_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/pitcher_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "pitcher_3",
+		"category": "pitcher",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/pitcher_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/pitcher_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "plate_1",
+		"category": "plate",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/plate_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/plate_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "plate_2",
+		"category": "plate",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/plate_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/plate_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "plate_3",
+		"category": "plate",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/plate_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/plate_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "plate_4",
+		"category": "plate",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/plate_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/plate_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "plate_5",
+		"category": "plate",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/plate_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/plate_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "plate_6",
+		"category": "plate",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/plate_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/plate_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "plate_7",
+		"category": "plate",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/plate_7.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/plate_7.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "pliers_1",
+		"category": "pliers",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/pliers_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/pliers_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "pliers_2",
+		"category": "pliers",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/pliers_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/pliers_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "pliers_3",
+		"category": "pliers",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/pliers_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/pliers_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "pliers_4",
+		"category": "pliers",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/pliers_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/pliers_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "pliers_5",
+		"category": "pliers",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/pliers_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/pliers_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "pliers_6",
+		"category": "pliers",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/pliers_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/pliers_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "potato_1",
+		"category": "potato",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/potato_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/potato_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "potato_2",
+		"category": "potato",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/potato_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/potato_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "potato_3",
+		"category": "potato",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/potato_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/potato_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "potato_4",
+		"category": "potato",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/potato_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/potato_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "potato_5",
+		"category": "potato",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/potato_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/potato_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "potato_6",
+		"category": "potato",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/potato_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/potato_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "rubber_eraser_1",
+		"category": "rubber_eraser",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/rubber_eraser_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/rubber_eraser_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "rubber_eraser_2",
+		"category": "rubber_eraser",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/rubber_eraser_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/rubber_eraser_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "rubber_eraser_3",
+		"category": "rubber_eraser",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/rubber_eraser_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/rubber_eraser_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "rubber_eraser_4",
+		"category": "rubber_eraser",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/rubber_eraser_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/rubber_eraser_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "scissors_1",
+		"category": "scissors",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/scissors_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/scissors_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "scissors_2",
+		"category": "scissors",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/scissors_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/scissors_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "scissors_3",
+		"category": "scissors",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/scissors_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/scissors_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "scissors_4",
+		"category": "scissors",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/scissors_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/scissors_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "shampoo_1",
+		"category": "shampoo",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/shampoo_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/shampoo_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "shampoo_2",
+		"category": "shampoo",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/shampoo_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/shampoo_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "shampoo_3",
+		"category": "shampoo",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/shampoo_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/shampoo_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "shampoo_4",
+		"category": "shampoo",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/shampoo_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/shampoo_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "shampoo_5",
+		"category": "shampoo",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/shampoo_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/shampoo_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "shampoo_6",
+		"category": "shampoo",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/shampoo_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/shampoo_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "soda_can_1",
+		"category": "soda_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/soda_can_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/soda_can_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "soda_can_2",
+		"category": "soda_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/soda_can_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/soda_can_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "soda_can_3",
+		"category": "soda_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/soda_can_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/soda_can_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "soda_can_4",
+		"category": "soda_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/soda_can_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/soda_can_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "soda_can_5",
+		"category": "soda_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/soda_can_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/soda_can_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "soda_can_6",
+		"category": "soda_can",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/soda_can_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/soda_can_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "sponge_1",
+		"category": "sponge",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/sponge_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/sponge_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "sponge_2",
+		"category": "sponge",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/sponge_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/sponge_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "sponge_3",
+		"category": "sponge",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/sponge_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/sponge_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "sponge_4",
+		"category": "sponge",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/sponge_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/sponge_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "sponge_5",
+		"category": "sponge",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/sponge_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/sponge_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "sponge_6",
+		"category": "sponge",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/sponge_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/sponge_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "sponge_7",
+		"category": "sponge",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/sponge_7.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/sponge_7.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "sponge_8",
+		"category": "sponge",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/sponge_8.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/sponge_8.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "sponge_9",
+		"category": "sponge",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/sponge_9.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/sponge_9.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "sponge_10",
+		"category": "sponge",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/sponge_10.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/sponge_10.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "sponge_11",
+		"category": "sponge",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/sponge_11.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/sponge_11.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "sponge_12",
+		"category": "sponge",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/sponge_12.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/sponge_12.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "stapler_1",
+		"category": "stapler",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/stapler_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/stapler_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "stapler_2",
+		"category": "stapler",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/stapler_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/stapler_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "stapler_3",
+		"category": "stapler",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/stapler_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/stapler_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "stapler_4",
+		"category": "stapler",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/stapler_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/stapler_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "stapler_5",
+		"category": "stapler",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/stapler_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/stapler_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "stapler_6",
+		"category": "stapler",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/stapler_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/stapler_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "stapler_7",
+		"category": "stapler",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/stapler_7.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/stapler_7.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "stapler_8",
+		"category": "stapler",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/stapler_8.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/stapler_8.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "tomato_1",
+		"category": "tomato",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/tomato_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/tomato_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "tomato_2",
+		"category": "tomato",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/tomato_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/tomato_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "tomato_3",
+		"category": "tomato",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/tomato_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/tomato_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "tomato_4",
+		"category": "tomato",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/tomato_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/tomato_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "tomato_5",
+		"category": "tomato",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/tomato_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/tomato_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "tomato_6",
+		"category": "tomato",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/tomato_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/tomato_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "tomato_7",
+		"category": "tomato",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/tomato_7.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/tomato_7.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "tomato_8",
+		"category": "tomato",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/tomato_8.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/tomato_8.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "toothbrush_1",
+		"category": "toothbrush",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/toothbrush_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/toothbrush_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "toothbrush_2",
+		"category": "toothbrush",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/toothbrush_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/toothbrush_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "toothbrush_3",
+		"category": "toothbrush",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/toothbrush_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/toothbrush_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "toothbrush_4",
+		"category": "toothbrush",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/toothbrush_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/toothbrush_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "toothbrush_5",
+		"category": "toothbrush",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/toothbrush_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/toothbrush_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "toothpaste_1",
+		"category": "toothpaste",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/toothpaste_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/toothpaste_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "toothpaste_2",
+		"category": "toothpaste",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/toothpaste_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/toothpaste_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "toothpaste_3",
+		"category": "toothpaste",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/toothpaste_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/toothpaste_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "toothpaste_4",
+		"category": "toothpaste",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/toothpaste_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/toothpaste_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "toothpaste_5",
+		"category": "toothpaste",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/toothpaste_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/toothpaste_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "water_bottle_1",
+		"category": "water_bottle",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/water_bottle_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/water_bottle_1.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "water_bottle_2",
+		"category": "water_bottle",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/water_bottle_2.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/water_bottle_2.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "water_bottle_3",
+		"category": "water_bottle",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/water_bottle_3.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/water_bottle_3.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "water_bottle_4",
+		"category": "water_bottle",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/water_bottle_4.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/water_bottle_4.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "water_bottle_5",
+		"category": "water_bottle",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/water_bottle_5.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/water_bottle_5.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "water_bottle_6",
+		"category": "water_bottle",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/water_bottle_6.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/water_bottle_6.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "water_bottle_7",
+		"category": "water_bottle",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/water_bottle_7.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/water_bottle_7.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "water_bottle_9",
+		"category": "water_bottle",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/water_bottle_9.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/water_bottle_9.tar"}
+},
+{
+	"model": "system_evaluation.ExampleObject",
+	"pk": null,
+	"fields":{
+		"name": "water_bottle_10",
+		"category": "water_bottle",
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/water_bottle_10.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/water_bottle_10.tar"}
+}
+]
