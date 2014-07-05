@@ -5,8 +5,8 @@
 	"fields":{
 		"name": "bowl_1",
 		"category": "bowl",
-		"url_pcd_tar": "http://0.0.0.0:8000/static/bowl_1_pcd.tar",
-		"url_image_tar": "http://0.0.0.0:8000/static/bowl_1_image.tar"}
+		"url_pcd_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset_pcd_ascii/bowl_1.tar",
+		"url_image_tar": "http://rgbd-dataset.cs.washington.edu/dataset/rgbd-dataset/bowl_1.tar"}
 },
 {
 	"model": "system_evaluation.ExampleObject",
