@@ -1,5 +1,5 @@
 from django.db import models
-import re
+from pointcloud.models import PointCloud
 
 
 def get_example_path(instance, filename):
@@ -56,10 +56,27 @@ class Frame(models.Model):
     frame_id = models.IntegerField()
     video_sequence = models.ForeignKey(VideoSequence,
                                        related_name="frames")
+    pcd_member_name = models.CharField(max_length=255)
+    image_member_name = models.CharField(max_length=255)
+    # _distribution = embededfield blabla
 
     class Meta:
         unique_together = (("frame_id", "video_sequence"),)
         app_label = 'system_evaluation'
+
+    @property
+    def pointcloud(self):
+        """ Extract the pointcloud from the ExampleObject archive. """
+        import tarfile
+        from tempfile import NamedTemporaryFile
+        from django_server.settings import MEDIA_ROOT
+        example_object = self.video_sequence.example_object
+        temp_file = NamedTemporaryFile(delete=True)
+        pcd_tar = tarfile.open(MEDIA_ROOT + example_object.pcd_tar.name)
+        temp_file.write(pcd_tar.extractfile(self.pcd_member_name).read())
+        temp_file.flush()
+        pointcloud = PointCloud.load_pcd(temp_file.name)
+        return pointcloud
 
 
 # Deletion of files when deleting a ExampleObject
