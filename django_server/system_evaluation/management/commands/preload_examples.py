@@ -58,7 +58,9 @@ def preload_example_object(example_object):
         sequence, _ = VideoSequence.objects.get_or_create(
             example_object=example_object, sequence_id=sequence_number)
         Frame.objects.create(video_sequence=sequence,
-                             frame_id=frame_number)
+                             frame_id=frame_number,
+                             pcd_member_name=pcd_member.name,
+                             image_member_name=image_member.name)
 
 
 class Command(BaseCommand):
@@ -73,6 +75,10 @@ class Command(BaseCommand):
                     dest='list_categories',
                     action='store_true',
                     help='List the available categories.'),
+        make_option('-a', '--all',
+                    dest='preload_all',
+                    action='store_true',
+                    help='Download all the dataset.'),
         )
 
     def handle(self, *args, **options):
@@ -83,7 +89,12 @@ class Command(BaseCommand):
             for category in sorted(categories):
                 print category
             return
-        for category in args:
-            example_objects = ExampleObject.objects.filter(category=category)
-            for example_object in example_objects:
-                preload_example_object(example_object)
+        if options['preload_all']:
+            example_objects = ExampleObject.objects.all()
+        elif args:
+            example_objects = ExampleObject.objects.filter(
+                category__in=args)
+        else:
+            raise "No Args"
+        for example_object in example_objects:
+            preload_example_object(example_object)
