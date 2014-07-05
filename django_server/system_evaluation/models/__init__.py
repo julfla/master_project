@@ -1,2 +1,2 @@
-from example import Example
-from evaluation_session import EvaluationSession, IdentificationAttempt
+from example import ExampleObject, VideoSequence, Frame
+from evaluation_session import IdentificationAttempt, EvaluationSession

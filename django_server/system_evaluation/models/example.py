@@ -1,91 +1,91 @@
 from django.db import models
-from django_mongodb_engine.fields import GridFSField
-from gridfs import GridOut
+from pointcloud.models import PointCloud
 
-from zlib import compress, decompress
-import re, tempfile
 
-class Example(models.Model):
-    name = models.CharField(unique=True, max_length=255)
-    _compressed = models.BooleanField(default=False)
-    _pcd_raw = GridFSField()
-    _image_raw = GridFSField()
+def get_example_path(instance, filename):
+    """ Return the relative path where to store a example file.
 
-    def compress_gridfsfield(self, data):
-        import zlib
-        if 'read' in dir(data): data = data.read() 
-        if self.compressed:
-            return zlib.compress( data )
-        else:
-            return data
+    File will be stored in :
+        MEDIA_ROOT/rgbd-dataset/<category>/<object_name>
+    """
+    from os.path import basename
+    return "{}/{}/{}".format(instance.category,
+                             instance.object_name,
+                             basename(filename))
 
-    def decompress_gridfsfield(self, data):
-        import zlib
-        if isinstance( data, GridOut):
-            data.seek(0)
-            data = data.read()
-        if self.compressed:
-            return zlib.decompress( data )
-        else:
-            return data
 
-    @property
-    def compressed(self):
-        return self._compressed
+class ExampleObject(models.Model):
 
-    @compressed.setter
-    def compressed(self, value):
-        if value ^ self.compressed:
-            pcd_data = self.pcd_file
-            image_data = self.image_file
-            _compressed = value
-            self.pcd_file = pcd_data
-            self.image_file = image_data
+    """ An object from the dataset with several video sequences.
 
-    @property
-    def pcd_file(self):
-        tmpfile = tempfile.NamedTemporaryFile()
-        tmpfile.write( self.decompress_gridfsfield(self._pcd_raw) )
-        tmpfile.flush()        
-        tmpfile.seek(0)
-        return tmpfile
+    The model contains also information regarding how to download the dataset
+    and where is it store is downloaded.
+    """
 
-    @pcd_file.setter
-    def pcd_file(self, value):
-        self._pcd_raw = self.compress_gridfsfield(value)
-    
-    @property
-    def image_file(self):
-        tmpfile = tempfile.NamedTemporaryFile()
-        tmpfile.write( self.decompress_gridfsfield(self._image_raw) )
-        tmpfile.flush()
-        tmpfile.seek(0)
-        return tmpfile
+    name = models.CharField(max_length=50, unique=True)
+    category = models.CharField(max_length=50)
+    url_pcd_tar = models.URLField()
+    url_image_tar = models.URLField()
+    pcd_tar = models.FileField(upload_to="rgbd-dataset/pcd_tar")
+    image_tar = models.FileField(upload_to="rgbd-dataset/image_tar")
 
-    @image_file.setter
-    def image_file(self, value):
-        self._image_raw = self.compress_gridfsfield(value)
+    class Meta:
+        app_label = "system_evaluation"
+
+
+class VideoSequence(models.Model):
+
+    """ Sequence of frames from the dataset. """
+
+    sequence_id = models.IntegerField()
+    example_object = models.ForeignKey(ExampleObject,
+                                       related_name="sequences")
+
+    class Meta:
+        unique_together = (("sequence_id", "example_object"),)
+        app_label = "system_evaluation"
+
+
+class Frame(models.Model):
+
+    """ One frame of an example sequence.
+
+    It contains the reference on how to retreive the pcd and image.
+    """
+
+    frame_id = models.IntegerField()
+    video_sequence = models.ForeignKey(VideoSequence,
+                                       related_name="frames")
+    pcd_member_name = models.CharField(max_length=255)
+    image_member_name = models.CharField(max_length=255)
+    # _distribution = embededfield blabla
+
+    class Meta:
+        unique_together = (("frame_id", "video_sequence"),)
+        app_label = 'system_evaluation'
 
     @property
-    def category(self):
-        return re.search('([a-z]+(_[a-z]+)*)+', self.name).group(0)
-
-    @property
-    def object_name(self):
-        return re.search('[a-z_]+_[0-9]+', self.name).group(0)
-
-    @staticmethod
-    def filter_categories(list_categories):
-        regex = '({})(_[0-9]+)+'.format(
-            '|'.join(list_categories)
-            )
-        return Example.objects.filter(name__regex=regex)
-
-    @staticmethod
-    def get_random(list_categories):
-        from random import randint
-        examples = Example.filter_categories(list_categories)
-        index = randint(0, len(examples) - 1)
-        return examples[index]
+    def pointcloud(self):
+        """ Extract the pointcloud from the ExampleObject archive. """
+        import tarfile
+        from tempfile import NamedTemporaryFile
+        from django_server.settings import MEDIA_ROOT
+        example_object = self.video_sequence.example_object
+        temp_file = NamedTemporaryFile(delete=True)
+        pcd_tar = tarfile.open(MEDIA_ROOT + example_object.pcd_tar.name)
+        temp_file.write(pcd_tar.extractfile(self.pcd_member_name).read())
+        temp_file.flush()
+        pointcloud = PointCloud.load_pcd(temp_file.name)
+        return pointcloud
 
 
+# Deletion of files when deleting a ExampleObject
+from django.db.models.signals import pre_delete
+from django.dispatch.dispatcher import receiver
+
+
+@receiver(pre_delete, sender=ExampleObject)
+def mymodel_delete(sender, instance, **kwargs):
+    # Pass false so FileField doesn't save the model.
+    instance.pcd_tar.delete(False)
+    instance.image_tar.delete(False)

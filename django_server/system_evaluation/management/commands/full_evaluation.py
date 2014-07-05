@@ -7,7 +7,7 @@ import json
 
 from shape_distribution.models import ShapeDistribution
 from sketchup_models.models import SketchupModel
-from system_evaluation.models import Example
+from system_evaluation.models import ExampleObject
 from identifier.models import Identifier
 from pointcloud.models import PointCloud
 from sklearn.svm import LinearSVC, SVC
@@ -18,6 +18,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier, RadiusNeighborsClassifier
 from collections import defaultdict
 import operator
+from django_server.settings import MEDIA_ROOT
 
 class Command(BaseCommand):
 
@@ -25,7 +26,7 @@ class Command(BaseCommand):
 
     dataset = dict()
     identifier = None
-    pending_examples = []
+    results = None
     done_examples = []
 
     help = ('Perform learning from a set of models,'
@@ -81,22 +82,7 @@ class Command(BaseCommand):
                     dest='classifier_type',
                     default='LinearSVC',
                     help='Kind of classifier to use.'),
-        make_option('-k', '--keep-descriptors',
-                    dest='keep-descriptors',
-                    action='store_true',
-                    default=False,
-                    help='Keep the descritors value in the output file.'),
-        make_option('--force-dataset',
-                    dest='force_dataset',
-                    action='store_true',
-                    default=False,
-                    help="Force loading from dataset."),
-        make_option('--force-learning',
-                    dest='force_learning',
-                    action='store_true',
-                    default=False,
-                    help="Force relearning."),
-        make_option('--force-descriptors',
+        make_option('-f', '--force-descriptors',
                     dest='force_descriptors',
                     action='store_true',
                     default=False,
@@ -107,21 +93,27 @@ class Command(BaseCommand):
         """ Handle the command call. """
         if options['load_file']:
             self.load(options['load_file'])
-        if not self.dataset or options['force_dataset']:
-            self.load_dataset(options)
         if not self.identifier or options['force_learning']:
+            if not self.dataset or options['force_dataset']:
+                self.load_dataset(options)
             self.perform_learning(options['classifier_type'])
             # We also want to reidentify objects
-            self.pending_examples = self.done_examples
+            self.results = None
             self.done_examples = []
         if options['learning']:  # We stop after learning
             self.dump(options)
             return
-        if not self.pending_examples and not self.done_examples:
-            self.initialize_list_examples()
+        examples = ExampleObject.objects.filter(
+            category__in=self.dataset.keys())
         try:
-            while len(self.pending_examples):
-                self.process_example(self.pending_examples[0], options)
+            for index, example in enumerate(examples.iterator()):
+                if example.pk not in self.done_examples:
+                    print "Identification of {} {}/{} ({}%)".format(
+                        example.name,
+                        index, examples.count(),
+                        100 * index / examples.count())
+                    print self.process_example(example, options)
+                    self.done_examples.append(example.pk)
             if options['analyze']:
                 self.analyse_results()
         # The process can be stopped and saved for restart
@@ -167,49 +159,27 @@ class Command(BaseCommand):
         # plt.show()
         self.identifier.train()
 
-    def initialize_list_examples(self):
-        """ Generate the pending examples list from the the database. """
-        self.pending_examples = []
-        self.done_examples = []
-        categories = self.dataset.keys()
-        map_f = lambda example: {'name': example.name,
-                                 'object_name': example.object_name,
-                                 'expected': example.category}
-        for example in Example.filter_categories(categories).iterator():
-            self.pending_examples.append(map_f(example))
-
     def process_example(self, example, options):
-        """ Process one example, and remove it from the pending list. """
-        # Display of completion
-        # if example['expected'] == 'food_can':
-        #     example['expected'] = 'soda_can'
-        number_done = len(self.done_examples)
-        number_total = number_done + len(self.pending_examples)
-        # print 'Dealing with {} ( {}/{}, {}% )'.format(
-        #     example['name'],
-        #     number_done + 1,
-        #     number_total,
-        #     100 * number_done / number_total)
-        if options['force_descriptors']:
-            # Remove the shape distribution if if was kept.
-            example.pop('shape_distribution')
-        if 'shape_distribution' not in example:
-            pcd_file = Example.objects.get(name=example['name']).pcd_file
-            cloud = PointCloud.load_pcd(pcd_file.name)
-            distribution = ShapeDistribution.compute(cloud).as_numpy_array
-        else:
-            distribution = example['shape_distribution']
-        (category, proba) = self.identifier.identify_with_proba(distribution)
-        example['actual'] = category
-        example['proba'] = proba
-        #  we may include the descriptors to the outputs
-        if 'keep-descriptors' in options:
-            example['shape_distribution'] = distribution
-        # display of results
-        # print '    {} has been identified as a {}, {}'.format(
-        #     example['name'], example['actual'], example['proba'])
-        self.done_examples.append(example)
-        self.pending_examples.remove(example)
+        """ Identify an example object and return the result. """
+        results = []
+        for sequence in example.sequences.iterator():
+            results.append(self.process_videosequence(sequence, options))
+        return results
+
+    def process_videosequence(self, video_sequence, options):
+        """ Perform the identification for a sequence.
+
+        This should be in the Identifier class maybe...
+        """
+        frame_results = defaultdict(int)
+        for frame in video_sequence.frames.iterator():
+            result = self.identifier.identify(frame.pointcloud)
+            print result
+            frame_results[result] += 1
+        sorted_results = sorted(frame_results.iteritems(), reverse=True,
+                                key=operator.itemgetter(1))
+        return sorted_results[0][0]
+
 
     def analyse_results(self):
         """ Analyze the results and print it in the terminal. """

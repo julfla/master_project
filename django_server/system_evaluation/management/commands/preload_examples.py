@@ -1,8 +1,10 @@
 """ Define a Django Command to seed the examples database. """
 
 from django.core.management.base import BaseCommand
+from django.core.files import File
 from optparse import make_option
-from system_evaluation.models import Example
+from system_evaluation.models import ExampleObject, VideoSequence, Frame
+from django_server.settings import MEDIA_ROOT
 
 import tarfile
 import re
@@ -10,6 +12,7 @@ import tempfile
 import urllib
 import json
 import sys
+from os.path import basename, splitext
 
 
 def dowload_with_progress_bar(url):
@@ -29,9 +32,40 @@ def dowload_with_progress_bar(url):
     return temp_file
 
 
+def preload_example_object(example_object):
+    # Dowload the pcd archve file if needed
+    if not example_object.pcd_tar:
+        temp_file = dowload_with_progress_bar(example_object.url_pcd_tar)
+        file_name = "%s_pcd.tar" % example_object.name
+        example_object.pcd_tar.save(file_name, File(temp_file))
+    # Dowload the image archve file if needed
+    if not example_object.image_tar:
+        temp_file = dowload_with_progress_bar(example_object.url_image_tar)
+        file_name = "%s_image.tar" % example_object.name
+        example_object.image_tar.save(file_name, File(temp_file))
+    pcd_tar = tarfile.open(MEDIA_ROOT + example_object.pcd_tar.name)
+    image_tar = tarfile.open(MEDIA_ROOT + example_object.image_tar.name)
+    # We iterate over all example's frames
+    for pcd_member in pcd_tar.getmembers():
+        m = re.compile(pcd_member.name.replace('.pcd', '_crop.png'))
+        for image_member in image_tar.getmembers():
+            # If we found the corresponding member then we stop iterating
+            if m.match(image_member.name):
+                break
+        # The path end with <...>_<sequence_id>_<frame_id>.pcd
+        frame_number = pcd_member.name.split('_')[-1].split('.')[0]
+        sequence_number = pcd_member.name.split('_')[-2]
+        sequence, _ = VideoSequence.objects.get_or_create(
+            example_object=example_object, sequence_id=sequence_number)
+        Frame.objects.create(video_sequence=sequence,
+                             frame_id=frame_number,
+                             pcd_member_name=pcd_member.name,
+                             image_member_name=image_member.name)
+
+
 class Command(BaseCommand):
 
-    """ Django Command to seed the example database from an online dataset. """
+    """ Django Command to dowload the dataset of example objects. """
 
     help = ('Dowload some examples from an online dataset\n'
             'Usage is preload_models [options] CATEGORY1 CATEGORY2 ...')
@@ -41,52 +75,26 @@ class Command(BaseCommand):
                     dest='list_categories',
                     action='store_true',
                     help='List the available categories.'),
+        make_option('-a', '--all',
+                    dest='preload_all',
+                    action='store_true',
+                    help='Download all the dataset.'),
         )
-
-    def dowload_and_create_examples(self, example_object):
-        # dowload image tar
-        image_file = dowload_with_progress_bar(example_object['image_tar'])
-        # extract example path without extension
-        image_tar = tarfile.open(image_file.name)
-        pcd_tar = None
-        example_image_members = []
-        # filter the archive content for the good image only
-        m = re.compile("\S+_crop.png")
-        for example_image_member in image_tar.getmembers():
-            if m.search(example_image_member.name):
-                example_image_members.append(example_image_member)
-        # iterate on example path and create examples
-        for example_image_member in example_image_members:
-            # without the _crop.png
-            example_path = re.sub('_crop.png', '', example_image_member.name)
-            example = Example(name=example_path.split('/')[-1],
-                              _compressed=True)
-            # escape if object exists already
-            if Example.objects.filter(name=example.name).exists():
-                return
-            print "Adding object {}".format(example.name)
-            # we need to donwload the pcd tar now
-            if pcd_tar is None:
-                pcd_file = dowload_with_progress_bar(example_object['pcd_tar'])
-                pcd_tar = tarfile.open(pcd_file.name)
-            m = re.compile('{}.pcd'.format(example_path))
-            for example_pcd_member in pcd_tar.getmembers():
-                if m.match(example_pcd_member.name):
-                    break
-            example.pcd_file = pcd_tar.extractfile(example_pcd_member)
-            example.image_file = image_tar.extractfile(example_image_member)
-            example.save()
 
     def handle(self, *args, **options):
         """ Handle the command call. """
-        available_examples = json.load(open('dataset.json'))
         if options['list_categories']:
-            categories = set(Example(name=example['name']).category
-                          for example in available_examples)
+            categories = set(example.category for example in
+                             ExampleObject.objects.all())
             for category in sorted(categories):
                 print category
             return
-        for category in args:
-            for example_object in available_examples:
-                if example_object['name'].startswith(category):
-                    self.dowload_and_create_examples(example_object)
+        if options['preload_all']:
+            example_objects = ExampleObject.objects.all()
+        elif args:
+            example_objects = ExampleObject.objects.filter(
+                category__in=args)
+        else:
+            raise "No Args"
+        for example_object in example_objects:
+            preload_example_object(example_object)
