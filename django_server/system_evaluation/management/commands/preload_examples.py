@@ -34,6 +34,7 @@ def dowload_with_progress_bar(url):
 
 def preload_example_object(example_object, options):
     # Dowload the pcd archve file if needed
+    print "Processing example %s" % example_object.name
     if not example_object.pcd_tar:
         temp_file = dowload_with_progress_bar(example_object.url_pcd_tar)
         file_name = "%s_pcd.tar" % example_object.name
@@ -63,9 +64,10 @@ def preload_example_object(example_object, options):
         sequence_number = pcd_member.name.split('_')[-2]
         sequence, _ = VideoSequence.objects.get_or_create(
             example_object=example_object, sequence_id=sequence_number)
-        frame = Frame(video_sequence=sequence, frame_id=frame_number,
-                      pcd_member_name=pcd_member.name,
-                      image_member_name=image_member.name)
+        frame, _ = Frame.objects.get_or_create(
+            video_sequence=sequence, frame_id=frame_number)
+        frame.pcd_member_name = pcd_member.name
+        frame.image_member_name = image_member.name
         if options['save_distribution'] or options['save_pointcloud']:
             pcd_path = "{}/{}".format(temp_dir, frame.pcd_member_name)
             pointcloud = PointCloud.load_pcd(pcd_path)
@@ -77,6 +79,11 @@ def preload_example_object(example_object, options):
     if temp_dir:
         import shutil
         shutil.rmtree(temp_dir)
+    number_frames = 0
+    for sequence in example_object.sequences.iterator():
+        number_frames += sequence.frames.count()
+    print "{} : {} sequences and {} frames.".format(
+        example_object.name, example_object.sequences.count(), number_frames)
 
 
 class Command(BaseCommand):
@@ -123,8 +130,6 @@ class Command(BaseCommand):
                                   category__in=args)]
         else:
             raise "No Args"
-        example_object = ExampleObject.objects.get(name='banana_1')
-        preload_example_object(example_object, options)
-        # for example_object_id in example_object_ids:
-        #     example_object = ExampleObject.objects.get(id=example_object_id)
-        #     preload_example_object(example_object, options)
+        for example_object_id in example_object_ids:
+            example_object = ExampleObject.objects.get(id=example_object_id)
+            preload_example_object(example_object, options)
