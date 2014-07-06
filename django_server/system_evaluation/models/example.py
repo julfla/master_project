@@ -1,5 +1,7 @@
 from django.db import models
+from djangotoolbox.fields import EmbeddedModelField
 from pointcloud.models import PointCloud
+from shape_distribution.models import ShapeDistribution
 
 
 def get_example_path(instance, filename):
@@ -58,14 +60,36 @@ class Frame(models.Model):
                                        related_name="frames")
     pcd_member_name = models.CharField(max_length=255)
     image_member_name = models.CharField(max_length=255)
-    # _distribution = embededfield blabla
+    _distribution = EmbeddedModelField(ShapeDistribution, null=True)
+    _pointcloud = EmbeddedModelField(PointCloud, null=True)
 
     class Meta:
         unique_together = (("frame_id", "video_sequence"),)
         app_label = 'system_evaluation'
 
     @property
-    def pointcloud(self):
+    def distribution(self, save=True, force_computation=False):
+        if not self._distribution or force_computation:
+            distribution = ShapeDistribution.compute(self.pointcloud)
+            if save:
+                self._distribution = distribution
+                self.save()
+        else:
+            distribution = self._distribution
+        return distribution
+
+    @property
+    def pointcloud(self, save=False):
+        if not self._pointcloud:
+            pointcloud = self.compute_pointcloud()
+            if save:
+                self._pointcloud = pointcloud
+                self.save()
+        else:
+            pointcloud = self._pointcloud
+        return pointcloud
+
+    def compute_pointcloud(self):
         """ Extract the pointcloud from the ExampleObject archive. """
         import tarfile
         from tempfile import NamedTemporaryFile
@@ -87,5 +111,7 @@ from django.dispatch.dispatcher import receiver
 @receiver(pre_delete, sender=ExampleObject)
 def mymodel_delete(sender, instance, **kwargs):
     # Pass false so FileField doesn't save the model.
+    #if instance.pcd_tar:
     instance.pcd_tar.delete(False)
+    #if instance.image_tar:
     instance.image_tar.delete(False)

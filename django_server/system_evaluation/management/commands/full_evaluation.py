@@ -5,11 +5,9 @@ from optparse import make_option
 import pickle
 import json
 
-from shape_distribution.models import ShapeDistribution
 from sketchup_models.models import SketchupModel
 from system_evaluation.models import ExampleObject
 from identifier.models import Identifier
-from pointcloud.models import PointCloud
 from sklearn.svm import LinearSVC, SVC
 from sklearn.multiclass import (OneVsOneClassifier,
                                 OneVsRestClassifier,
@@ -18,7 +16,6 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier, RadiusNeighborsClassifier
 from collections import defaultdict
 import operator
-from django_server.settings import MEDIA_ROOT
 
 class Command(BaseCommand):
 
@@ -162,7 +159,7 @@ class Command(BaseCommand):
     def process_example(self, example, options):
         """ Identify an example object and return the result. """
         results = []
-        for sequence in example.sequences.iterator():
+        for sequence in example.sequences.all():
             results.append(self.process_videosequence(sequence, options))
         return results
 
@@ -173,8 +170,7 @@ class Command(BaseCommand):
         """
         frame_results = defaultdict(int)
         for frame in video_sequence.frames.iterator():
-            result = self.identifier.identify(frame.pointcloud)
-            print result
+            result = self.identifier.identify(frame.distribution)
             frame_results[result] += 1
         sorted_results = sorted(frame_results.iteritems(), reverse=True,
                                 key=operator.itemgetter(1))

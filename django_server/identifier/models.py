@@ -8,6 +8,7 @@ from django.utils.six import with_metaclass
 from sketchup_models.models import SketchupModel
 from shape_distribution.models import (ShapeDistribution,
                                        SHAPE_DISTRIBUTION_SIZE)
+from pointcloud.models import PointCloud
 from partial_view.models import PartialView
 
 from sklearn import svm, multiclass
@@ -56,9 +57,9 @@ class Identifier(models.Model):
         if len(self.dict_categories) < 1:
             print "No category cannot identify"
             raise IndexError("Identifier is empty.")
-        if type(data) == 'PointCloud':
+        if type(data) is PointCloud:
             data = ShapeDistribution.compute(data)
-        if type(data) == 'ShapeDistribution':
+        if type(data) is ShapeDistribution:
             data = data.as_numpy_array
         result_proba = None
         try:
