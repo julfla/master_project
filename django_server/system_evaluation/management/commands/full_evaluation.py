@@ -4,6 +4,7 @@ from django.core.management.base import BaseCommand
 from optparse import make_option
 import pickle
 import json
+import re
 
 from sketchup_models.models import SketchupModel
 from system_evaluation.models import ExampleObject
@@ -14,7 +15,7 @@ from sklearn.multiclass import (OneVsOneClassifier,
                                 OutputCodeClassifier)
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier, RadiusNeighborsClassifier
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 import operator
 
 class Command(BaseCommand):
@@ -23,7 +24,7 @@ class Command(BaseCommand):
 
     dataset = dict()
     identifier = None
-    results = None
+    results = OrderedDict()
     done_examples = []
 
     help = ('Perform learning from a set of models,'
@@ -90,18 +91,18 @@ class Command(BaseCommand):
         """ Handle the command call. """
         if options['load_file']:
             self.load(options['load_file'])
-        if not self.identifier or options['force_learning']:
+        if not self.identifier:
             if not self.dataset or options['force_dataset']:
                 self.load_dataset(options)
             self.perform_learning(options['classifier_type'])
             # We also want to reidentify objects
-            self.results = None
+            self.results = OrderedDict()
             self.done_examples = []
         if options['learning']:  # We stop after learning
             self.dump(options)
             return
         examples = ExampleObject.objects.filter(
-            category__in=self.dataset.keys())
+            category__in=self.dataset.keys()).order_by("name")
         try:
             for index, example in enumerate(examples.iterator()):
                 if example.pk not in self.done_examples:
@@ -109,7 +110,8 @@ class Command(BaseCommand):
                         example.name,
                         index, examples.count(),
                         100 * index / examples.count())
-                    print self.process_example(example, options)
+                    self.results[example.name] = self.process_example(example,
+                                                                     options)
                     self.done_examples.append(example.pk)
             if options['analyze']:
                 self.analyse_results()
@@ -176,68 +178,43 @@ class Command(BaseCommand):
                                 key=operator.itemgetter(1))
         return sorted_results[0][0]
 
+    def results_by_category(self):
+        from collections import OrderedDict
+        category_m = re.compile("[a-z_]*[a-z]")
+        categories = OrderedDict()
+        for example, results in self.results.iteritems():
+            example_category = category_m.match(example).group(0)
+            if example_category not in categories:
+                categories[example_category] = OrderedDict()
+            categories[example_category][example] = results
+        return categories
 
     def analyse_results(self):
         """ Analyze the results and print it in the terminal. """
-        def result_group_by(examples, key, displayed_name=None):
-            """ Group example by the value of the key provided. """
-            if displayed_name is None:
-                displayed_name = key
-            results = defaultdict(lambda: defaultdict(list))
-            for example in examples:
-                key_value = example[key]
-                results[key_value]['all'].append(example)
-                if example['expected'] == example['actual']:
-                    results[key_value]['positives'].append(example)
-                else:
-                    results[key_value]['negatives'].append(example)
-            for group, item in results.items():
-                results[group]['percentage'] = (100 * len(item['positives']) /
-                                                len(item['all']))
+        print "Results by category"
+        for category, examples in self.results_by_category().iteritems():
+            num_sequences = sum([len(seq) for seq in examples.values()])
+            failures = []
+            for example, sequences in examples.iteritems():
+                for index, result in enumerate(sequences):
+                    if category != result:
+                        failures.append((example, index, result))
+            num_positives = num_sequences - len(failures)
+            print "{}: {}/{} ({}%)".format(category, num_positives,
+                                           num_sequences,
+                                           100 * num_positives / num_sequences)
+            if failures:
+                print "Failures :"
+            for example, sequence, result in failures:
+                print "     {} seq {} -> {}".format(example, sequence, result)
 
-            sorted_results = sorted(results.items(),
-                                    key=lambda x: x[1]['percentage'])
-            print 'Results by {}'.format(displayed_name)
-            for group, item in sorted_results:
-                error_stats = defaultdict(int)
-                for example in item['negatives']:
-                    error_stats[example['actual']] += 1
-                sorted_error_starts = sorted(error_stats.iteritems(),
-                                             key=lambda x: x[1], reverse=True)
-                detail_result = ', '.join(
-                    ["{}: {}".format(x[0], x[1]) for x in sorted_error_starts])
-
-                print '{} : {}% (total: {}) | Errors : {}'.format(
-                    group, item['percentage'], len(item['all']), detail_result)
-            print ''
-
-        examples = self.done_examples
-        positives = [a for a in examples if a['expected'] == a['actual']]
-        print "Identification of {} examples.".format(len(examples))
-        print "Overall results : {}%".format(
-            100 * len(positives)/len(examples))
-        print ''
-        result_group_by(examples, 'expected', 'category')
-        # result_group_by(examples, 'object_name', 'object')
-        object_name_set = set([example['object_name']
-                               for example in self.done_examples])
-        positives = 0
-        total = len(object_name_set)
-        for object_name in sorted(object_name_set):
-            results_count = defaultdict(int)
-            expected = None
-            for example in [example for example in self.done_examples
-                            if example['object_name'] == object_name]:
-                if not expected:
-                    expected = example['expected']
-                results_count[example['actual']] += 1
-            result = max(results_count.iteritems(),
-                         key=operator.itemgetter(1))[0]
-            if expected == result:
-                positives += 1
-            else:
-                print "{} is classified as a {}".format(object_name, result)
-        print positives, " / ", total, " (", 100 * positives / total, "%)"
+        # print "Results by object"
+        # sorted_results = sorted(self.results.iteritems(),
+        #                         key=operator.itemgetter(0))
+        # for example_name, sequence_results in sorted_results:
+        #     print "Result of %s" % example_name
+        #     for index, sequence_result in enumerate(sequence_results):
+        #         print "    sequence {}: {}".format(index+1, sequence_result)
 
     def dump(self, options):
         """ Dump the process in a homemade format. """
@@ -250,8 +227,8 @@ class Command(BaseCommand):
         state = {}
         state['dataset'] = self.dataset
         state['done_examples'] = self.done_examples
-        state['pending_examples'] = self.pending_examples
         state['identifier'] = self.identifier
+        state['results'] = self.results
         with open(state_file_path, 'wb') as handle:
             pickle.dump(state, handle)
         print "State has been saved to {}.".format(state_file_path)
