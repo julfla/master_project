@@ -224,7 +224,7 @@ class Command(BaseCommand):
                     num_sequences += 1
                     if result == category:
                         num_positives += 1
-        print "Overall result: {}%".format(100 * num_positives / num_positives)
+        print "Overall result: {}%".format(100 * num_positives / num_sequences)
 
     def dump(self, options):
         """ Dump the process in a homemade format. """
