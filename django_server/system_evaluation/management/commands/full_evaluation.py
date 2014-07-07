@@ -216,6 +216,16 @@ class Command(BaseCommand):
         #     for index, sequence_result in enumerate(sequence_results):
         #         print "    sequence {}: {}".format(index+1, sequence_result)
 
+        num_positives = 0
+        num_sequences = 0
+        for category, examples in self.results_by_category().iteritems():
+            for examples, sequences in examples.iteritems():
+                for result in sequences:
+                    num_sequences += 1
+                    if result == category:
+                        num_positives += 1
+        print "Overall result: {}%".format(100 * num_positives / num_positives)
+
     def dump(self, options):
         """ Dump the process in a homemade format. """
         if options['save_file']:
