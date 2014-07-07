@@ -32,58 +32,63 @@ def dowload_with_progress_bar(url):
     return temp_file
 
 
+def save_pointcloud_or_distribution(example_object, options):
+    """ Store pointclouds and/or distributions into the db. """
+    frames = Frame.objects.filter(
+        video_sequence__in=list(example_object.sequences.all()))
+    if not options['force']:
+        if options['save_pointcloud'] and options['save_distribution']:
+            from django.db.models import Q
+            frames = frames.filter(Q(_pointcloud__isnull=True) |
+                                   Q(_distribution__isnull=True))
+        elif options['save_pointcloud']:
+            frames = frames.filter(_pointcloud__isnull=True)
+        else:
+            frames = frames.filter(_distribution__isnull=True)
+    if not frames.exists():
+        return  # No process needed
+    temp_dir = tempfile.mkdtemp()
+    pcd_tar = tarfile.open(MEDIA_ROOT + example_object.pcd_tar.name)
+    pcd_tar.extractall(temp_dir)  # Extract all pcds
+    for frame in frames.iterator():
+        pcd_path = "{}/{}".format(temp_dir, frame.pcd_member_name())
+        pointcloud = PointCloud.load_pcd(pcd_path)
+        if options['save_pointcloud']:
+            frame._pointcloud = pointcloud
+        if options['save_distribution']:
+            frame._distribution = ShapeDistribution.compute(pointcloud)
+        frame.save()
+
+
 def preload_example_object(example_object, options):
-    # Dowload the pcd archve file if needed
+    """ Dowload the dataset archives and create the sequences and frames. """
+    # Dowload the pcd archive file if needed
     print "Processing example %s" % example_object.name
     if not example_object.pcd_tar:
         temp_file = dowload_with_progress_bar(example_object.url_pcd_tar)
         file_name = "%s_pcd.tar" % example_object.name
         example_object.pcd_tar.save(file_name, File(temp_file))
-    # Dowload the image archve file if needed
+    # Dowload the image archive file if needed
     if not example_object.image_tar:
         temp_file = dowload_with_progress_bar(example_object.url_image_tar)
         file_name = "%s_image.tar" % example_object.name
         example_object.image_tar.save(file_name, File(temp_file))
     pcd_tar = tarfile.open(MEDIA_ROOT + example_object.pcd_tar.name)
-    image_tar = tarfile.open(MEDIA_ROOT + example_object.image_tar.name)
-    # If we compute distributions or pointclouds
-    # it would be faster to extract all the archive at once
-    temp_dir = None
-    if options['save_distribution'] or options['save_pointcloud']:
-        temp_dir = tempfile.mkdtemp()
-        pcd_tar.extractall(temp_dir)
     # We iterate over all example's frames
-    for pcd_member in pcd_tar.getmembers():
-        m = re.compile(pcd_member.name.replace('.pcd', '_crop.png'))
-        for image_member in image_tar.getmembers():
-            # If we found the corresponding member then we stop iterating
-            if m.match(image_member.name):
-                break
+    for pcd_member_name in pcd_tar.getnames():
         # The path end with <...>_<sequence_id>_<frame_id>.pcd
-        frame_number = pcd_member.name.split('_')[-1].split('.')[0]
-        sequence_number = pcd_member.name.split('_')[-2]
+        frame_number = pcd_member_name.split('_')[-1].split('.')[0]
+        sequence_number = pcd_member_name.split('_')[-2]
         sequence, _ = VideoSequence.objects.get_or_create(
             example_object=example_object, sequence_id=sequence_number)
         frame, _ = Frame.objects.get_or_create(
             video_sequence=sequence, frame_id=frame_number)
-        frame.pcd_member_name = pcd_member.name
-        frame.image_member_name = image_member.name
-        if options['save_distribution'] or options['save_pointcloud']:
-            pcd_path = "{}/{}".format(temp_dir, frame.pcd_member_name)
-            pointcloud = PointCloud.load_pcd(pcd_path)
-            if options['save_pointcloud']:
-                frame._pointcloud = pointcloud
-            if options['save_distribution']:
-                frame._distribution = ShapeDistribution.compute(pointcloud)
-        frame.save()
-    if temp_dir:
-        import shutil
-        shutil.rmtree(temp_dir)
     number_frames = 0
     for sequence in example_object.sequences.iterator():
         number_frames += sequence.frames.count()
     print "{} : {} sequences and {} frames.".format(
         example_object.name, example_object.sequences.count(), number_frames)
+    return example_object
 
 
 class Command(BaseCommand):
@@ -110,6 +115,10 @@ class Command(BaseCommand):
                     dest='save_distribution',
                     action='store_true',
                     help='Will also save the ShapeDistribution in db.'),
+        make_option('-f', '--force',
+                    dest='force',
+                    action='store_true',
+                    help='Overwrite values of pointcloud or distribution.'),
         )
 
     def handle(self, *args, **options):
@@ -132,4 +141,7 @@ class Command(BaseCommand):
             raise "No Args"
         for example_object_id in example_object_ids:
             example_object = ExampleObject.objects.get(id=example_object_id)
-            preload_example_object(example_object, options)
+            example_object = preload_example_object(example_object, options)
+            if (options['force'] or options['save_pointcloud'] or
+               options['save_distribution']):
+                save_pointcloud_or_distribution(example_object, options)

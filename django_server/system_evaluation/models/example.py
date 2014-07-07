@@ -67,8 +67,26 @@ class Frame(models.Model):
         unique_together = (("frame_id", "video_sequence"),)
         app_label = 'system_evaluation'
 
+    def _member_name(self):
+        """ Common part between pcd_member_name and image_member_name. """
+        object_name = self.video_sequence.example_object.name
+        category = self.video_sequence.example_object.category
+        frame_name = "{}_{}_{}".format(
+            object_name, self.video_sequence.sequence_id, self.frame_id)
+        return "rgbd-dataset/{}/{}/{}".format(
+            category, object_name, frame_name)
+
+    def pcd_member_name(self):
+        """ Return the path of the pcd inside the tar archive. """
+        return self._member_name() + ".pcd"
+
+    def image_member_name(self):
+        """ Return the path of the image inside the tar archive. """
+        return self._member_name() + "_crop.png"
+
     @property
     def distribution(self, save=True, force_computation=False):
+        """ Distribution of the frame, computed if needed, can be slow. """
         if not self._distribution or force_computation:
             distribution = ShapeDistribution.compute(self.pointcloud)
             if save:
@@ -80,6 +98,7 @@ class Frame(models.Model):
 
     @property
     def pointcloud(self, save=False):
+        """ PointCloud of the frame, very slow if read from the archive. """
         if not self._pointcloud:
             pointcloud = self.compute_pointcloud()
             if save:
@@ -97,7 +116,7 @@ class Frame(models.Model):
         example_object = self.video_sequence.example_object
         temp_file = NamedTemporaryFile(delete=True)
         pcd_tar = tarfile.open(MEDIA_ROOT + example_object.pcd_tar.name)
-        temp_file.write(pcd_tar.extractfile(self.pcd_member_name).read())
+        temp_file.write(pcd_tar.extractfile(self.pcd_member_name()).read())
         temp_file.flush()
         pointcloud = PointCloud.load_pcd(temp_file.name)
         return pointcloud
@@ -111,7 +130,5 @@ from django.dispatch.dispatcher import receiver
 @receiver(pre_delete, sender=ExampleObject)
 def mymodel_delete(sender, instance, **kwargs):
     # Pass false so FileField doesn't save the model.
-    #if instance.pcd_tar:
     instance.pcd_tar.delete(False)
-    #if instance.image_tar:
     instance.image_tar.delete(False)
