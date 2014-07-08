@@ -58,6 +58,9 @@ def save_pointcloud_or_distribution(example_object, options):
         if options['save_distribution']:
             frame._distribution = ShapeDistribution.compute(pointcloud)
         frame.save()
+    import shutil
+    shutil.rmtree(temp_dir)
+
 
 
 def preload_example_object(example_object, options):
