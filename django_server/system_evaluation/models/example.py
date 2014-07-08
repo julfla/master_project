@@ -84,20 +84,20 @@ class Frame(models.Model):
         """ Return the path of the image inside the tar archive. """
         return self._member_name() + "_crop.png"
 
-    @property
-    def distribution(self, save=True, force_computation=False):
+    def get_distribution(self, save=True, force_computation=False):
         """ Distribution of the frame, computed if needed, can be slow. """
-        if not self._distribution or force_computation:
+        if force_computation or not self._distribution:
             distribution = ShapeDistribution.compute(self.pointcloud)
             if save:
                 self._distribution = distribution
                 self.save()
+            return distribution
         else:
-            distribution = self._distribution
-        return distribution
+            return self._distribution
 
-    @property
-    def pointcloud(self, save=False):
+    distribution = property(get_distribution)
+
+    def get_pointcloud(self, save=False):
         """ PointCloud of the frame, very slow if read from the archive. """
         if not self._pointcloud:
             pointcloud = self.compute_pointcloud()
@@ -107,6 +107,8 @@ class Frame(models.Model):
         else:
             pointcloud = self._pointcloud
         return pointcloud
+
+    pointcloud = property(get_pointcloud)
 
     def compute_pointcloud(self):
         """ Extract the pointcloud from the ExampleObject archive. """
