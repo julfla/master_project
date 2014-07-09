@@ -82,10 +82,12 @@ def preload_example_object(example_object, options):
         # The path end with <...>_<sequence_id>_<frame_id>.pcd
         frame_number = pcd_member_name.split('_')[-1].split('.')[0]
         sequence_number = pcd_member_name.split('_')[-2]
-        sequence, _ = VideoSequence.objects.get_or_create(
-            example_object=example_object, sequence_id=sequence_number)
-        frame, _ = Frame.objects.get_or_create(
-            video_sequence=sequence, frame_id=frame_number)
+        # We keep only the one fith of the frames, starting from the 1st
+        if frame_number % 5 == 1:
+            sequence, _ = VideoSequence.objects.get_or_create(
+                example_object=example_object, sequence_id=sequence_number)
+            frame, _ = Frame.objects.create(
+                video_sequence=sequence, frame_id=frame_number)
     number_frames = 0
     for sequence in example_object.sequences.iterator():
         number_frames += sequence.frames.count()
