@@ -39,6 +39,7 @@ class Command(BaseCommand):
         'KNeighbors': KNeighborsClassifier(weights='distance',
                                            n_neighbors=5,
                                            leaf_size=64),
+        'KNeighbors_default': KNeighborsClassifier(),
         'RadiusNeighbors': RadiusNeighborsClassifier(weights='distance',
                                                      n_neighbors=5,
                                                      leaf_size=30,
