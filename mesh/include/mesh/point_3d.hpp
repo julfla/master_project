@@ -11,7 +11,7 @@ class Point_3D {
 public:
     Point_3D() : x(0), y(0), z(0) {}
     Point_3D(double x, double y, double z) : x(x), y(y), z(z) {}
-    
+
     double getX() const {return x;}
     double getY() const {return y;}
     double getZ() const {return z;}
@@ -19,11 +19,15 @@ public:
     void setY(double y) {this->y = y;}
     void setZ(double z) {this->z = z;}
 
-    const double distance(Point_3D point) {
+    const double squared_distance(Point_3D point) {
         double sum = pow(x - point.getX(), 2);
         sum += pow(y - point.getY(), 2);
         sum += pow(z - point.getZ(), 2);
-        return sqrt(sum);
+        return sum;
+    }
+
+    const double distance(Point_3D point) {
+        return sqrt(this->squared_distance(point));
     }
 
     Point_3D operator*(const double scalar) const {

@@ -11,6 +11,8 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 
+#include "mesh/point_3d.hpp"
+
 #include <vector>
 #include <cmath>
 #include <string>
@@ -32,12 +34,10 @@ class Distribution {
     Distribution() {}
 
     explicit Distribution(DefaultCloud * const cloud) {
-        std::vector<double> sample = compute_sample(cloud, _SAMPLE_LENGTH_);
+        std::vector<double> sample = compute_a3_sample(cloud, _SAMPLE_LENGTH_);
         compute_histogram(sample);
         sample = compute_sample(cloud, _SAMPLE_LENGTH_, true);
         compute_histogram(sample);
-        // this->distribution.insert(this->distribution.end(),
-        //                           hist.data->begin(), hist.data->end());
     }
 
     std::string to_csv();
@@ -74,10 +74,14 @@ class Distribution {
     // Build the histogram and recopy the data with different resolution
     void compute_histogram(std::vector<double> sample);
 
-    // Generate <number_poits> the random var distance between 2 random points
+    // Generate <number_points> the random var distance between 2 random points
     std::vector<double> compute_sample(DefaultCloud * const cloud,
                                        int number_points,
                                        bool scale_coordinates = false);
+
+    // Generate <number_points> the random var 'angle formed by 3 random points'
+    std::vector<double> compute_a3_sample(DefaultCloud * const cloud,
+                                          int number_points);
 
 
     template<class Archive>

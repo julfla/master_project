@@ -1,4 +1,5 @@
 #include "descriptors/shape_distribution.h"
+#include <math.h>  // provides acos function
 #include <pcl/io/pcd_io.h>
 #include <pcl/common/distances.h>  // provides pcl::euclideanDistance
 #include <algorithm>  // provides sort std::vector::sort
@@ -51,6 +52,34 @@ std::vector<double> Distribution::compute_sample(DefaultCloud * const cloud,
                              pcl::euclideanDistance(pts1, pts2)));
     }
     return sample;
+}
+
+std::vector<double> Distribution::compute_a3_sample(DefaultCloud * const cloud,
+                                                    int number_points) {
+    std::vector<double> sample;
+    if (cloud->empty())
+        return sample;
+    boost::minstd_rand generator;
+    boost::uniform_int<> uni_dist;
+    generator = boost::minstd_rand(std::time(0));
+    uni_dist = boost::uniform_int<>(0, cloud->size() - 1);
+    for (int i = 0; i < number_points; ++i) {
+        // get two random points and compute the distance between them
+        pcl::PointXYZ pcl_pts1 = cloud->at(uni_dist(generator));
+        pcl::PointXYZ pcl_pts2 = cloud->at(uni_dist(generator));
+        pcl::PointXYZ pcl_pts3 = cloud->at(uni_dist(generator));
+        Point_3D pts1(pcl_pts1.x, pcl_pts1.y, pcl_pts1.z);
+        Point_3D pts2(pcl_pts2.x, pcl_pts2.y, pcl_pts2.z);
+        Point_3D pts3(pcl_pts3.x, pcl_pts3.y, pcl_pts3.z);
+
+        // we consider the angle pts2, pts1, pts3
+        double d_12 = pts1.squared_distance(pts2);
+        double d_13 = pts1.squared_distance(pts3);
+        double d_23 = pts2.squared_distance(pts3);
+
+        double cosinus = (d_12 + d_13 - d_23) / (2 * sqrt(d_12) * sqrt(d_13));
+        sample.push_back(acos(cosinus));
+    }
 }
 
 Distribution Distribution::load_archive(const std::string path) {
