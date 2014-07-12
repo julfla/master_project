@@ -108,10 +108,10 @@ class Command(BaseCommand):
                 if example.pk not in self.done_examples:
                     print "Identification of {} {}/{} ({}%)".format(
                         example.name,
-                        index, examples.count(),
-                        100 * index / examples.count())
+                        index + 1, examples.count(),
+                        100 * (index + 1) / examples.count())
                     self.results[example.name] = self.process_example(example,
-                                                                     options)
+                                                                      options)
                     self.done_examples.append(example.pk)
             if options['analyze']:
                 self.analyse_results()
@@ -172,7 +172,11 @@ class Command(BaseCommand):
         """
         frame_results = defaultdict(int)
         for frame in video_sequence.frames.iterator():
-            result = self.identifier.identify(frame.distribution)
+            if options['force_descriptors']:
+                distribution = frame.get_distribution(True, True)
+            else:
+                distribution = frame.distribution
+            result = self.identifier.identify(distribution)
             frame_results[result] += 1
         sorted_results = sorted(frame_results.iteritems(), reverse=True,
                                 key=operator.itemgetter(1))
