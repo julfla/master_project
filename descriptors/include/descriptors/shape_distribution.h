@@ -36,8 +36,6 @@ class Distribution {
     explicit Distribution(DefaultCloud * const cloud) {
         std::vector<double> sample = compute_a3_sample(cloud, _SAMPLE_LENGTH_);
         compute_histogram(sample);
-        sample = compute_sample(cloud, _SAMPLE_LENGTH_, true);
-        compute_histogram(sample);
     }
 
     std::string to_csv();
