@@ -230,8 +230,8 @@ class Command(BaseCommand):
                     if result == category:
                         num_positives += 1
         print "Overall result: {}%".format(100 * num_positives / num_sequences)
-        print "    {} categories, {} objects".format(
-            len(self.results_by_category()), len(self.results))
+        print "    {} categories, {} objects, {} video sequences".format(
+            len(self.results_by_category()), len(self.results), num_sequences)
 
     def dump(self, options):
         """ Dump the process in a homemade format. """
