@@ -33,77 +33,76 @@ def dowload_with_progress_bar(url):
 
 def save_pointclouds(example_object, options):
     """ Extract pointclouds from tar archive. """
+    import shutil
+    import os.path
     sequences = list(example_object.sequences.all())
     frames = Frame.objects.filter(video_sequence__in=sequences)
     if not options['force']:
         frames = frames.filter(_pointcloud__isnull=True)
     if not frames.exists():
         return  # Nothing to process
-    temp_dir = tempfile.mkdtemp()
-    pcd_tar = tarfile.open(MEDIA_ROOT + example_object.pcd_tar.name)
-    pcd_tar.extractall(temp_dir)  # Extract all pcds
-    # We add the temp_dir to options for further process
-    options['pcds_temp_dir'] = temp_dir
-    if not options['save_pointcloud']:
-        # We extracted the archive in order to enfaster distribution process
-        return  # But we don't need to process the pointclouds
+    if options['download_folder'] is None:
+        archive_dir = dowload_archives([example_object])
+    else:
+        archive_dir = options['download_folder']
+    pcd_tar_path = "{}/pcd_tar/{}_pcd.tar".format(archive_dir,
+                                                  example_object.name)
+    pcd_tar = tarfile.open(pcd_tar_path)
+    tmp_dir = tempfile.mkdtemp()
+    pcd_tar.extractall(tmp_dir)
+    # pcd_members = dict((m.name, m) for m in pcd_tar.getmembers())
     for frame in frames.iterator():
-        pcd_path = "{}/{}".format(temp_dir, frame.pcd_member_name())
-        pointcloud = PointCloud.load_pcd(pcd_path)
+        current_pcd = os.path.join(tmp_dir, frame.pcd_member_name())
+        pointcloud = PointCloud.load_pcd(current_pcd)
         frame._pointcloud = pointcloud
         frame.save()
+    shutil.rmtree(tmp_dir)
+    if options['download_folder'] is None:
+        shutil.rmtree(archive_dir)
 
 
 def save_distributions(example_object, options):
-    """ Store pointclouds and/or distributions into the db. """
+    """ Store distributions into the db. """
+    # TODO will be extremly slow if the pointcloud are not stored.
     sequences = list(example_object.sequences.all())
     frames = Frame.objects.filter(video_sequence__in=sequences)
     if not options['force']:
         frames = frames.filter(_distribution__isnull=True)
     if not frames.exists() or not options['save_distribution']:
         return  # No process needed
-    temp_dir = options['pcds_temp_dir']
     for frame in frames.iterator():
-        if frame._pointcloud:
-            pointcloud = frame._pointcloud
-        else:
-            pcd_path = "{}/{}".format(temp_dir, frame.pcd_member_name())
-            pointcloud = PointCloud.load_pcd(pcd_path)
-        frame._distribution = ShapeDistribution.compute(pointcloud)
-        frame.save()
+        frame.get_distribution(True, options['force'])
 
 
-def preload_example_object(example_object, options):
-    """ Dowload the dataset archives and create the sequences and frames. """
-    # Dowload the pcd archive file if needed
-    print "Processing example %s" % example_object.name
-    if not example_object.pcd_tar:
-        temp_file = dowload_with_progress_bar(example_object.url_pcd_tar)
-        file_name = "%s_pcd.tar" % example_object.name
-        example_object.pcd_tar.save(file_name, File(temp_file))
-    # Dowload the image archive file if needed
-    if not example_object.image_tar:
-        temp_file = dowload_with_progress_bar(example_object.url_image_tar)
-        file_name = "%s_image.tar" % example_object.name
-        example_object.image_tar.save(file_name, File(temp_file))
-    pcd_tar = tarfile.open(MEDIA_ROOT + example_object.pcd_tar.name)
-    # We iterate over all example's frames
-    for pcd_member_name in pcd_tar.getnames():
-        # The path end with <...>_<sequence_id>_<frame_id>.pcd
-        frame_number = int(pcd_member_name.split('_')[-1].split('.')[0])
-        sequence_number = int(pcd_member_name.split('_')[-2])
-        # We keep only the one fith of the frames, starting from the 1st
-        if frame_number % 5 == 1:
-            sequence, _ = VideoSequence.objects.get_or_create(
-                example_object=example_object, sequence_id=sequence_number)
-            frame, _ = Frame.objects.get_or_create(
-                video_sequence=sequence, frame_id=frame_number)
-    number_frames = 0
-    for sequence in example_object.sequences.iterator():
-        number_frames += sequence.frames.count()
-    print "{} : {} sequences and {} frames.".format(
-        example_object.name, example_object.sequences.count(), number_frames)
-    return example_object
+def dowload_archives(example_objects, download_folder=None):
+    """ For the list of ExampleObject, dowload the archives.
+
+    If download_folder is None, if will be dowloaded to a tmp directory.
+    The function returns the path to the dowload directory.
+    """
+    if download_folder is None:
+        import tempfile
+        download_folder = tempfile.mkdtemp()
+    import os
+    import os.path
+    print "Dowloading archives to %s" % download_folder
+    # print "Dowloading image archives"
+    # list_urls = [e.url_image_tar for e in example_objects]
+    # os.system("wget -P {} -nc {}".format(
+    #     os.path.join(download_folder, "image_tar"),
+    #     " ".join(list_urls)))
+    print "Dowloading pcd archives"
+    list_urls = [e.url_pcd_tar for e in example_objects]
+    os.system("wget -P {} -nc {}".format(
+        os.path.join(download_folder, "pcd_tar"),
+        " ".join(list_urls)))
+    return download_folder
+
+
+def save_images(example_object, download_folder=None):
+    """ Save the images of the frames, dowload if necessary."""
+    # TODO
+    pass
 
 
 class Command(BaseCommand):
@@ -111,7 +110,9 @@ class Command(BaseCommand):
     """ Django Command to dowload the dataset of example objects. """
 
     help = ('Dowload some examples from an online dataset\n'
-            'Usage is preload_models [options] CATEGORY1 CATEGORY2 ...')
+            'Usage is : \n'
+            '    preload_models [options] CATEGORY1 CATEGORY2 ...\n'
+            '    preload_models [options] --all')
 
     option_list = BaseCommand.option_list + (
         make_option('-l', '--list',
@@ -121,15 +122,18 @@ class Command(BaseCommand):
         make_option('-a', '--all',
                     dest='preload_all',
                     action='store_true',
-                    help='Download all the dataset.'),
+                    help='Process all the dataset.'),
+        make_option('-D', '--download_folder',
+                    dest='download_folder',
+                    help='Store/load the dataset archives in this directory.'),
         make_option('-p', '--save_pointcloud',
                     dest='save_pointcloud',
                     action='store_true',
-                    help='Will also save the pointclouds in db.'),
+                    help='Save the PointClouds in db.'),
         make_option('-d', '--save_distribution',
                     dest='save_distribution',
                     action='store_true',
-                    help='Will also save the ShapeDistribution in db.'),
+                    help='Save the ShapeDistributions in db.'),
         make_option('-f', '--force',
                     dest='force',
                     action='store_true',
@@ -144,23 +148,36 @@ class Command(BaseCommand):
             for category in sorted(categories):
                 print category
             return
+        if options['preload_all']:
+            example_objects = ExampleObject.objects
+        elif args:
+            example_objects = ExampleObject.objects.filter(category__in=args)
+        else:
+            print self.help
+            raise ValueError
+
+        if not example_objects.exists():
+            print "No examples could be found"
+            print ("Did you load the fixture " +
+                   "system_evaluation/fixtures/initial_data.json ?")
+            return
+
+        # We donwload all the corresponding archives, without overwriting
+        if options['download_folder']:
+            dowload_archives(example_objects.all(), options['download_folder'])
+
+        if not (options['force'] or options['save_pointcloud'] or
+           options['save_distribution']):
+            return 0  # Nothing to process
+
         # We query the ids and work with them to avoid mongo timeout
         # Indeed, the download is very time consuming and can lead to the error
         #     Invalid cursor id <ID> on server
-        if options['preload_all']:
-            example_object_ids = [e.pk for e in ExampleObject.objects.all()]
-        elif args:
-            example_object_ids = [e.pk for e in ExampleObject.objects.filter(
-                                  category__in=args)]
-        else:
-            raise "No Args"
-        for example_object_id in example_object_ids:
+        for example_object_id in [e.pk for e in example_objects.all()]:
             example_object = ExampleObject.objects.get(id=example_object_id)
-            example_object = preload_example_object(example_object, options)
-            if (options['force'] or options['save_pointcloud'] or
-               options['save_distribution']):
+            if options['save_pointcloud']:
                 save_pointclouds(example_object, options)
+                print "    PointClouds processed"
+            if options['save_distribution']:
                 save_distributions(example_object, options)
-            if 'pcd_temp_dir' in options:
-                import shutil
-                shutil.rmtree(options['pcd_temp_dir'])
+                print "    Distributions processed"
