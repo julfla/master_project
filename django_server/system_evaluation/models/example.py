@@ -28,8 +28,6 @@ class ExampleObject(models.Model):
     category = models.CharField(max_length=50)
     url_pcd_tar = models.URLField()
     url_image_tar = models.URLField()
-    pcd_tar = models.FileField(upload_to="rgbd-dataset/pcd_tar")
-    image_tar = models.FileField(upload_to="rgbd-dataset/image_tar")
 
     class Meta:
         app_label = "system_evaluation"
@@ -122,15 +120,3 @@ class Frame(models.Model):
         temp_file.flush()
         pointcloud = PointCloud.load_pcd(temp_file.name)
         return pointcloud
-
-
-# Deletion of files when deleting a ExampleObject
-from django.db.models.signals import pre_delete
-from django.dispatch.dispatcher import receiver
-
-
-@receiver(pre_delete, sender=ExampleObject)
-def mymodel_delete(sender, instance, **kwargs):
-    # Pass false so FileField doesn't save the model.
-    instance.pcd_tar.delete(False)
-    instance.image_tar.delete(False)
