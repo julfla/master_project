@@ -173,8 +173,12 @@ class Command(BaseCommand):
         # We query the ids and work with them to avoid mongo timeout
         # Indeed, the download is very time consuming and can lead to the error
         #     Invalid cursor id <ID> on server
-        for example_object_id in [e.pk for e in example_objects.all()]:
+        number_of_objects = example_objects.count()
+        for index, example_object_id in enumerate(
+           [e.pk for e in example_objects.all()]):
             example_object = ExampleObject.objects.get(id=example_object_id)
+            print "Object {} ({}/{})".format(example_object.name,
+                index, number_of_objects)
             if options['save_pointcloud']:
                 save_pointclouds(example_object, options)
                 print "    PointClouds processed"
