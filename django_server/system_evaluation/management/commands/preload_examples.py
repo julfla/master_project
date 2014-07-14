@@ -45,7 +45,7 @@ def save_pointclouds(example_object, options):
         archive_dir = dowload_archives([example_object])
     else:
         archive_dir = options['download_folder']
-    pcd_tar_path = "{}/pcd_tar/{}_pcd.tar".format(archive_dir,
+    pcd_tar_path = "{}/pcd_tar/{}.tar".format(archive_dir,
                                                   example_object.name)
     pcd_tar = tarfile.open(pcd_tar_path)
     tmp_dir = tempfile.mkdtemp()
