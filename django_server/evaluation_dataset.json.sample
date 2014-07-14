@@ -9,8 +9,34 @@
 			"ba0d56295321002718ddbf38fa69c501",
 			"7d78e217e0ba160fe2b248b8bb97d290"
 			],
+"bowl":		[
+			"fa61e604661d4aa66658ecd96794a1cd",
+			"aeb7b4bb33fd43a14e23e9314af9ae57",
+			"d2e1dc9ee02834c71621c7edb823fc53"
+			],
+"camera": 	[
+			"118daf1b090652c354868f79a59b116e",
+			"f78946ef4a19d59ba74c05c4c91b284f",
+			"f76db39ef2cd2110d24e3068806a8c67",
+			"63c10cfd6f0ce09a241d076ab53023c1"
+			],
+"cap":		[
+			"d18c3ce1f186c16976bb31db0358e9c6",
+			"4bd0b6df02772d8f59c9250a427b57f",
+			"f8e7d70ece651aa17905d1ff05d3f9c1"
+			],
+"coffee_mug":[
+			"e3a1f5cea0d1023481723756ae2c39ad",
+			"7d6baadd51d0703455da767dfc5b748e",
+			"71995893d717598c9de7b195ccfa970"
+			],
+"comb":		[
+			"975524c93e34a588ba7ec626e1762ecf",
+			"ccb01166be5a4a89ff5cced4ff5df69b",
+			"85b26e5d40a713d6809ef38cb59990fa"
+			],
 "food_box": [
-			"fbf7021503a2a11fce41b639931f9ca1",
+			"f921e7c143a676204781fbc434d6f87b",
 			"338a9be4f34c10e6656551518a63a78a",
 			"f822931fe07a7654ce41b639931f9ca1"
 			],
@@ -19,20 +45,10 @@
 			"f818771f4b0727e330612f5c0ef21eb8",
 			"612abb2fadd1c44e846564a8a219239b"
 			],
-"bowl":		[
-			"fa61e604661d4aa66658ecd96794a1cd",
-			"aeb7b4bb33fd43a14e23e9314af9ae57",
-			"d2e1dc9ee02834c71621c7edb823fc53"
-			],
 "food_cup":	[
 			"525a9dbee87267211760dc76b2e6fa60",
 			"d83b5b64b9d0a76495f577622f465c85",
 			"1e9b2d6d41a6c9cc95f577622f465c85"
-			],
-"soda_can": [
-			"637006720b7886e0c7a50f701fe65efe",
-			"51f0b5ce9711f63bb15a1cf05bc3d210",
-			"af444e72a44e6db153c22afefaf6f2a4"
 			],
 "water_bottle": [
 			"af853a8c58d2b631992eedbdd14b936d",
@@ -50,17 +66,29 @@
 			"9d86f895dc2d54c9b09914703fdadd6",
 			"u7282d3a6-4d29-4a42-8aa9-c94679d5352c"
 			],
+"lemon":	[
+			"54bb7e4bcb99e57783be9743b41f210",
+			"de3ace0ee3b37f9a32e150233fdd42e9",
+			"f885ddeefb28e2b5912eae0718f5a250"
+			],
+"orange": 	[
+			"d8abc1d081a1cf802075b15fe6269402",
+			"c9814e0d29b1e54072a4249dacf3a508"
+			],
+"pear":		[
+			"6de743001c18997a24517c38da518f49",
+			"50357628769b2a75713c042b393cc65b"
+			],
 "pitcher": 	[
 			"dcf0ad328f12907bf647627bcfb29d6",
 			"e1fb2c2e712e380adf6cfab91d65bb91",
 			"502218d23e9b90e21ed672982b7954af",
 			"27ee11e9b67e88f7664b3b9b23ddfcbc"
 			],
-"camera": 	[
-			"118daf1b090652c354868f79a59b116e",
-			"f78946ef4a19d59ba74c05c4c91b284f",
-			"f76db39ef2cd2110d24e3068806a8c67",
-			"63c10cfd6f0ce09a241d076ab53023c1"
+"soda_can": [
+			"637006720b7886e0c7a50f701fe65efe",
+			"51f0b5ce9711f63bb15a1cf05bc3d210",
+			"af444e72a44e6db153c22afefaf6f2a4"
 			],
 "toothbrush": [
 			"7e86427112a7f3609df6f10c48eb6cee",
@@ -69,4 +97,3 @@
 			"df341be97700069e19a06a1b6a6241e"
 			]
 }
-
