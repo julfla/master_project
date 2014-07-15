@@ -11,9 +11,12 @@ def get_example_path(instance, filename):
         MEDIA_ROOT/rgbd-dataset/<category>/<object_name>
     """
     from os.path import basename
+    base_filename = basename(filename)
+    if type(instance) is VideoSequence:
+        instance = instance.example_object
     return "{}/{}/{}".format(instance.category,
-                             instance.object_name,
-                             basename(filename))
+                             instance.name,
+                             base_filename)
 
 
 class ExampleObject(models.Model):
@@ -40,6 +43,7 @@ class VideoSequence(models.Model):
     sequence_id = models.IntegerField()
     example_object = models.ForeignKey(ExampleObject,
                                        related_name="sequences")
+    video = models.FileField(upload_to=get_example_path)
 
     class Meta:
         unique_together = (("sequence_id", "example_object"),)
