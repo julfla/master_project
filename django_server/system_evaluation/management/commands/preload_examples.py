@@ -3,38 +3,42 @@
 from django.core.management.base import BaseCommand
 from django.core.files import File
 from optparse import make_option
-from system_evaluation.models import ExampleObject, VideoSequence, Frame
+from system_evaluation.models import ExampleObject, Frame
 from pointcloud.models import PointCloud
-from shape_distribution.models import ShapeDistribution
-from django_server.settings import MEDIA_ROOT
 
 import tarfile
 import tempfile
 import urllib
 import sys
+import os
+import shutil
+import os.path
+
+# check that we have convert setup so that we can create sequence gif
+if not os.system("convert --help > /dev/null 2>&1") == 0:
+    print "You must have 'convert' installed when preloading models"
+    sys.exit(1)
 
 
-def dowload_with_progress_bar(url):
-    """ Display a progress bar while dowloading a file. """
-    def reporthook(count, block_size, total_size):
-        """ Print the bar. """
-        progress_size = int(count * block_size)
-        percent = int(count * block_size * 100 / total_size)
-        sys.stdout.write(
-            "\r...{}%, {}MB".format(percent, progress_size / (1024 * 1024))
-            )
-        sys.stdout.flush()
-    print "Dowloading file {} :".format(url)
-    temp_file = tempfile.NamedTemporaryFile()
-    urllib.urlretrieve(url, temp_file.name, reporthook)
-    print ''  # reporthook need a end line after using
-    return temp_file
+# def dowload_with_progress_bar(url):
+#     """ Display a progress bar while dowloading a file. """
+#     def reporthook(count, block_size, total_size):
+#         """ Print the bar. """
+#         progress_size = int(count * block_size)
+#         percent = int(count * block_size * 100 / total_size)
+#         sys.stdout.write(
+#             "\r...{}%, {}MB".format(percent, progress_size / (1024 * 1024))
+#             )
+#         sys.stdout.flush()
+#     print "Dowloading file {} :".format(url)
+#     temp_file = tempfile.NamedTemporaryFile()
+#     urllib.urlretrieve(url, temp_file.name, reporthook)
+#     print ''  # reporthook need a end line after using
+#     return temp_file
 
 
 def save_pointclouds(example_object, options):
     """ Extract pointclouds from tar archive. """
-    import shutil
-    import os.path
     sequences = list(example_object.sequences.all())
     frames = Frame.objects.filter(video_sequence__in=sequences)
     if not options['force']:
@@ -46,7 +50,7 @@ def save_pointclouds(example_object, options):
     else:
         archive_dir = options['download_folder']
     pcd_tar_path = "{}/pcd_tar/{}.tar".format(archive_dir,
-                                                  example_object.name)
+                                              example_object.name)
     pcd_tar = tarfile.open(pcd_tar_path)
     tmp_dir = tempfile.mkdtemp()
     pcd_tar.extractall(tmp_dir)
@@ -56,6 +60,38 @@ def save_pointclouds(example_object, options):
         pointcloud = PointCloud.load_pcd(current_pcd)
         frame._pointcloud = pointcloud
         frame.save()
+    shutil.rmtree(tmp_dir)
+    if options['download_folder'] is None:
+        shutil.rmtree(archive_dir)
+
+
+def save_images(example_object, options):
+    """ Store video_sequence video in db. """
+    sequences = example_object.sequences
+    if not options['force']:
+        sequences = sequences.filter(video__exact='')
+    if not sequences.exists():
+        return  # No process needed
+    if options['download_folder'] is None:
+        archive_dir = dowload_archives([example_object], None, False, True)
+    else:
+        archive_dir = options['download_folder']
+    image_tar_path = "{}/image_tar/{}.tar".format(archive_dir,
+                                                  example_object.name)
+    image_tar = tarfile.open(image_tar_path)
+    tmp_dir = tempfile.mkdtemp()
+    image_tar.extractall(tmp_dir)
+    for sequence in sequences.iterator():
+        images = [os.path.join(tmp_dir, frame.image_member_name())
+                  for frame in sequence.frames.iterator()]
+        filename = "{}_{}.gif".format(sequence.example_object.name,
+                                      sequence.sequence_id)
+        delay = "150"  # 30ms between frame * 5 frames (subsampling)
+        cmd = "convert -delay {} -loop 0 {} {}"
+        os.system(cmd.format(
+            delay, " ".join(images), os.path.join(tmp_dir, filename)))
+        sequence.video = File(open(os.path.join(tmp_dir, filename)))
+        sequence.save()
     shutil.rmtree(tmp_dir)
     if options['download_folder'] is None:
         shutil.rmtree(archive_dir)
@@ -74,7 +110,8 @@ def save_distributions(example_object, options):
         frame.get_distribution(True, options['force'])
 
 
-def dowload_archives(example_objects, download_folder=None):
+def dowload_archives(example_objects, download_folder=None,
+                     dowload_pcd=True, download_image=True):
     """ For the list of ExampleObject, dowload the archives.
 
     If download_folder is None, if will be dowloaded to a tmp directory.
@@ -86,23 +123,19 @@ def dowload_archives(example_objects, download_folder=None):
     import os
     import os.path
     print "Dowloading archives to %s" % download_folder
-    # print "Dowloading image archives"
-    # list_urls = [e.url_image_tar for e in example_objects]
-    # os.system("wget -P {} -nc {}".format(
-    #     os.path.join(download_folder, "image_tar"),
-    #     " ".join(list_urls)))
-    print "Dowloading pcd archives"
-    list_urls = [e.url_pcd_tar for e in example_objects]
-    os.system("wget -P {} -nc {}".format(
-        os.path.join(download_folder, "pcd_tar"),
-        " ".join(list_urls)))
+    if download_image:
+        print "Dowloading image archives"
+        list_urls = [e.url_image_tar for e in example_objects]
+        os.system("wget -P {} -nc {}".format(
+            os.path.join(download_folder, "image_tar"),
+            " ".join(list_urls)))
+    if dowload_pcd:
+        print "Dowloading pcd archives"
+        list_urls = [e.url_pcd_tar for e in example_objects]
+        os.system("wget -P {} -nc {}".format(
+            os.path.join(download_folder, "pcd_tar"),
+            " ".join(list_urls)))
     return download_folder
-
-
-def save_images(example_object, download_folder=None):
-    """ Save the images of the frames, dowload if necessary."""
-    # TODO
-    pass
 
 
 class Command(BaseCommand):
@@ -134,6 +167,10 @@ class Command(BaseCommand):
                     dest='save_distribution',
                     action='store_true',
                     help='Save the ShapeDistributions in db.'),
+        make_option('-i', '--save_image',
+                    dest='save_image',
+                    action='store_true',
+                    help='Save the sequence video in db.'),
         make_option('-f', '--force',
                     dest='force',
                     action='store_true',
@@ -167,7 +204,7 @@ class Command(BaseCommand):
             dowload_archives(example_objects.all(), options['download_folder'])
 
         if not (options['force'] or options['save_pointcloud'] or
-           options['save_distribution']):
+           options['save_distribution'] or options['save_image']):
             return 0  # Nothing to process
 
         # We query the ids and work with them to avoid mongo timeout
@@ -177,8 +214,11 @@ class Command(BaseCommand):
         for index, example_object_id in enumerate(
            [e.pk for e in example_objects.all()]):
             example_object = ExampleObject.objects.get(id=example_object_id)
-            print "Object {} ({}/{})".format(example_object.name,
-                index, number_of_objects)
+            print "Object {} ({}/{})".format(
+                example_object.name, index, number_of_objects)
+            if options['save_image']:
+                save_images(example_object, options)
+                print "    Images processed"
             if options['save_pointcloud']:
                 save_pointclouds(example_object, options)
                 print "    PointClouds processed"
