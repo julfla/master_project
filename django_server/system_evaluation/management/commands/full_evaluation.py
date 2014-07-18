@@ -18,6 +18,7 @@ from sklearn.neighbors import KNeighborsClassifier, RadiusNeighborsClassifier
 from collections import defaultdict, OrderedDict
 import operator
 
+
 class Command(BaseCommand):
 
     """ Django Command for classification evaluation. """
@@ -77,6 +78,11 @@ class Command(BaseCommand):
                     action='store_true',
                     default=False,
                     help='Performs the learning only, do not evaluate.'),
+        make_option('-e', '--use-entropy',
+                    dest='entropy',
+                    action='store_true',
+                    default=False,
+                    help='Use entropy to filter partial views.'),
         make_option('-c', '--classifier',
                     dest='classifier_type',
                     default='LinearSVC',
@@ -95,7 +101,7 @@ class Command(BaseCommand):
         if not self.identifier:
             if not self.dataset or options['force_dataset']:
                 self.load_dataset(options)
-            self.perform_learning(options['classifier_type'])
+            self.perform_learning(options)
             # We also want to reidentify objects
             self.results = OrderedDict()
             self.done_examples = []
@@ -133,10 +139,11 @@ class Command(BaseCommand):
                                     format(category))
             self.dataset = {k: self.dataset[k] for k in categories}
 
-    def perform_learning(self, classifier_type):
+    def perform_learning(self, options):
         """ Perfrom the learning from the dataset. """
         # Retreiving the dataset models
-        print 'Training using a {} classifier.'.format(classifier_type)
+        print 'Training using a {} classifier.'.format(
+            options['classifier_type'])
         models = {}
         for category in self.dataset.keys():
             models[category] = []
@@ -144,7 +151,7 @@ class Command(BaseCommand):
                 models[category].append(
                     SketchupModel.find_google_id(google_id))
         # Training
-        classifier = self.classifiers_available[classifier_type]
+        classifier = self.classifiers_available[options['classifier_type']]
         self.identifier = Identifier(classifier=classifier)
         for category in models.keys():
             self.identifier.add_models(models[category], category)
@@ -157,7 +164,7 @@ class Command(BaseCommand):
         # plt.plot(y, w, 'ro')
         # print self.dataset.keys()
         # plt.show()
-        self.identifier.train()
+        self.identifier.train(options['entropy'])
 
     def process_example(self, example, options):
         """ Identify an example object and return the result. """
@@ -229,7 +236,7 @@ class Command(BaseCommand):
                     num_sequences += 1
                     if result == category:
                         num_positives += 1
-        print "Overall result: {}/{} ({}%)%".format(
+        print "Overall result: {}/{} ({}%)".format(
             num_positives, num_sequences, 100 * num_positives / num_sequences)
         print "    {} categories, {} objects, {} video sequences".format(
             len(self.results_by_category()), len(self.results), num_sequences)

@@ -88,27 +88,26 @@ class Identifier(models.Model):
         for model in models:
             category.add(model.google_id)
 
-    def train(self):
+    def train(self, use_entropy=False):
         """ Train the classifier for all the models that it knows. """
         if len(self.dict_categories) < 2:
             print "At least two categories are needed for training..."
             print "Training is skipped."
-        (X, Y, W) = self._get_example_matrix()
+        (X, Y, W) = self._get_example_matrix(use_entropy)
         print "Training with {} categories and {} views.".format(
             len(self.dict_categories), len(Y))
-        print self.classifier.fit(X, Y)  # , sample_weight=W)
+        print self.classifier.fit(X, Y)
 
-    def _get_model_example_matrix(self, model):
-        views = model.partialview_set.all()
-        w = [v.entropy for v in views]
-        mean_w = sum(w) / len(w)
-        x = numpy.vstack([v.distribution.as_numpy_array
-                          for v in views])  # if v.entropy > mean_w])
-        # Scale entropy so that each model has the same weight
-        w = numpy.array([value / mean_w for value in w])
+    def _get_model_example_matrix(self, model, use_entropy):
+        views = model.partialview_set
+        if use_entropy:
+            agg = views.aggregate(models.Avg('entropy'))
+            views = views.filter(entropy__gt=agg['entropy__avg'])
+        w = numpy.array([v.entropy for v in views.all()])
+        x = numpy.array([v.distribution.as_numpy_array for v in views.all()])
         return (x, w)
 
-    def _get_example_matrix(self):
+    def _get_example_matrix(self, use_entropy):
         """ Return the input matrix of example (X). """
         X = numpy.zeros([0, SHAPE_DISTRIBUTION_SIZE])
         Y = numpy.array([])
@@ -119,7 +118,7 @@ class Identifier(models.Model):
                 model = SketchupModel.find_google_id(model_id)
                 if model.partialview_set.count() == 0:
                     PartialView.compute_all_views(model)
-                (x, w) = self._get_model_example_matrix(model)
+                (x, w) = self._get_model_example_matrix(model, use_entropy)
                 y = numpy.array([idx for _ in range(x.shape[0])])
                 X = numpy.vstack([X, x])
                 Y = numpy.concatenate([Y, y])
