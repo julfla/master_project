@@ -8,14 +8,6 @@
 #include <vector>
 #include "boost/random.hpp"
 
-void Distribution::compute_histogram(std::vector<double> sample) {
-    std::sort(sample.begin(), sample.end());
-    Histogram hist = Histogram(&sample, SHAPE_DISTRIBUTION_SIZE);
-    // Insert the histogram at the end of the current distribution
-    this->distribution.insert(this->distribution.end(),
-                              hist.data->begin(), hist.data->end());
-}
-
 std::vector<double> Distribution::compute_sample(DefaultCloud * const cloud,
                                                  int number_points,
                                                  bool scale_coordinates) {

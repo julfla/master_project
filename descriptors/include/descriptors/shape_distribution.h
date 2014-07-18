@@ -30,14 +30,26 @@ class Distribution {
 
 
     public:
-    static const int SHAPE_DISTRIBUTION_SIZE = 64;
+    static const int SHAPE_DISTRIBUTION_SIZE = 256 + 128 + 64 + 32;
 
     // Used when loading archive
     Distribution() {}
 
     explicit Distribution(DefaultCloud * const cloud) {
+        // SHAPE_DISTRIBUTION_SIZE is 256 + 128 + 64 + 32
         std::vector<double> sample = compute_a3_sample(cloud, _SAMPLE_LENGTH_);
-        compute_histogram(sample);
+        Histogram histogram(&sample, 256);
+        append_histogram(histogram);
+        for (int i = 0; i < 3; ++i) {
+            histogram.scale_down(2);
+            append_histogram(histogram);
+        }
+    }
+
+    void append_histogram(const Histogram &histogram) {
+        distribution.insert(distribution.end(),
+                            histogram.data->begin(),
+                            histogram.data->end());
     }
 
     std::string to_csv();
@@ -71,9 +83,6 @@ class Distribution {
     void save_archive(const char* path);
 
     private:
-    // Build the histogram and recopy the data with different resolution
-    void compute_histogram(std::vector<double> sample);
-
     // Generate <number_points> the random var distance between 2 random points
     std::vector<double> compute_sample(DefaultCloud * const cloud,
                                        int number_points,
