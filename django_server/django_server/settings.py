@@ -27,7 +27,7 @@ TEMPLATE_DEBUG = True
 ALLOWED_HOSTS = []
 
 # See here : https://github.com/cyberj/django-ignoretests
-TEST_RUNNER="ignoretests.DjangoIgnoreTestSuiteRunner"
+TEST_RUNNER = "ignoretests.DjangoIgnoreTestSuiteRunner"
 
 IGNORE_TESTS = (
     'django.contrib.admin',
@@ -51,7 +51,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions', # some need stuff added into manage.py
+    'django_extensions',  # some need stuff added into manage.py
     'singleton_models',
     'bootstrap3',
     'common',
@@ -63,6 +63,7 @@ INSTALLED_APPS = (
     'shape_distribution',
     'partial_view',
     'system_evaluation',
+    'django_cleanup',  # must be last !!
 )
 
 MIDDLEWARE_CLASSES = (
@@ -83,10 +84,10 @@ WSGI_APPLICATION = 'django_server.wsgi.application'
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
 DATABASES = {
-   'default' : {
-      'ENGINE' : 'django_mongodb_engine',
-      'NAME' : 'my_database'
-   }
+    'default': {
+        'ENGINE': 'django_mongodb_engine',
+        'NAME': 'my_database'
+    }
 }
 
 TEMPLATE_LOADERS = (
