@@ -21,7 +21,6 @@
 
 #define _SAMPLE_LENGTH_ 10000
 
-
 class Distribution {
     // Used to get access to the private attributes
     friend class boost::serialization::access;
@@ -29,7 +28,10 @@ class Distribution {
     typedef pcl::PointXYZ DefaultPoint;
     typedef pcl::PointCloud<DefaultPoint> DefaultCloud;
 
+
     public:
+    static const int SHAPE_DISTRIBUTION_SIZE = 64;
+
     // Used when loading archive
     Distribution() {}
 
@@ -89,5 +91,7 @@ class Distribution {
 
     std::vector<double> distribution;
 };
+
+const int Distribution::SHAPE_DISTRIBUTION_SIZE;
 
 #endif  // SHAPE_DISTRIBUTION_H
