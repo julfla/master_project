@@ -1,94 +1,124 @@
+""" Implementation of the SketchupWarehouse API. """
+
 from django.db import models
 from django_mongodb_engine.fields import GridFSField
-from gridfs import GridFS, GridOut
-import urllib2, tempfile, os, json, re
+import json
+from urllib import urlencode
+import urllib2
 
 from sketchup_models.models import SketchupModel
-from time import sleep
+
+
+SKETCHUP_API_URL = "https://3dwarehouse.sketchup.com/3dw"
+
 
 class WarehouseCache(models.Model):
+
+    """ A cache manager for http ressources. """
+
     url = models.CharField(unique=True, max_length=500)
     ressource = GridFSField()
 
     @staticmethod
     def get_ressource(url):
+        """ Return url content after and cache in in db. """
         try:
             return WarehouseCache.objects.get(url=url).ressource.read()
         except WarehouseCache.DoesNotExist:
-            print "Getting ressource {}".format( url )
+            print "Getting ressource {}".format(url)
             newEntry = WarehouseCache()
             newEntry.url = url
             newEntry.ressource = urllib2.urlopen(url).read()
             newEntry.save()
             return newEntry.ressource
 
-class WarehouseScrapper():
 
-    @staticmethod
-    def search_for_models(keywords):
-        models = []
-        if keywords:
-            model_ids = WarehouseScrapper._scrap_search_engine(keywords)
-            for model_id in model_ids:
-                models.append(SketchupModel.find_google_id(model_id))
-                sleep(0.100)
-        return models 
+def api_get(command, **params):
+    """ Return a json object from the Sketchup API. """
+    url = "{}/{}?{}".format(SKETCHUP_API_URL, command, urlencode(params))
+    return json.loads(WarehouseCache.get_ressource(url))
 
-    @staticmethod
-    def scrap_one_model(google_id):
 
-        skp_binary_tag = ['s', 's13', 's8', 's7', 's6']
-        img_binary_tag = ['lt', 'bot_st']
+def search_by_keywords(keywords):
+    """ Search the API for the keywords, return a list of model_ids. """
+    params = {'startRow': 1, 'endRow': 16, 'calculateTotal': True,
+              'q': '', 'type': 'SKETCHUP_MODEL', 'class': 'entity',
+              'Lk': True, 'title': keywords}
+    json_data = api_get('Search', **params)
+    return [entry['id'] for entry in json_data['entries']]
 
-        def get_one_url(json_binary, tag_list):
-            for tag in tag_list:
-                if tag in json_binary:
-                    print "tag {} found.".format(tag)
-                    return json_binary[tag]['contentUrl']
-            raise KeyError("Tags {} cannot be found.".format(tag_list))
 
-        model_url = ("https://3dwarehouse.sketchup.com/3dw/GetEntity?id={}".
-        format(google_id))
-        model = SketchupModel()
-        model.google_id = google_id
-        json_data = json.loads(WarehouseCache.get_ressource( model_url) )     
-        model.title = json_data['title']
-        model.text = json_data['description']
-        model.tags = json_data['tags']
-        # retreive the image and skp url
-        link_image = get_one_url(json_data['binaries'], img_binary_tag)
-        link_skp = get_one_url(json_data['binaries'], skp_binary_tag)
-        model.url_mesh = link_skp
-        model.image = WarehouseCache.get_ressource(link_image)
-        model.save()
-        return model
+def retreive_model(google_id):
+    """ Return the SketchupModel corresponding to the google_id. """
+    json_data = api_get("GetEntity", id=google_id)
+    try:
+        model = SketchupModel.objects.get(google_id=google_id)
+    except SketchupModel.DoesNotExist:
+        model = SketchupModel(google_id=google_id)
+    model.title = json_data['title']
+    model.text = json_data['description']
+    model.tags = json_data['tags']
+    url_image = _parse_image_url(json_data['binaries'])
+    model.url_mesh = _parse_skp_url(json_data['binaries'])
+    model.image = WarehouseCache.get_ressource(url_image)
+    model.save()
+    return model
 
-    @staticmethod
-    def _download_skp_and_convert_to_tri(model, url_skp):        
-        # the mesh in store in temp and converted into a .tri file
-        with tempfile.NamedTemporaryFile() as tmp_file:
-            tmp_file.write( WarehouseCache.get_ressource(url_skp) )
-            tmp_file.flush()
-            cvt_cmd = 'WINEDEBUG=-all, ../bin/skp2tri.exe {0} {0}'
-            if os.system(cvt_cmd.format(tmp_file.name)) != 0:
-                raise ("Error on skp2tri conversion : model: {}, url: {}".
-                    format(model.google_id, url) )
-            tmp_file.seek(0)
-            model.mesh = tmp_file.read()
 
-    @staticmethod
-    def _scrap_search_engine(keywords):
-    	keywords = re.sub(' ', '%2B', keywords)
-        search_url = (
-            "https://3dwarehouse.sketchup.com/"
-            "3dw/Search?startRow=1&endRow=16&calculateTotal=true"
-            "&q&type=SKETCHUP_MODEL&class=entity&Lk=true&title={}"
-            .format(keywords)
-            )
-        # print search_url
-        json_data = json.loads( WarehouseCache.get_ressource( search_url ) )
-        model_ids = []
-        for entry in json_data['entries']:
-            model_ids.append(entry['id'])
-        return model_ids
+def _parse_one_of_contentUrl(json_binaries, tag_set):
+    """ Return the contentUrl for one of the tag if found in the json. """
+    tags_found = list(tag_set & set(json_binaries.keys()))
+    if tags_found:
+        return json_binaries[tags_found[0]]['contentUrl']
+    else:
+        error_msg = "Any of {} tags not found in {}".format(
+            tag_set, json_binaries)
+        raise KeyError(error_msg)
 
+
+def _parse_image_url(json_binaries):
+    """ Return the image url from the json binaries list. """
+    img_tags = set(['lt', 'bot_st'])
+    return _parse_one_of_contentUrl(json_binaries, img_tags)
+
+
+def _parse_skp_url(json_binaries):
+    """ Return the skp url from the json binaries list. """
+    skp_tags = set(['s', 's13', 's8', 's7', 's6'])
+    return _parse_one_of_contentUrl(json_binaries, skp_tags)
+
+
+def _download_and_convert_skp2tri(url_skp):
+    """ Return a file object of the skp ressource, converted to tri. """
+    import os
+    import tempfile
+    temp_file = tempfile.NamedTemporaryFile()
+    temp_file.write(WarehouseCache.get_ressource(url_skp))
+    temp_file.flush()  # flush the file before the system call
+    cvt_cmd = 'WINEDEBUG=-all, ../bin/skp2tri.exe {0} {0}'
+    if os.system(cvt_cmd.format(temp_file.name)) != 0:
+        raise ("Error on skp2tri conversion url: %s" % url_skp)
+    else:
+        temp_file.seek(0)
+        return temp_file
+
+
+# class WarehouseScrapper():
+
+#     @staticmethod
+#     def search_for_models(keywords):
+#         models = []
+#         if keywords:
+#             model_ids = search_by_keywords(keywords)
+#             for model_id in model_ids:
+#                 models.append(SketchupModel.find_google_id(model_id))
+#                 sleep(0.100)
+#         return models
+
+#     @staticmethod
+#     def scrap_one_model(google_id):
+#         return retreive_model(google_id)
+
+#     @staticmethod
+#     def _download_skp_and_convert_to_tri(model, url_skp):
+#         model.mesh = _download_and_convert_skp2tri(url_skp).read()
