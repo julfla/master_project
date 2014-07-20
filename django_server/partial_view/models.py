@@ -8,6 +8,18 @@ from shape_distribution.models import ShapeDistribution
 from pointcloud.models import PointCloud
 
 
+def lazy_property(fn):
+    """ Lazy property decorator. """
+    attr_name = '_lazy_' + fn.__name__
+
+    @property
+    def _lazy_property(self):
+        if not hasattr(self, attr_name):
+            setattr(self, attr_name, fn(self))
+        return getattr(self, attr_name)
+    return _lazy_property
+
+
 class PartialCloudComputer(object):
 
     def __init__(self):
@@ -55,9 +67,13 @@ class PartialView(models.Model):
     class Meta:
         unique_together = (("model", "theta", "phi"),)
 
-    @property
+    @lazy_property
     def partial_cloud_computer(self):
-        self.partial_cloud_computer = PartialCloudComputer()
+        return PartialCloudComputer()
+
+    @partial_cloud_computer.setter
+    def partial_cloud_computer(self, value):
+        setattr(self, '_lazy_partial_cloud_computer', value)
 
     @property
     def distribution(self):
@@ -82,6 +98,7 @@ class PartialView(models.Model):
     def compute_all_views(model):
         SQRT_NUMBER_VIEWS = 8  # 8 * 8 = 64 views per object
         pi = 3.1416
+        partial_cloud_computer = PartialCloudComputer()
         for i in range(SQRT_NUMBER_VIEWS):
             for j in range(SQRT_NUMBER_VIEWS):
                 print "Computing view {}_{} for model {}".format(
@@ -89,6 +106,8 @@ class PartialView(models.Model):
                 theta = pi * i / SQRT_NUMBER_VIEWS
                 phi = 2 * pi * j / SQRT_NUMBER_VIEWS
                 view = PartialView(model=model, theta=theta, phi=phi)
+                setattr(view, 'partial_cloud_computer',
+                        partial_cloud_computer)
                 # force computation of distribution while mesh is loaded
                 view.distribution
                 view.save()
