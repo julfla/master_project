@@ -177,6 +177,7 @@ double PartialViewComputer::compute_entropy(float theta, float phi) {
     draw(true);  // draw the mesh with entropy colors output
     std::vector<glm::vec4> data = framebuffer_data();
     std::map<int, int> pixels_per_triangle;
+    int background_pixels = 0;
     for (std::vector<glm::vec4>::iterator it = data.begin();
          it < data.end(); ++it) {
         // Use the w coordinate for segmenting background
@@ -185,10 +186,16 @@ double PartialViewComputer::compute_entropy(float theta, float phi) {
             // the index of the triangle for this index
             int triangle_index = color_to_index(glm::vec3(*it));
             pixels_per_triangle[triangle_index]++;
+        } else {
+            background_pixels++;
         }
     }
-    double entropy = 0.0;
+    double entropy = 0;
     double number_pixels = data.size();
+    {  // The background is counted too !!
+        double ratio = background_pixels / number_pixels;
+        entropy += - ratio * log(ratio);
+    }
     for (std::map<int, int>::iterator it = pixels_per_triangle.begin();
          it != pixels_per_triangle.end(); ++it) {
         double ratio = it->second / number_pixels;
@@ -200,7 +207,7 @@ double PartialViewComputer::compute_entropy(float theta, float phi) {
 const std::vector<glm::vec4> PartialViewComputer::framebuffer_data() {
     std::vector<glm::vec4> data(width*height);
     glReadBuffer(GL_COLOR_ATTACHMENT0);
-    glReadPixels(0,0,width,height,GL_RGBA,GL_FLOAT,&data[0]);
+    glReadPixels(0, 0, width, height, GL_RGBA, GL_FLOAT, &data[0]);
     return data;
 }
 

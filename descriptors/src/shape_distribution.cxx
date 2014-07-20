@@ -18,8 +18,7 @@ int main(int argc, char **argv) {
     po::options_description desc("Allowed options");
     desc.add_options()
             ("help,h", "Produce help message")
-            ("input,i", po::value<string>(), "Input file")
-            ("input-format,I", po::value<string>()->default_value("pcd"), "Input file format tri|pcd|archive")
+            ("input,i", po::value<string>(), "Input pcd file")
             ("output,o", po::value<string>(), "Output file")
             ("output-format,O", po::value<string>()->default_value("archive"), "Ouput file format archive|csv")
             ("no-clobber,n", po::bool_switch(), "Do not overwrite an existing file.")
@@ -51,30 +50,15 @@ int main(int argc, char **argv) {
         }
     }
 
-    Distribution distribution;
-    if (vm["input-format"].as<string>() == "archive") {
-        // load data from archive
-        distribution = Distribution::load_archive(input_path);
-    }
-    else if (vm["input-format"].as<string>() == "tri") {
-        distribution = Distribution(Mesh(input_path));
-    }
-    else if (vm["input-format"].as<string>() == "pcd") {
-
-        // load the pointcloud
-        pcl::PointCloud<pcl::PointXYZ> cloud;
-        if (pcl::io::loadPCDFile<pcl::PointXYZ> (input_path, cloud) == -1) //* load the file
-        {
-            cout << "Input file unknown or invalid." << endl;
-            cout << desc << endl;
-            return -1;
-        }
-        distribution = Distribution(&cloud);
-    }
-    else {
+    // load the pointcloud
+    pcl::PointCloud<pcl::PointXYZ> cloud;
+    if (pcl::io::loadPCDFile<pcl::PointXYZ> (input_path, cloud) == -1) //* load the file
+    {
+        cout << "Input file unknown or invalid." << endl;
         cout << desc << endl;
-        return 1;
+        return -1;
     }
+    Distribution distribution(&cloud);
 
     if (vm["output-format"].as<string>() == "csv") { //export to csv
         if (vm.count("output")) {

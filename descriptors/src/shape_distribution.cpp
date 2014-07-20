@@ -10,7 +10,8 @@
 
 std::vector<double> Distribution::compute_sample(DefaultCloud * const cloud,
                                                  int number_points,
-                                                 bool scale_coordinates) {
+                                                 bool scale_coordinates)
+{
     if (cloud->empty())
         return std::vector<double>();
     float x, y, z;
@@ -46,8 +47,8 @@ std::vector<double> Distribution::compute_sample(DefaultCloud * const cloud,
     return sample;
 }
 
-std::vector<double> Distribution::compute_a3_sample(DefaultCloud * const cloud,
-                                                    int number_points) {
+std::vector<double> Distribution::compute_a3_sample(
+    DefaultCloud * const cloud, int number_points) {
     std::vector<double> sample;
     if (cloud->empty())
         return sample;

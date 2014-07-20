@@ -23,12 +23,13 @@ INCLUDE_DIRECTORIES(${PCL_INCLUDE_DIRS})
 LINK_DIRECTORIES(${PCL_LIBRARY_DIRS})
 ADD_DEFINITIONS(${PCL_DEFINITIONS})
 
-ADD_EXECUTABLE(partial_view src/partial_view.cxx src/partial_view.cpp src/shader_helper.cpp)
-TARGET_LINK_LIBRARIES(partial_view descriptors ${GL_LIBS} ${PCL_LIBRARIES})
 
 ADD_LIBRARY(partialview SHARED src/partial_view.cpp src/shader_helper.cpp)
 TARGET_LINK_LIBRARIES(partialview descriptors ${GL_LIBS} ${PCL_LIBRARIES} ${Boost_LIBRARIES})
 SET_TARGET_PROPERTIES(partialview PROPERTIES EXCLUDE_FROM_ALL true)
+
+ADD_EXECUTABLE(partial_view src/partial_view.cxx)
+TARGET_LINK_LIBRARIES(partial_view descriptors partialview)
 
 # Expose PartialView to be used with python
 FIND_PACKAGE(PythonLibs REQUIRED)
