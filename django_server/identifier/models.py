@@ -11,27 +11,18 @@ from shape_distribution.models import (ShapeDistribution,
 from pointcloud.models import PointCloud
 from partial_view.models import PartialView
 
-from sklearn import svm, multiclass
-from sklearn import tree
-from sklearn import neighbors
+from sklearn import covariance
 import pickle
 import numpy
 
 
-class SVCField(with_metaclass(models.SubfieldBase, models.Field)):
+class ClassifierField(with_metaclass(models.SubfieldBase, models.Field)):
 
     """ A django field conresponding to sklearn classifier objects. """
 
-    import inspect
-    svm_classifier_classes = inspect.getmembers(svm, inspect.isclass)
-    svm_classifier_classes += inspect.getmembers(multiclass, inspect.isclass)
-    svm_classifier_classes += inspect.getmembers(tree, inspect.isclass)
-    svm_classifier_classes += inspect.getmembers(neighbors, inspect.isclass)
-    svm_classifier_classes = set([x[1] for x in svm_classifier_classes])
-
     def to_python(self, value):
         """ Recreate python object from db. """
-        if value.__class__ in self.svm_classifier_classes:
+        if hasattr(value, "fit"):
             return value
         elif value and len(value) > 0:
             return pickle.loads(value)
@@ -39,7 +30,7 @@ class SVCField(with_metaclass(models.SubfieldBase, models.Field)):
 
     def get_prep_value(self, value):
         """ Serialize python object to be stored in db. """
-        if value.__class__ in self.svm_classifier_classes:
+        if hasattr(value, "fit"):
             return pickle.dumps(value)
         else:
             return value
@@ -49,13 +40,13 @@ class Identifier(models.Model):
 
     """ Identifier for pointcloud objects. """
 
-    classifier = SVCField()
+    classifier = ClassifierField()
     dict_categories = DictField(SetField, default=dict())
 
     def identify_with_proba(self, data):
         """ Return the category of the Pointcloud or Distribution object. """
-        if len(self.dict_categories) < 1:
-            print "No category cannot identify"
+        if len(self.dict_categories) < 2:
+            print "No enough categories cannot identify"
             raise IndexError("Identifier is empty.")
         if type(data) is PointCloud:
             data = ShapeDistribution.compute(data)
@@ -93,7 +84,12 @@ class Identifier(models.Model):
         if len(self.dict_categories) < 2:
             print "At least two categories are needed for training..."
             print "Training is skipped."
+            return
         (X, Y, W) = self._get_example_matrix(use_entropy)
+        if self.classifier.metric == 'mahalanobis':
+            # The mahalanobis distance needs the covariance of the data
+            cov = covariance.empirical_covariance(X)
+            self.classifier.metric_kwds['V'] = cov
         print "Training with {} categories and {} views.".format(
             len(self.dict_categories), len(Y))
         print self.classifier.fit(X, Y)

@@ -41,9 +41,8 @@ def api_get(command, **params):
 
 def search_by_keywords(keywords):
     """ Search the API for the keywords, return a list of model_ids. """
-    params = {'startRow': 1, 'endRow': 16, 'calculateTotal': True,
-              'q': '', 'type': 'SKETCHUP_MODEL', 'class': 'entity',
-              'Lk': True, 'title': keywords}
+    params = {'startRow': 1, 'endRow': 30, 'q': keywords,
+              'type': 'SKETCHUP_MODEL', 'class': 'entity', 'Lk': True}
     json_data = api_get('Search', **params)
     return [entry['id'] for entry in json_data['entries']]
 
@@ -55,13 +54,16 @@ def retreive_model(google_id):
         model = SketchupModel.objects.get(google_id=google_id)
     except SketchupModel.DoesNotExist:
         model = SketchupModel(google_id=google_id)
-    model.title = json_data['title']
-    model.text = json_data['description']
-    model.tags = json_data['tags']
-    url_image = _parse_image_url(json_data['binaries'])
-    model.url_mesh = _parse_skp_url(json_data['binaries'])
-    model.image = WarehouseCache.get_ressource(url_image)
-    model.save()
+    try:
+        model.title = json_data['title']
+        model.text = json_data['description']
+        model.tags = json_data['tags']
+        url_image = _parse_image_url(json_data['binaries'])
+        model.url_mesh = _parse_skp_url(json_data['binaries'])
+        model.image = WarehouseCache.get_ressource(url_image)
+        model.save()
+    except KeyError:
+        return None
     return model
 
 
@@ -103,22 +105,22 @@ def _download_and_convert_skp2tri(url_skp):
         return temp_file
 
 
-# class WarehouseScrapper():
+class WarehouseScrapper():
 
-#     @staticmethod
-#     def search_for_models(keywords):
-#         models = []
-#         if keywords:
-#             model_ids = search_by_keywords(keywords)
-#             for model_id in model_ids:
-#                 models.append(SketchupModel.find_google_id(model_id))
-#                 sleep(0.100)
-#         return models
+    @staticmethod
+    def search_for_models(keywords):
+        models = []
+        if keywords:
+            model_ids = search_by_keywords(keywords)
+            for model_id in model_ids:
+                models.append(SketchupModel.find_google_id(model_id))
+                # sleep(0.100)
+        return models
 
-#     @staticmethod
-#     def scrap_one_model(google_id):
-#         return retreive_model(google_id)
+    @staticmethod
+    def scrap_one_model(google_id):
+        return retreive_model(google_id)
 
-#     @staticmethod
-#     def _download_skp_and_convert_to_tri(model, url_skp):
-#         model.mesh = _download_and_convert_skp2tri(url_skp).read()
+    @staticmethod
+    def _download_skp_and_convert_to_tri(model, url_skp):
+        model.mesh = _download_and_convert_skp2tri(url_skp).read()

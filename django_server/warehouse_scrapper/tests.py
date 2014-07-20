@@ -4,6 +4,8 @@ from warehouse_scrapper.models import retreive_model
 
 class SimpleTest(TestCase):
 
+    """ Test case. """
+
     def test_download_one_model(self):
         """" Test that a model is correctly download from the database.
 
