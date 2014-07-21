@@ -1,4 +1,5 @@
-from shape_distribution.models import ShapeDistribution
+from shape_distribution.models import (ShapeDistribution,
+                                       SHAPE_DISTRIBUTION_SIZE)
 from django.http import HttpResponse
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -8,7 +9,7 @@ from matplotlib.dates import DateFormatter
 def distribution_image(request, distribution):
     fig = Figure()
     ax = fig.add_subplot(111)
-    ax.plot( distribution.as_numpy_array )
+    ax.bar( range(SHAPE_DISTRIBUTION_SIZE), distribution.as_numpy_array, width=1)
     canvas = FigureCanvas(fig)
     response = HttpResponse(content_type='image/png')
     canvas.print_png(response)
