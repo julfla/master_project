@@ -80,6 +80,7 @@ std::vector<double> Distribution::compute_a3_sample(DefaultCloud * const cloud,
         double cosinus = (d_12 + d_13 - d_23) / (2 * sqrt(d_12) * sqrt(d_13));
         sample.push_back(acos(cosinus));
     }
+    return sample;
 }
 
 Distribution Distribution::load_archive(const std::string path) {
