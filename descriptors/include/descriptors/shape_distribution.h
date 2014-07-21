@@ -38,6 +38,7 @@ class Distribution {
     explicit Distribution(DefaultCloud * const cloud) {
         // SHAPE_DISTRIBUTION_SIZE is 256 + 128 + 64 + 32
         std::vector<double> sample = compute_a3_sample(cloud, _SAMPLE_LENGTH_);
+        std::sort(sample.begin(), sample.end());
         Histogram histogram(&sample, 256);
         append_histogram(histogram);
         for (int i = 0; i < 3; ++i) {
