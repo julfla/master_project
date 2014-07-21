@@ -19,6 +19,23 @@ from collections import defaultdict, OrderedDict
 import operator
 
 
+def taneja_distance(X, Y):
+    """ Return the Taneja distance between X and Y. """
+    import numpy as np
+    from math import log, sqrt
+
+    def operation(x, y):
+        """ Distance for two numbers, to be vectorise. """
+        if x == 0 and y == 0:
+            return 0
+        elif x == 0 or y == 0:
+            return float('Inf')
+        else:
+            return  0.5 * (x + y) * log(0.5 * (x + y) / sqrt(x*y))
+
+    dist = np.vectorize(operation)
+    return np.sum(dist(X, Y))
+
 class Command(BaseCommand):
 
     """ Django Command for classification evaluation. """
@@ -32,45 +49,35 @@ class Command(BaseCommand):
     help = ('Perform learning from a set of models,'
             ' and test it vs the dataset.')
 
-    def teneja_distance(X, Y):
-        """ Return the Taneja distance between X and Y. """
-        import numpy as np
-
-        def operation(x, y):
-            """ Distance for two numbers, to be vectorise. """
-            tmp = 0.5 * (x + y)
-            return tmp * np.log(tmp / np.sqrt(x*y))
-
-        dist = np.vectorize(operation)
-        return np.sum(dist(X, Y))
-
     classifiers_available = {
         'LinearSVC': LinearSVC(random_state=0),
         'SVC': SVC(),
         'OneVsOne': OneVsOneClassifier(LinearSVC(random_state=0)),
         'OneVsRest': OneVsRestClassifier(LinearSVC(random_state=0)),
+        'KNeighbors_default': KNeighborsClassifier(),
+        'OutputCode': OutputCodeClassifier(LinearSVC(random_state=0)),
         'DecisionTree': DecisionTreeClassifier(),
         'KNeighbors': KNeighborsClassifier(weights='distance',
                                            n_neighbors=5,
                                            leaf_size=64),
-        'KNeighbors_taneja': KNeighborsClassifier(
-            metric='pyfunc', func=teneja_distance),
-        'KNeighbors': KNeighborsClassifier(weights='distance',
+        'KNeighbors_distance_l2': KNeighborsClassifier(weights='distance',
                                            n_neighbors=5,
                                            leaf_size=64),
-        'KNeighbors_default': KNeighborsClassifier(),
-        'KNeighbors_brute': KNeighborsClassifier(algorithm='brute'),
+        'KNeighbors_uniforme_l2': KNeighborsClassifier(
+                                           n_neighbors=5,
+                                           leaf_size=64),
+        'KNeighbors_brute_l2': KNeighborsClassifier(algorithm='brute'),
         'KNeighbors_distance_mahalanobis': KNeighborsClassifier(
                                            weights='distance',
                                            n_neighbors=5,
                                            leaf_size=64,
                                            metric='mahalanobis'),
-        'KNeighbors_default_mahalanobis': KNeighborsClassifier(metric="mahalanobis"),
-        'RadiusNeighbors': RadiusNeighborsClassifier(weights='distance',
-                                                     n_neighbors=5,
-                                                     leaf_size=30,
-                                                     radius=10.0),
-        'OutputCode': OutputCodeClassifier(LinearSVC(random_state=0)),
+        'KNeighbors_distance_taneja': KNeighborsClassifier(
+                                           weights='distance',
+                                           n_neighbors=5,
+                                           leaf_size=64,
+                                           metric='pyfunc',
+                                           func=taneja_distance),
         }
 
     option_list = BaseCommand.option_list + (
