@@ -236,6 +236,7 @@ class Command(BaseCommand):
                     num_sequences += 1
                     if result == category:
                         num_positives += 1
+
         print "Overall result: {}/{} ({}%)".format(
             num_positives, num_sequences, 100 * num_positives / num_sequences)
         print "    {} categories, {} objects, {} video sequences".format(
