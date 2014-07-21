@@ -24,12 +24,25 @@ class Command(BaseCommand):
     """ Django Command for classification evaluation. """
 
     dataset = dict()
+    merge_info = dict()  # Hash containing category => category_merged_with
     identifier = None
     results = OrderedDict()
     done_examples = []
 
     help = ('Perform learning from a set of models,'
             ' and test it vs the dataset.')
+
+    def teneja_distance(X, Y):
+        """ Return the Taneja distance between X and Y. """
+        import numpy as np
+
+        def operation(x, y):
+            """ Distance for two numbers, to be vectorise. """
+            tmp = 0.5 * (x + y)
+            return tmp * np.log(tmp / np.sqrt(x*y))
+
+        dist = np.vectorize(operation)
+        return np.sum(dist(X, Y))
 
     classifiers_available = {
         'LinearSVC': LinearSVC(random_state=0),
@@ -40,7 +53,19 @@ class Command(BaseCommand):
         'KNeighbors': KNeighborsClassifier(weights='distance',
                                            n_neighbors=5,
                                            leaf_size=64),
+        'KNeighbors_taneja': KNeighborsClassifier(
+            metric='pyfunc', func=teneja_distance),
+        'KNeighbors': KNeighborsClassifier(weights='distance',
+                                           n_neighbors=5,
+                                           leaf_size=64),
         'KNeighbors_default': KNeighborsClassifier(),
+        'KNeighbors_brute': KNeighborsClassifier(algorithm='brute'),
+        'KNeighbors_distance_mahalanobis': KNeighborsClassifier(
+                                           weights='distance',
+                                           n_neighbors=5,
+                                           leaf_size=64,
+                                           metric='mahalanobis'),
+        'KNeighbors_default_mahalanobis': KNeighborsClassifier(metric="mahalanobis"),
         'RadiusNeighbors': RadiusNeighborsClassifier(weights='distance',
                                                      n_neighbors=5,
                                                      leaf_size=30,
@@ -131,6 +156,8 @@ class Command(BaseCommand):
         """ Load the dataset according to the options. """
         with open(options['dataset_file']) as dataset_file:
             self.dataset = json.load(dataset_file)
+            if 'merge_info' in self.dataset:
+                self.merge_info = self.dataset.pop('merge_info')
         if options['categories']:  # We restrict the dataset to some categories
             categories = options['categories'].split(',')
             for category in categories:
@@ -199,6 +226,7 @@ class Command(BaseCommand):
             if example_category not in categories:
                 categories[example_category] = OrderedDict()
             categories[example_category][example] = results
+        print categories.keys()
         return categories
 
     def analyse_results(self):
@@ -209,7 +237,11 @@ class Command(BaseCommand):
             failures = []
             for example, sequences in examples.iteritems():
                 for index, result in enumerate(sequences):
-                    if category != result:
+                    if category in self.merge_info:
+                        expected = self.merge_info[category]
+                    else:
+                        expected = category
+                    if expected != result:
                         failures.append((example, index, result))
             num_positives = num_sequences - len(failures)
             print "{}: {}/{} ({}%)".format(category, num_positives,
@@ -242,6 +274,8 @@ class Command(BaseCommand):
         print "    {} categories, {} objects, {} video sequences".format(
             len(self.results_by_category()), len(self.results), num_sequences)
 
+        print "Classifier %s" % self.identifier.classifier
+
     def dump(self, options):
         """ Dump the process in a homemade format. """
         if options['save_file']:
@@ -252,6 +286,7 @@ class Command(BaseCommand):
             return
         state = {}
         state['dataset'] = self.dataset
+        state['merge_info'] = self.merge_info
         state['done_examples'] = self.done_examples
         state['identifier'] = self.identifier
         state['results'] = self.results

@@ -86,7 +86,8 @@ class Identifier(models.Model):
             print "Training is skipped."
             return
         (X, Y, W) = self._get_example_matrix(use_entropy)
-        if self.classifier.metric == 'mahalanobis':
+        if (hasattr(self.classifier, 'metric') and
+           self.classifier.metric == 'mahalanobis'):
             # The mahalanobis distance needs the covariance of the data
             cov = covariance.empirical_covariance(X)
             self.classifier.metric_kwds['V'] = cov
