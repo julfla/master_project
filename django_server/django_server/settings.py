@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'django_server.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django_mongodb_engine',
-        'NAME': 'my_database'
+        'NAME': 'user_study'
     }
 }
 
