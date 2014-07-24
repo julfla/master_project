@@ -9,7 +9,7 @@ from django.template import RequestContext
 from sketchup_models.models import SketchupModel
 # from pointcloud.models import PointCloud
 from .models import IdentificationAttempt, EvaluationSession
-from .forms import NewSessionForm, AgreeWithIdentificationForm, EndSessionForm
+from .forms import NewSessionForm, AgreeWithIdentificationForm
 
 from warehouse_scrapper.models import search_by_keywords
 
@@ -50,6 +50,8 @@ def identication_succeeded_result(request, session, attempt, attempt_index):
             print 'cleaned_data:', form.cleaned_data
             attempt.user_agreed = form.cleaned_data['user_agreed']
             attempt.user_identification = request.POST['user_identification']
+            if attempt.user_identification not in session.identifier.categories:
+                attempt.new_category_learned = True
             session.save()
             if attempt.user_agreed:
                 return redirect(
@@ -111,13 +113,16 @@ def new_session(request):
 def end_session(request, evaluation_session_id):
     """ Display the result of the evaluation session. """
     session = get_object_or_404(EvaluationSession, pk=evaluation_session_id)
-    if request.method == 'POST':
-        form = EndSessionForm(request.POST)
-    else:
-        form = EndSessionForm()
+    failures = [attempt for attempt in session.attempts
+                if not attempt.user_agreed]
+    objects_learned = [attempt for attempt in session.attempts
+                       if attempt.new_category_learned]
     return render_to_response(
         'end_of_session.html',
-        {'session': session, 'form': form},
+        {'session': session,
+         'number_failures': len(failures) - len(objects_learned),
+         'number_objects_learned': len(objects_learned),
+         'number_attempts': len(session.attempts)},
         context_instance=RequestContext(request))
 
 
@@ -127,7 +132,7 @@ def new_attempt(request, evaluation_session_id):
     if len(session.attempts) == NUMBER_ATTEMPT_SESSION:
         # The evaluation is complete
         # We redirect to its end page instead of continuing.
-        return end_session(request, evaluation_session_id)
+        return redirect('/system/session/{}/end'.format(session.pk))
 
     attempt = IdentificationAttempt()
     session.attempts.append(attempt)

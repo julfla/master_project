@@ -30,10 +30,3 @@ class AgreeWithIdentificationForm(forms.Form):
                  "identification please give us your personnal choice."))
         else:
             return cleaned_data
-
-
-class EndSessionForm(forms.Form):
-
-    """ A form to ask for global opinion to the user after the session. """
-
-    pass

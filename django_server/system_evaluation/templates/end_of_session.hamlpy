@@ -1,0 +1,23 @@
+-extends "base_html.hamlpy"
+
+-block body
+  :css
+    .orange {color: orange;}
+    .red {color: red;}
+    .green {color: green;}
+  %h1 Thank you very for your participation
+  %p Please quickly fill the paper survey.
+  %p Here is the summary of your session :
+    %ul
+      - for attempt in session.attempts
+        - if attempt.user_agreed and attempt.identification_succeed
+          %li.green A ={attempt.identification_result} was successfully identified.
+        - else
+          - if not attempt.identification_succeed
+            %li.orange You taught the system to recognize its first object.
+          - elif attempt.new_category_learned
+            %li.orange You taught the system to recognize ={attempt.user_identification}.
+          - else
+            %li.red A ={attempt.user_identification} was identified as a ={attempt.identification_result}.
+    %p ={number_failures} failure(s) over ={number_attempts} attempts.
+    %p You taught the system to recognize ={number_objects_learned} kind of objects.

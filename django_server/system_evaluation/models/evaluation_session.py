@@ -20,6 +20,7 @@ class IdentificationAttempt(models.Model):
     identification_result = models.CharField(max_length=255)
     user_agreed = models.BooleanField(default=True)
     user_identification = models.CharField(max_length=255)
+    new_category_learned = models.BooleanField(default=False)
 
     @property
     def video_sequence(self):
@@ -51,5 +52,3 @@ class EvaluationSession(models.Model):
             default = Identifier(classifier=KNeighborsClassifier())
             kwargs['identifier'] = default
         super(EvaluationSession, self).__init__(*args, **kwargs)
-
-# 53cb5245a533a363c0039d03
