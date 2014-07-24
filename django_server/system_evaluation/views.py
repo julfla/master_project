@@ -1,5 +1,7 @@
 from django.http import HttpResponse, HttpResponseNotFound
-import datetime
+from collections import defaultdict
+import operator
+from urllib import urlencode
 
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
@@ -7,26 +9,29 @@ from django.template import RequestContext
 from sketchup_models.models import SketchupModel
 # from pointcloud.models import PointCloud
 from .models import IdentificationAttempt, EvaluationSession
-from .forms import NewSessionForm, AgreeWithIdentificationForm
+from .forms import NewSessionForm, AgreeWithIdentificationForm, EndSessionForm
 
 from warehouse_scrapper.models import search_by_keywords
 
-from .models import ExampleObject, VideoSequence, Frame
+from .models import ExampleObject, VideoSequence
 
 # This constant store the video sequence ids that can be used in the GUI.
 # In order to run the HIM with a acceptable speed, we use only the video
 # sequence for which all the frames have the pointcloud preloaded.
-VIDEO_SEQUENCE_HMI = set([frame.video_sequence for frame in
-                          Frame.objects.filter(_pointcloud__isnull=False)])
+CATEGORIES_HMI = set(['plate', 'apple', 'soda_can', 'toothbrush', 'banana'])
+VIDEO_SEQUENCE_HMI = set(
+    [sequence
+     for example in ExampleObject.objects.filter(category__in=CATEGORIES_HMI)
+     for sequence in example.sequences.all()])
 
-NUMBER_ATTEMPT_SESSION = 5
+NUMBER_ATTEMPT_SESSION = 20
 
 
 def identification_result(request, evaluation_session_id, attempt_index):
     """ Display the result of a identification attempt. """
     session = get_object_or_404(EvaluationSession, pk=evaluation_session_id)
     attempt = session.attempts[int(attempt_index)]
-    if attempt.identification_succeed:
+    if attempt.identification_succeed and attempt.user_agreed:
         print "attempt {} succeed !".format(attempt_index)
         return identication_succeeded_result(request, session,
                                              attempt, attempt_index)
@@ -37,14 +42,23 @@ def identification_result(request, evaluation_session_id, attempt_index):
 
 
 def identication_succeeded_result(request, session, attempt, attempt_index):
+    """ Result view in the case of a successful identification. """
     if request.method == 'POST':
+        print "POST : ", request.POST
         form = AgreeWithIdentificationForm(request.POST)
         if form.is_valid():
+            print 'cleaned_data:', form.cleaned_data
             attempt.user_agreed = form.cleaned_data['user_agreed']
-            attempt.user_identification = form.cleaned_data['user_identification']
+            attempt.user_identification = request.POST['user_identification']
             session.save()
-            return redirect(
-                '/system/session/{}/attempt/new'.format(session.pk))
+            if attempt.user_agreed:
+                return redirect(
+                    '/system/session/{}/attempt/new'.format(session.pk))
+            else:
+                return redirect(
+                    '/system/session/{}/attempt/{}/result/?{}'.format(
+                        session.pk, attempt_index,
+                        urlencode({'keywords': attempt.user_identification})))
     else:
         form = AgreeWithIdentificationForm()
     print 'render_to_response'
@@ -96,7 +110,15 @@ def new_session(request):
 
 def end_session(request, evaluation_session_id):
     """ Display the result of the evaluation session. """
-    return HttpResponseNotFound("End of session not implemented.")
+    session = get_object_or_404(EvaluationSession, pk=evaluation_session_id)
+    if request.method == 'POST':
+        form = EndSessionForm(request.POST)
+    else:
+        form = EndSessionForm()
+    return render_to_response(
+        'end_of_session.html',
+        {'session': session, 'form': form},
+        context_instance=RequestContext(request))
 
 
 def new_attempt(request, evaluation_session_id):
@@ -112,12 +134,21 @@ def new_attempt(request, evaluation_session_id):
     import random
     video_sequence = random.sample(VIDEO_SEQUENCE_HMI, 1)[0]
     attempt.video_sequence = video_sequence
+    print "Identifying {}_{}...".format(video_sequence.example_object.name,
+                                        video_sequence.sequence_id)
     try:
-        attempt.identification_result = session.identifier.identify(
-            video_sequence)
+        results = defaultdict(int)
+        for frame in video_sequence.frames.iterator():
+            result = session.identifier.identify(frame.pointcloud)
+            results[result] += 1
+        sorted_results = sorted(results.iteritems(), reverse=True,
+                                key=operator.itemgetter(1))
+        attempt.identification_result = sorted_results[0][0]
         attempt.identification_succeed = True
+        print "    Indentified as a ", attempt.identification_result
     except:  # TODO PRECISE EXCEPTION !!!
         attempt.identification_succeed = False
+        print "    Indentification failed..."
     session.save()
     return redirect('/system/session/{}/attempt/{}/result/'.format(
         session.pk, len(session.attempts) - 1))

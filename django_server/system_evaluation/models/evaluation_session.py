@@ -18,8 +18,8 @@ class IdentificationAttempt(models.Model):
     video_sequence_id = models.IntegerField()
     identification_succeed = models.BooleanField()
     identification_result = models.CharField(max_length=255)
-    user_agreed = models.BooleanField()
-    user_indentification = models.CharField(max_length=255)
+    user_agreed = models.BooleanField(default=True)
+    user_identification = models.CharField(max_length=255)
 
     @property
     def video_sequence(self):
