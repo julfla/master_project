@@ -1,19 +1,16 @@
-from django.http import HttpResponse, HttpResponseNotFound
 from collections import defaultdict
 import operator
 from urllib import urlencode
 
+from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 
 from sketchup_models.models import SketchupModel
-# from pointcloud.models import PointCloud
-from .models import IdentificationAttempt, EvaluationSession
-from .forms import NewSessionForm, AgreeWithIdentificationForm
-
 from warehouse_scrapper.models import search_by_keywords
-
-from .models import ExampleObject, VideoSequence
+from .models import (IdentificationAttempt, EvaluationSession,
+                     ExampleObject, VideoSequence)
+from .forms import NewSessionForm, AgreeWithIdentificationForm, EndSessionForm
 
 # This constant store the video sequence ids that can be used in the GUI.
 # In order to run the HIM with a acceptable speed, we use only the video
@@ -23,7 +20,6 @@ VIDEO_SEQUENCE_HMI = set(
     [sequence
      for example in ExampleObject.objects.filter(category__in=CATEGORIES_HMI)
      for sequence in example.sequences.all()])
-
 NUMBER_ATTEMPT_SESSION = 20
 
 
@@ -50,7 +46,8 @@ def identication_succeeded_result(request, session, attempt, attempt_index):
             print 'cleaned_data:', form.cleaned_data
             attempt.user_agreed = form.cleaned_data['user_agreed']
             attempt.user_identification = request.POST['user_identification']
-            if attempt.user_identification not in session.identifier.categories:
+            if (attempt.user_identification not in
+               session.identifier.dict_categories):
                 attempt.new_category_learned = True
             session.save()
             if attempt.user_agreed:
@@ -93,9 +90,6 @@ def image(request, evaluation_session_id, identification_attempt_index):
 
 def new_session(request):
     """ A form view that lead to the begining a an evaluation session. """
-    # DEBUG
-    EvaluationSession.objects.all().delete()
-    # END DEBUG
     if request.method == 'POST':
         form = NewSessionForm(request.POST)
         if form.is_valid():
@@ -117,13 +111,20 @@ def end_session(request, evaluation_session_id):
                 if not attempt.user_agreed]
     objects_learned = [attempt for attempt in session.attempts
                        if attempt.new_category_learned]
-    return render_to_response(
-        'end_of_session.html',
-        {'session': session,
-         'number_failures': len(failures) - len(objects_learned),
-         'number_objects_learned': len(objects_learned),
-         'number_attempts': len(session.attempts)},
-        context_instance=RequestContext(request))
+    if request.method == 'POST':
+        form = EndSessionForm(request.POST)
+        print "form received."
+        return render_to_response('thank_you.html',
+                                  context_instance=RequestContext(request))
+    else:
+        form = EndSessionForm()
+        return render_to_response(
+            'end_of_session.html',
+            {'session': session, 'form': form,
+             'number_failures': len(failures) - len(objects_learned),
+             'number_objects_learned': len(objects_learned),
+             'number_attempts': len(session.attempts)},
+            context_instance=RequestContext(request))
 
 
 def new_attempt(request, evaluation_session_id):
@@ -162,11 +163,18 @@ def new_attempt(request, evaluation_session_id):
 def train_identifier(request, evaluation_session_id):
     """ Train the identifier then redirect to a new attempt. """
     session = get_object_or_404(EvaluationSession, pk=evaluation_session_id)
+    attempt_index = int(request.GET['identification_attempt_index'])
+    attempt = session.attempts[attempt_index]
     category = request.GET['category']
-    model_ids = request.GET['google_ids'].split(",")
+    if request.GET['google_ids']:
+        model_ids = request.GET['google_ids'].split(",")
+    else:
+        model_ids = []
     models = [SketchupModel.find_google_id(id) for id in model_ids]
+    attempt.selected_model_ids = model_ids
     session.identifier.add_models(models, category)
     session.identifier.train()
+
     session.save()
     return redirect('/system/session/{}/attempt/new'.format(session.pk))
 

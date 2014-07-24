@@ -11,6 +11,24 @@ class NewSessionForm(forms.Form):
         attrs={'placeholder': 'Enter your name here...'}))
 
 
+class EndSessionForm(forms.Form):
+
+    """  A form to ask for a global opinion to the user. """
+
+    label = "Would you mind having to each to a robot in order to use it after that ?"
+    agree_teaching = forms.CharField(
+        widget=forms.Textarea, label=label, required=False)
+
+    label = "What kind of interface would you want to use when teaching something to a Robot ?"
+    other_interface = forms.CharField(
+        widget=forms.Textarea, label=label, required=False)
+
+    label = "What would you teach to a robot if it could recognize objects ?"
+    action_robot = forms.CharField(
+        widget=forms.Textarea, label=label, required=False)
+
+
+
 class AgreeWithIdentificationForm(forms.Form):
 
     """ A form to ask the user his opinion on an identification result. """

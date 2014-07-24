@@ -21,6 +21,7 @@ class IdentificationAttempt(models.Model):
     user_agreed = models.BooleanField(default=True)
     user_identification = models.CharField(max_length=255)
     new_category_learned = models.BooleanField(default=False)
+    selected_model_ids = ListField()
 
     @property
     def video_sequence(self):
