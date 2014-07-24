@@ -19,7 +19,7 @@
       - for model in models
         - if forloop.counter0|divisibleby:4
           - if forloop.counter0 == 0
-            :plain 
+            :plain
               <div class="row">
           - else
             :plain
