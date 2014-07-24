@@ -20,23 +20,6 @@ if not os.system("convert --help > /dev/null 2>&1") == 0:
     sys.exit(1)
 
 
-# def dowload_with_progress_bar(url):
-#     """ Display a progress bar while dowloading a file. """
-#     def reporthook(count, block_size, total_size):
-#         """ Print the bar. """
-#         progress_size = int(count * block_size)
-#         percent = int(count * block_size * 100 / total_size)
-#         sys.stdout.write(
-#             "\r...{}%, {}MB".format(percent, progress_size / (1024 * 1024))
-#             )
-#         sys.stdout.flush()
-#     print "Dowloading file {} :".format(url)
-#     temp_file = tempfile.NamedTemporaryFile()
-#     urllib.urlretrieve(url, temp_file.name, reporthook)
-#     print ''  # reporthook need a end line after using
-#     return temp_file
-
-
 def save_pointclouds(example_object, options):
     """ Extract pointclouds from tar archive. """
     sequences = list(example_object.sequences.all())

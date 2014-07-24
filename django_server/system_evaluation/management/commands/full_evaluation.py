@@ -14,7 +14,7 @@ from sklearn.multiclass import (OneVsOneClassifier,
                                 OneVsRestClassifier,
                                 OutputCodeClassifier)
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.neighbors import KNeighborsClassifier, RadiusNeighborsClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from collections import defaultdict, OrderedDict
 import operator
 
@@ -31,10 +31,11 @@ def taneja_distance(X, Y):
         elif x == 0 or y == 0:
             return float('Inf')
         else:
-            return  0.5 * (x + y) * log(0.5 * (x + y) / sqrt(x*y))
+            return 0.5 * (x + y) * log(0.5 * (x + y) / sqrt(x*y))
 
     dist = np.vectorize(operation)
     return np.sum(dist(X, Y))
+
 
 class Command(BaseCommand):
 
@@ -57,9 +58,7 @@ class Command(BaseCommand):
         'KNeighbors_default': KNeighborsClassifier(),
         'OutputCode': OutputCodeClassifier(LinearSVC(random_state=0)),
         'DecisionTree': DecisionTreeClassifier(),
-        'KNeighbors': KNeighborsClassifier(weights='distance',
-                                           n_neighbors=5,
-                                           leaf_size=64),
+        'KNeighbors': KNeighborsClassifier(),
         'KNeighbors_distance_l2': KNeighborsClassifier(weights='distance',
                                            n_neighbors=5,
                                            leaf_size=64),
