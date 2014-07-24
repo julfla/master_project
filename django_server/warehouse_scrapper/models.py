@@ -10,6 +10,7 @@ from sketchup_models.models import SketchupModel
 
 
 SKETCHUP_API_URL = "https://3dwarehouse.sketchup.com/3dw"
+NUMBER_OF_RESULTS = 32
 
 
 class WarehouseCache(models.Model):
@@ -41,7 +42,7 @@ def api_get(command, **params):
 
 def search_by_keywords(keywords):
     """ Search the API for the keywords, return a list of model_ids. """
-    params = {'startRow': 1, 'endRow': 30, 'q': keywords,
+    params = {'startRow': 1, 'endRow': NUMBER_OF_RESULTS, 'q': keywords,
               'type': 'SKETCHUP_MODEL', 'class': 'entity', 'Lk': True}
     json_data = api_get('Search', **params)
     return [entry['id'] for entry in json_data['entries']]
