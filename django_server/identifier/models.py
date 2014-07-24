@@ -45,9 +45,11 @@ class Identifier(models.Model):
 
     def identify_with_proba(self, data):
         """ Return the category of the Pointcloud or Distribution object. """
-        if len(self.dict_categories) < 2:
-            print "No enough categories cannot identify"
+        if not self.dict_categories:
             raise IndexError("Identifier is empty.")
+        if len(self.dict_categories) == 1:
+            #  Only 1 category return it directly
+            return (self.dict_categories.keys()[0], 1.0)
         if type(data) is PointCloud:
             data = ShapeDistribution.compute(data)
         if type(data) is ShapeDistribution:
