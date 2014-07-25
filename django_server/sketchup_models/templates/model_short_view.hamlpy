@@ -3,10 +3,10 @@
   .panel-heading ={model.title}
   .panel-body
     .col-md-3
-      %img.img-thumbnail{'src': "/model/={model.google_id}/image/"}
+      %img.img-thumbnail{'src': '={model.url_image}'}
       %a{'href':"/model/={model.google_id}/mesh/"} Dowload Mesh
     .col-md-3
       %p.description ={model.text}
-      %p.tags Tags: 
+      %p.tags Tags:
         - for tag in model.tags
           ={tag},

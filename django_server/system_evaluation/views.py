@@ -71,9 +71,8 @@ def identication_succeeded_result(request, session, attempt, attempt_index):
 def identication_failed_result(request, session, attempt, attempt_index):
     """ Result view in the case of a failed identification. """
     keywords = request.GET.get('keywords', '')
-    model_ids = search_by_keywords(keywords) if keywords else []
-    print len(model_ids), ' models found for keywords ', keywords
-    models = [SketchupModel.find_google_id(id) for id in model_ids]
+    models = search_by_keywords(keywords, True) if keywords else []
+    print len(models), ' models found for keywords ', keywords
     return render_to_response(
         'identification_failed.html',
         {'attempt': attempt, 'attempt_index': attempt_index,
@@ -174,7 +173,6 @@ def train_identifier(request, evaluation_session_id):
     attempt.selected_model_ids = model_ids
     session.identifier.add_models(models, category)
     session.identifier.train()
-
     session.save()
     return redirect('/system/session/{}/attempt/new'.format(session.pk))
 

@@ -1,31 +1,37 @@
 from django.test import TestCase
-from system_evaluation.models import Example
 
 
 class TestSystemEvaluation(TestCase):
 
-    def test_compressed_gridfsfield(self):
-        example = Example(name='test', _compressed=True)
-        example.image_file = 'hello'
-        image_file = example.image_file
-        self.assertEqual( image_file.read(), 'hello')
-
     def test_form_AgreeWithIdentificationForm_validation(self):
+        """ Field user_identification can be null only if user disagree. """
         from system_evaluation.forms import AgreeWithIdentificationForm
-        # test that user_identification can be null if and only if user disagree
-        form = AgreeWithIdentificationForm(data={'user_agreed': True})
+        data = {'user_agreed': True}
+        form = AgreeWithIdentificationForm(data=data)
         self.assertTrue(form.is_valid())
-        form = AgreeWithIdentificationForm(data={'user_agreed': False})
+        data = {'user_agreed': False}
+        form = AgreeWithIdentificationForm(data=data)
         self.assertFalse(form.is_valid())
-        form = AgreeWithIdentificationForm(data={'user_agreed': False, 'user_identification': 'choice'})
+        data = {'user_agreed': False, 'user_identification': 'choice'}
+        form = AgreeWithIdentificationForm(data=data)
         self.assertTrue(form.is_valid())
 
-    def test_example_regex(self):
-        """ Test the regex used to retreive info from the example name. """
-        example = Example(name='banana_2_1_166')
-        self.assertEqual(example.category, "banana")
-        self.assertEqual(example.object_name, "banana_2")
-
-        example = Example(name='soda_can_2_1_1')
-        self.assertEqual(example.category, "soda_can")
-        self.assertEqual(example.object_name, "soda_can_2")
+    def test_session_can_store_big_identifier(self):
+        """ Test that a session can contain a large identifier. """
+        from .models import EvaluationSession
+        from warehouse_scrapper.models import (search_by_keywords,
+                                               retreive_model)
+        session = EvaluationSession()
+        categories = ['dinner plate', 'toothbrush', 'apple fruit', 'soda can']
+        for category in categories:
+            models = [retreive_model(id) for id in
+                      search_by_keywords(category)]
+            models = [model for model in models if model is not None]
+            session.identifier.add_models(models, category)
+        session.identifier.train()
+        import sys
+        import pickle
+        serialized_size = sys.getsizeof(pickle.dumps(session.identifier))
+        print "Size needed: ", serialized_size, " bytes."
+        self.assertTrue(serialized_size > 16 * 1024 * 1024)  # 16 Mo
+        session.save()

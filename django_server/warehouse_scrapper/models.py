@@ -10,6 +10,9 @@ from sketchup_models.models import SketchupModel
 
 
 SKETCHUP_API_URL = "https://3dwarehouse.sketchup.com/3dw"
+IMG_TAGS = set(['lt', 'bot_st'])
+SKP_TAGS = set(['s', 's13', 's8', 's7', 's6'])
+
 NUMBER_OF_RESULTS = 32
 
 
@@ -40,12 +43,24 @@ def api_get(command, **params):
     return json.loads(WarehouseCache.get_ressource(url))
 
 
-def search_by_keywords(keywords):
+def search_by_keywords(keywords, create_models=False):
     """ Search the API for the keywords, return a list of model_ids. """
     params = {'startRow': 1, 'endRow': NUMBER_OF_RESULTS, 'q': keywords,
               'type': 'SKETCHUP_MODEL', 'class': 'entity', 'Lk': True}
     json_data = api_get('Search', **params)
-    return [entry['id'] for entry in json_data['entries']]
+    if create_models:
+        models = []
+        for entry in json_data['entries']:
+            try:
+                model = SketchupModel()
+                _parse_model_entry(model, entry)
+                model.save()
+                models.append(model)
+            except KeyError as exception:
+                print exception
+        return models
+    else:
+        return [entry['id'] for entry in json_data['entries']]
 
 
 def retreive_model(google_id):
@@ -54,41 +69,36 @@ def retreive_model(google_id):
     try:
         model = SketchupModel.objects.get(google_id=google_id)
     except SketchupModel.DoesNotExist:
-        model = SketchupModel(google_id=google_id)
+        model = SketchupModel()
     try:
-        model.title = json_data['title']
-        model.text = json_data['description']
-        model.tags = json_data['tags']
-        url_image = _parse_image_url(json_data['binaries'])
-        model.url_mesh = _parse_skp_url(json_data['binaries'])
-        model.image = WarehouseCache.get_ressource(url_image)
+        _parse_model_entry(model, json_data)
         model.save()
+        return model
     except KeyError:
         return None
-    return model
 
 
-def _parse_one_of_contentUrl(json_binaries, tag_set):
+def _parse_model_entry(model, json_data):
+    model.google_id = json_data['id']
+    model.title = json_data['title']
+    model.text = json_data['description']
+    # model.tags = json_data['tags']
+    model.url_image = _extract_binary_url(
+        model.google_id, json_data['binaryNames'], IMG_TAGS)
+    model.url_mesh = _extract_binary_url(
+        model.google_id, json_data['binaryNames'], SKP_TAGS)
+
+
+def _extract_binary_url(google_id, binary_names, tags):
     """ Return the contentUrl for one of the tag if found in the json. """
-    tags_found = list(tag_set & set(json_binaries.keys()))
+    tags_found = list(set(tags) & set(binary_names))
     if tags_found:
-        return json_binaries[tags_found[0]]['contentUrl']
+        return "{}/{}?subjectClass=entity&subjectId={}&name={}".format(
+            SKETCHUP_API_URL, "getbinary", google_id, tags_found[0])
     else:
-        error_msg = "Any of {} tags not found in {}".format(
-            tag_set, json_binaries)
+        error_msg = "Any of {} tags not found in {} for model {}".format(
+            tags, binary_names, google_id)
         raise KeyError(error_msg)
-
-
-def _parse_image_url(json_binaries):
-    """ Return the image url from the json binaries list. """
-    img_tags = set(['lt', 'bot_st'])
-    return _parse_one_of_contentUrl(json_binaries, img_tags)
-
-
-def _parse_skp_url(json_binaries):
-    """ Return the skp url from the json binaries list. """
-    skp_tags = set(['s', 's13', 's8', 's7', 's6'])
-    return _parse_one_of_contentUrl(json_binaries, skp_tags)
 
 
 def _download_and_convert_skp2tri(url_skp):
