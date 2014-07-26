@@ -46,7 +46,7 @@ class EvaluationSession(models.Model):
     attempts = ListField(EmbeddedModelField('IdentificationAttempt'))
     user = models.CharField(max_length=50, default="Anonymous")
     identifier = EmbeddedModelField()
-    number_failures = models.IntegerField()
+    number_failures = models.IntegerField(null=True)
     agree_teaching = models.TextField()
     other_interface = models.TextField()
     action_robot = models.TextField()
