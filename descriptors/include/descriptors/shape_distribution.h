@@ -31,18 +31,18 @@ class Distribution {
 
 
     public:
-    static const int SHAPE_DISTRIBUTION_SIZE = 256 + 128 + 64 + 32;
+    static const int SHAPE_DISTRIBUTION_SIZE = 128 + 64 + 32;
 
     // Used when loading archive
     Distribution() {}
 
     explicit Distribution(DefaultCloud * const cloud) {
-        // SHAPE_DISTRIBUTION_SIZE is 256 + 128 + 64 + 32
+        // SHAPE_DISTRIBUTION_SIZE is 128 + 64 + 32
         std::vector<double> sample = compute_a3_sample(cloud, _SAMPLE_LENGTH_);
         std::sort(sample.begin(), sample.end());
-        Histogram histogram(&sample, 256);
+        Histogram histogram(&sample, 128);
         append_histogram(histogram);
-        for (int i = 0; i < 3; ++i) {
+        for (int i = 0; i < 2; ++i) {
             histogram.scale_down(2);
             append_histogram(histogram);
         }
