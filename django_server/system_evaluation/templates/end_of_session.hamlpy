@@ -6,8 +6,8 @@
     .red {color: red;}
     .green {color: green;}
 
-  %h1 Evaluation finishe
-  %p Please quickly fill the paper survey.
+  %h1 Evaluation finished
+  %p Please quickly fill the survey.
   %p Here is the summary of your session :
     %ul
       - for attempt in session.attempts

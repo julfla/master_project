@@ -15,12 +15,12 @@ from .forms import NewSessionForm, AgreeWithIdentificationForm, EndSessionForm
 # This constant store the video sequence ids that can be used in the GUI.
 # In order to run the HIM with a acceptable speed, we use only the video
 # sequence for which all the frames have the pointcloud preloaded.
-CATEGORIES_HMI = set(['plate', 'apple', 'soda_can', 'toothbrush', 'banana'])
+CATEGORIES_HMI = set(['plate', 'apple', 'banana'])
 VIDEO_SEQUENCE_HMI = set(
     [sequence
      for example in ExampleObject.objects.filter(category__in=CATEGORIES_HMI)
      for sequence in example.sequences.all()])
-NUMBER_ATTEMPT_SESSION = 20
+NUMBER_ATTEMPT_SESSION = 10
 
 
 def identification_result(request, evaluation_session_id, attempt_index):

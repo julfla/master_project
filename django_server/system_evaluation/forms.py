@@ -15,11 +15,11 @@ class EndSessionForm(forms.Form):
 
     """  A form to ask for a global opinion to the user. """
 
-    label = "How many time did the system failed to recognize an object ?"
+    label = "How many times did the system fail to recognize an object ?"
     number_failures = forms.IntegerField(
         widget=forms.Textarea, label=label, required=False)
 
-    label = "Would you mind having to teach to a robot in order to use it afterwards ?"
+    label = "Would you mind having to teach a robot in order to use it afterwards ?"
     agree_teaching = forms.CharField(
         widget=forms.Textarea, label=label, required=False)
 
