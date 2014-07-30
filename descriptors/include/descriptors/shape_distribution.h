@@ -20,7 +20,7 @@
 
 #include "descriptors/histogram.h"
 
-#define _SAMPLE_LENGTH_ 1000000
+#define _SAMPLE_LENGTH_ 100000
 
 class Distribution {
     // Used to get access to the private attributes
@@ -31,21 +31,16 @@ class Distribution {
 
 
     public:
-    static const int SHAPE_DISTRIBUTION_SIZE = 128 + 64 + 32;
+    static const int SHAPE_DISTRIBUTION_SIZE = 64;
 
     // Used when loading archive
     Distribution() {}
 
     explicit Distribution(DefaultCloud * const cloud) {
-        // SHAPE_DISTRIBUTION_SIZE is 128 + 64 + 32
         std::vector<double> sample = compute_a3_sample(cloud, _SAMPLE_LENGTH_);
         std::sort(sample.begin(), sample.end());
-        Histogram histogram(&sample, 128);
+        Histogram histogram(&sample, SHAPE_DISTRIBUTION_SIZE);
         append_histogram(histogram);
-        for (int i = 0; i < 2; ++i) {
-            histogram.scale_down(2);
-            append_histogram(histogram);
-        }
     }
 
     void append_histogram(const Histogram &histogram) {
