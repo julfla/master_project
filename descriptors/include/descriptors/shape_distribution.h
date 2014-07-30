@@ -19,7 +19,7 @@
 
 #include "descriptors/histogram.h"
 
-#define _SAMPLE_LENGTH_ 1000000
+#define _SAMPLE_LENGTH_ 100000
 
 class Distribution {
     // Used to get access to the private attributes
