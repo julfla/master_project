@@ -101,9 +101,19 @@ class Identifier(models.Model):
         views = model.partialview_set
         if use_entropy:
             agg = views.aggregate(models.Avg('entropy'))
+            print "Keep only view of entropy > %s" % agg['entropy__avg']
             views = views.filter(entropy__gt=agg['entropy__avg'])
-        w = numpy.array([v.entropy for v in views.all()])
-        x = numpy.array([v.distribution.as_numpy_array for v in views.all()])
+        x = []
+        w = []
+        for view in views.all():
+            distribution = view.distribution.as_numpy_array
+            if not distribution.shape == (SHAPE_DISTRIBUTION_SIZE, ):
+                print "model {} bad view {}".format(model, view.pk)
+            else:
+                x.append(distribution)
+                w.append(view.entropy)
+        w = numpy.array(w)
+        x = numpy.array(x)
         return (x, w)
 
     def _get_example_matrix(self, use_entropy):

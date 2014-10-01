@@ -6,8 +6,8 @@
     .red {color: red;}
     .green {color: green;}
 
-  %h1 Evaluation finishe
-  %p Please quickly fill the paper survey.
+  %h1 Evaluation finished
+  %p Please quickly fill the survey.
   %p Here is the summary of your session :
     %ul
       - for attempt in session.attempts
@@ -20,7 +20,5 @@
             %li.orange You taught the system to recognize ={attempt.user_identification}.
           - else
             %li.red A ={attempt.user_identification} was identified as a ={attempt.identification_result}.
-    %p ={number_failures} failure(s) over ={number_attempts} attempts.
-    %p You taught the system to recognize ={number_objects_learned} kind of objects.
 
     -include 'bootstrap_form.html' with form=form

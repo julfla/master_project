@@ -13,10 +13,9 @@ class SketchupModel(models.Model):
     title = models.CharField(max_length=255)
     text = models.TextField()
     tags = ListField()
-    image = GridFSField()
+    url_image = models.TextField()
     url_mesh = models.TextField()
     _mesh = GridFSField()
-    # similat_objects
 
     @property
     def mesh(self):
@@ -48,4 +47,8 @@ class SketchupModel(models.Model):
             return SketchupModel.objects.get(google_id=google_id)
         except SketchupModel.DoesNotExist:
             from warehouse_scrapper.models import retreive_model
-            return retreive_model(google_id)
+            model = retreive_model(google_id)
+            if model is None:
+                raise SketchupModel.DoesNotExist("google id : %s" % google_id)
+            else:
+                return model

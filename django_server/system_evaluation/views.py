@@ -15,12 +15,12 @@ from .forms import NewSessionForm, AgreeWithIdentificationForm, EndSessionForm
 # This constant store the video sequence ids that can be used in the GUI.
 # In order to run the HIM with a acceptable speed, we use only the video
 # sequence for which all the frames have the pointcloud preloaded.
-CATEGORIES_HMI = set(['plate', 'apple', 'soda_can', 'toothbrush', 'banana'])
+CATEGORIES_HMI = set(['plate', 'apple', 'banana'])
 VIDEO_SEQUENCE_HMI = set(
     [sequence
      for example in ExampleObject.objects.filter(category__in=CATEGORIES_HMI)
      for sequence in example.sequences.all()])
-NUMBER_ATTEMPT_SESSION = 20
+NUMBER_ATTEMPT_SESSION = 10
 
 
 def identification_result(request, evaluation_session_id, attempt_index):
@@ -71,9 +71,8 @@ def identication_succeeded_result(request, session, attempt, attempt_index):
 def identication_failed_result(request, session, attempt, attempt_index):
     """ Result view in the case of a failed identification. """
     keywords = request.GET.get('keywords', '')
-    model_ids = search_by_keywords(keywords) if keywords else []
-    print len(model_ids), ' models found for keywords ', keywords
-    models = [SketchupModel.find_google_id(id) for id in model_ids]
+    models = search_by_keywords(keywords, True) if keywords else []
+    print len(models), ' models found for keywords ', keywords
     return render_to_response(
         'identification_failed.html',
         {'attempt': attempt, 'attempt_index': attempt_index,
@@ -174,7 +173,6 @@ def train_identifier(request, evaluation_session_id):
     attempt.selected_model_ids = model_ids
     session.identifier.add_models(models, category)
     session.identifier.train()
-
     session.save()
     return redirect('/system/session/{}/attempt/new'.format(session.pk))
 

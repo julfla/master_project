@@ -15,7 +15,11 @@ class EndSessionForm(forms.Form):
 
     """  A form to ask for a global opinion to the user. """
 
-    label = "Would you mind having to each to a robot in order to use it after that ?"
+    label = "How many times did the system fail to recognize an object ?"
+    number_failures = forms.IntegerField(
+        widget=forms.Textarea, label=label, required=False)
+
+    label = "Would you mind having to teach a robot in order to use it afterwards ?"
     agree_teaching = forms.CharField(
         widget=forms.Textarea, label=label, required=False)
 
@@ -26,7 +30,6 @@ class EndSessionForm(forms.Form):
     label = "What would you teach to a robot if it could recognize objects ?"
     action_robot = forms.CharField(
         widget=forms.Textarea, label=label, required=False)
-
 
 
 class AgreeWithIdentificationForm(forms.Form):
